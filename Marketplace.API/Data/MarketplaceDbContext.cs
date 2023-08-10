@@ -9,8 +9,8 @@ namespace Marketplace.API.Data {
 		public DbSet<GeneralListing> GeneralListings { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
-			modelBuilder.Entity<GeneralListing>().HasDiscriminator<string>("Discriminator")
-				.HasValue<Clothes>("Clothes");
+			/*modelBuilder.Entity<GeneralListing>().HasDiscriminator<string>("Discriminator")
+				.HasValue<Clothes>("Clothes");*/
 			modelBuilder.Entity<Clothes>().HasBaseType<GeneralListing>();
 			var generalListings = new List<GeneralListing>() {
 				new GeneralListing { 

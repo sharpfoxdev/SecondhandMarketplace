@@ -3,7 +3,6 @@ using System;
 using Marketplace.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -12,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Marketplace.API.Migrations
 {
     [DbContext(typeof(MarketplaceDbContext))]
-    [Migration("20230731195306_trying to edit tables")]
-    partial class tryingtoedittables
+    [Migration("20230810192203_test2 mysql")]
+    partial class test2mysql
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,19 +20,28 @@ namespace Marketplace.API.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Marketplace.API.Models.Domain.GeneralListing", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("RandomIntProperty")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReasonOfSale")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -42,6 +50,15 @@ namespace Marketplace.API.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("GeneralListing");
 
                     b.UseTphMappingStrategy();
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8ee116e1-24c8-4421-97ec-75d6904d33c7"),
+                            Description = "Easy",
+                            RandomIntProperty = 1,
+                            ReasonOfSale = "I don't need it anymore"
+                        });
                 });
 
             modelBuilder.Entity("Marketplace.API.Models.Domain.Clothes", b =>
@@ -50,6 +67,10 @@ namespace Marketplace.API.Migrations
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
+
+                    b.Property<string>("RandomProperty")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Size")
                         .HasColumnType("int");

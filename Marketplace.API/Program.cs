@@ -10,8 +10,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<MarketplaceDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("MarketplaceConnectionString")));
+
+
+var connectionString = "server=localhost;user=testUser;password=testPassword;database=test;";
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 34));
+// Replace 'YourDbContext' with the name of your own DbContext derived class.
+builder.Services.AddDbContext<MarketplaceDbContext>(
+	dbContextOptions => dbContextOptions
+		.UseMySql(connectionString, serverVersion)
+		// The following three options help with debugging, but should
+		// be changed or removed for production.
+		.LogTo(Console.WriteLine, LogLevel.Information)
+		.EnableSensitiveDataLogging()
+		.EnableDetailedErrors()
+);
+
+/*builder.Services.AddDbContext<MarketplaceDbContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("MarketplaceConnectionString")));*/
 
 var app = builder.Build();
 
