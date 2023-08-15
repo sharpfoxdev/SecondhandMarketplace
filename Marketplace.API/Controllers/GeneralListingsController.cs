@@ -23,7 +23,7 @@ namespace Marketplace.API.Controllers
 
         // GET: api/GeneralListings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GeneralListing>>> GetGeneralListings()
+        public async Task<ActionResult<IEnumerable<ListingGeneral>>> GetGeneralListings()
         {
           if (_context.GeneralListings == null)
           {
@@ -34,7 +34,7 @@ namespace Marketplace.API.Controllers
 
         // GET: api/GeneralListings/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<GeneralListing>> GetGeneralListing(Guid id)
+        public async Task<ActionResult<ListingGeneral>> GetGeneralListing(Guid id)
         {
           if (_context.GeneralListings == null)
           {
@@ -53,7 +53,7 @@ namespace Marketplace.API.Controllers
         // PUT: api/GeneralListings/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGeneralListing(Guid id, GeneralListing generalListing)
+        public async Task<IActionResult> PutGeneralListing(Guid id, ListingGeneral generalListing)
         {
             if (id != generalListing.Id)
             {
@@ -84,7 +84,7 @@ namespace Marketplace.API.Controllers
         // POST: api/GeneralListings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<GeneralListing>> PostGeneralListing(GeneralListing generalListing)
+        public async Task<ActionResult<ListingGeneral>> PostGeneralListing(ListingGeneral generalListing)
         {
           if (_context.GeneralListings == null)
           {
