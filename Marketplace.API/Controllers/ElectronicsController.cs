@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Marketplace.API.Data;
 using Marketplace.API.Models.Domain.Categories.Gear.Electronics;
+using Marketplace.API.Models.DTO.AddListing;
+using AutoMapper;
 
 namespace Marketplace.API.Controllers
 {
@@ -15,10 +17,11 @@ namespace Marketplace.API.Controllers
     public class ElectronicsController : ControllerBase
     {
         private readonly MarketplaceDbContext _context;
-
-        public ElectronicsController(MarketplaceDbContext context)
+        private readonly IMapper _mapper;
+        public ElectronicsController(MarketplaceDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Electronics
@@ -84,16 +87,17 @@ namespace Marketplace.API.Controllers
         // POST: api/Electronics
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Electronics>> PostElectronics(Electronics electronics)
+        public async Task<ActionResult<Electronics>> PostElectronics([FromBody] CreateElectronicsListingDto electronics)
         {
-          if (_context.Electronics == null)
-          {
-              return Problem("Entity set 'MarketplaceDbContext.Electronics'  is null.");
-          }
-            _context.Electronics.Add(electronics);
+            var electronicsDomain = _mapper.Map<Electronics>(electronics);
+            if (_context.Electronics == null)
+            {
+                return Problem("Entity set 'MarketplaceDbContext.Electronics'  is null.");
+            }
+            _context.Electronics.Add(electronicsDomain);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetElectronics", new { id = electronics.Id }, electronics);
+            return CreatedAtAction("GetElectronics", new { id = electronicsDomain.Id }, electronicsDomain);
         }
 
         // DELETE: api/Electronics/5

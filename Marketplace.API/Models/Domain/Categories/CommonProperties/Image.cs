@@ -5,6 +5,7 @@ namespace Marketplace.API.Models.Domain.Categories.CommonProperties
     public class Image
     {
         public Guid Id { get; set; }
+        public Guid ListingId { get; set; }
         // will not be in database, as we dont store images directly in database but in file system
         [NotMapped]
         public IFormFile File { get; set; }

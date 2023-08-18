@@ -1,4 +1,5 @@
 using Marketplace.API.Data;
+using Marketplace.API.Mappings;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,7 @@ builder.Services.AddDbContext<MarketplaceDbContext>(
 		.EnableSensitiveDataLogging()
 		.EnableDetailedErrors()
 );
-
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 /*builder.Services.AddDbContext<MarketplaceDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("MarketplaceConnectionString")));*/
 
