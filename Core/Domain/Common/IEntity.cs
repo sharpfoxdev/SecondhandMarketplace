@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Common {
-	internal interface IEntity {
+	public interface IEntity {
 		public Guid Id { get; set; }
 	}
 }

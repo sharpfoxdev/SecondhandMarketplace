@@ -1,4 +1,6 @@
-﻿using Infrastructure.Persistence;
+﻿using Application.Interfaces.Repositories;
+using Infrastructure.Persistence.Contexts;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,12 +11,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure {
+namespace Infrastructure
+{
 
-	/// <summary>
-	/// Setup of dependency injections, the methods are called from Program.cs in WebApi
-	/// </summary>
-	public static class Startup {
+    /// <summary>
+    /// Setup of dependency injections, the methods are called from Program.cs in WebApi
+    /// </summary>
+    public static class Startup {
 		public static IServiceCollection AddInfrastructure(this IServiceCollection services) {
 			// TODO MOVE CONNECTION STRING
 			var connectionString = "server=localhost;user=testUser;password=testPassword;database=marketplace;";
@@ -28,7 +31,7 @@ namespace Infrastructure {
 					.LogTo(Console.WriteLine, LogLevel.Information)
 					.EnableSensitiveDataLogging()
 					.EnableDetailedErrors()
-			);
+			).AddScoped<IListingRepository, ListingRepository>();
 		}
 	}
 }
