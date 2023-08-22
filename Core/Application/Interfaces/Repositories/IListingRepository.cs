@@ -11,10 +11,10 @@ namespace Application.Interfaces.Repositories {
 	/// Generic repository for crud operations
 	/// </summary>
 	public interface IListingRepository {
-		public Task<List<BaseListing>> GetAllAsync();
+		public Task<List<T>> GetAllAsync<T>() where T: BaseListing;
 		public Task<BaseListing?> GetByIdAsync(Guid id);
 		public Task<BaseListing> CreateAsync(BaseListing listing);
-		public Task<BaseListing?> UpdateAsync(BaseListing listing);
+		public Task<BaseListing?> UpdateAsync(Guid id, BaseListing listing);
 		public Task<BaseListing?> DeleteAsync(Guid id);
 	}
 }

@@ -1,5 +1,5 @@
 ﻿using Application.Interfaces.Repositories;
-using Domain.Entities.Listings.Cooking.Stoves;
+using Domain.Entities.Listings.Cooking.Cookware;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -7,40 +7,40 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApi.Controllers {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class StovesController : ControllerBase {
+	public class CookwareController : ControllerBase {
 		private readonly IListingRepository repository;
 
-		public StovesController(IListingRepository repository)
-        {
+		public CookwareController(IListingRepository repository) {
 			this.repository = repository;
 		}
-        // GET: api/<StovesController>
-        [HttpGet]
+		// GET: api/<StovesController>
+		[HttpGet]
 		public async Task<IActionResult> Get() {
-			return Ok(await repository.GetAllAsync<Stove>());
+			return Ok(await repository.GetAllAsync<Cookware>());
 		}
 
-		// GET api/<StovesController>/5
+		// GET api/<CookwareController>/5
 		[HttpGet("{id}")]
 		public async Task<IActionResult> Get(Guid id) {
 			return Ok(await repository.GetByIdAsync(id));
 		}
 
-		// POST api/<StovesController>
+		// POST api/<CookwareController>
 		[HttpPost]
-		public async Task<IActionResult> Post([FromBody] Stove stove) {
+		public async Task<IActionResult> Post([FromBody] Cookware stove) {
 			return Ok(await repository.CreateAsync(stove));
 		}
 
-		// PUT api/<StovesController>/5
+		// PUT api/<CookwareController>/5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Put(Guid id, [FromBody] Stove stove) {
+		public async Task<IActionResult> Put(Guid id, [FromBody] Cookware stove) {
 			return Ok(await repository.UpdateAsync(id, stove));
 		}
 
-		// DELETE api/<StovesController>/5
+		// DELETE api/<CookwareController>/5
 		[HttpDelete("{id}")]
 		public void Delete(int id) {
 		}
 	}
+	
 }

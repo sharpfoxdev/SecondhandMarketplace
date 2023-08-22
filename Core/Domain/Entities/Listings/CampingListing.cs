@@ -11,5 +11,10 @@ namespace Domain.Entities.Listings {
 	public class CampingListing : BaseListing {
 		public bool Ultralight { get; set; }
 		public float? Weight { get; set; }
+		public override void Update(BaseListing updatedListing) {
+			base.Update(updatedListing);
+			Ultralight = ((CampingListing)updatedListing).Ultralight;
+			Weight = ((CampingListing)updatedListing).Weight;
+		}
 	}
 }

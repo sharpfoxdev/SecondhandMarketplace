@@ -31,5 +31,16 @@ namespace Domain.Entities.Listings
 		public bool IsSold { get; set; }
 		public string ListingImageUrl { get; set; }
 
+		public virtual void Update(BaseListing updatedListing) {
+			Id = updatedListing.Id;
+			Price = updatedListing.Price;
+			SellerId = updatedListing.SellerId;
+			StateOfItemId = updatedListing.StateOfItemId;
+			Description = updatedListing.Description;
+			ReasonOfSale = updatedListing.ReasonOfSale;
+			IsSold = updatedListing.IsSold;
+			ListingImageUrl = updatedListing.ListingImageUrl;
+		}
+
 	}
 }

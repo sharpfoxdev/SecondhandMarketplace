@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces.Repositories;
+using Domain.Common;
 using Domain.Entities.Listings;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -34,8 +35,10 @@ namespace Infrastructure.Persistence.Repositories {
 			return existingListing;
 		}
 
-		public async Task<List<BaseListing>> GetAllAsync() {
-			return await _dbContext.Listings.ToListAsync();
+		public async Task<List<T>> GetAllAsync<T>() where T : BaseListing {
+			// implement this correctly to retun the type of the list, that we specify
+			// I think this might list all listings, not just a sub tree
+			return (await _dbContext.Listings.OfType<T>().ToListAsync());//.Cast<T>().ToList();
 		}
 		
 
@@ -43,8 +46,15 @@ namespace Infrastructure.Persistence.Repositories {
 			return await _dbContext.Listings.FirstOrDefaultAsync(x => x.Id == id);
 		}
 
-		public async Task<BaseListing?> UpdateAsync(BaseListing listing) {
-			throw new NotImplementedException();
+		public async Task<BaseListing?> UpdateAsync(Guid id, BaseListing listing) {
+			// todo create update methods inside listings
+			var existingListing = await _dbContext.Listings.FindAsync(listing.Id);
+			if (existingListing == null) {
+				return null;
+			}
+			existingListing.Update(listing);
+			await _dbContext.SaveChangesAsync();
+			return existingListing;
 		}
 	}
 }

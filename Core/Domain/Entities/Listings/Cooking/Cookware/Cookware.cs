@@ -22,5 +22,13 @@ namespace Domain.Entities.Listings.Cooking.Cookware
         // color
         public Color Color { get; set; }
         public Guid ColorId { get; set; }
-    }
+
+		public override void Update(BaseListing updatedListing) {
+			base.Update(updatedListing);
+            CookwareBrandId = ((Cookware)updatedListing).CookwareBrandId;
+            CookwareTypeId = ((Cookware)updatedListing).CookwareTypeId;
+            CookwareMaterialId = ((Cookware)updatedListing).CookwareMaterialId;
+            ColorId = ((Cookware)updatedListing).ColorId;
+		}
+	}
 }
