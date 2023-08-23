@@ -10,5 +10,12 @@ namespace Domain.Entities.Listings.Gear.KnivesMultitools
         public Guid KnifeMultitoolTypeId { get; set; }
         public Color Color { get; set; }
         public Guid ColorId { get; set; }
+
+        public override void Update(BaseListing updatedListing) {
+            base.Update(updatedListing);
+            KnifeMultitoolBrandId = ((KnifeMultitool)updatedListing).KnifeMultitoolBrandId;
+            KnifeMultitoolTypeId = ((KnifeMultitool)updatedListing).KnifeMultitoolTypeId;
+            ColorId = ((KnifeMultitool)updatedListing).ColorId;
+        }
     }
 }

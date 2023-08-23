@@ -28,5 +28,14 @@ namespace Domain.Entities.Listings.Shoes
         public Gender Gender { get; set; }
         public Guid GenderId { get; set; }
 
+        public override void Update(BaseListing updatedListing) {
+			base.Update(updatedListing);
+			ShoeBrandId = ((Shoe)updatedListing).ShoeBrandId;
+			ShoeTypeId = ((Shoe)updatedListing).ShoeTypeId;
+			ShoeSizeId = ((Shoe)updatedListing).ShoeSizeId;
+			ColorId = ((Shoe)updatedListing).ColorId;
+			GenderId = ((Shoe)updatedListing).GenderId;
+		}
+
     }
 }

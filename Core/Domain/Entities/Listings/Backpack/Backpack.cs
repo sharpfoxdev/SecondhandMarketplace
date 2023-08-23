@@ -21,5 +21,12 @@ namespace Domain.Entities.Listings.Backpack {
 
 		// volume - size of the backpack - 45 litres 
 		public float? Volume { get; set; }
+		public override void Update(BaseListing updatedListing) {
+			base.Update(updatedListing);
+			BackpackBrandId = ((Backpack)updatedListing).BackpackBrandId;
+			BackpackTypeId = ((Backpack)updatedListing).BackpackTypeId;
+			ColorId = ((Backpack)updatedListing).ColorId;
+			Volume = ((Backpack)updatedListing).Volume;
+		}
 	}
 }

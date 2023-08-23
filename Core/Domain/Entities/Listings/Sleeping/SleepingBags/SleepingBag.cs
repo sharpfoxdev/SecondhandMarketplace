@@ -36,5 +36,19 @@ namespace Domain.Entities.Listings.Sleeping.SleepingBags
         public int? ComfortTemperature { get; set; }
         public int? LimitTemperature { get; set; }
         public int? ExtremeTemperature { get; set; }
-    }
+
+		public override void Update(BaseListing updatedListing) {
+			base.Update(updatedListing);
+            ColorId = ((SleepingBag)updatedListing).ColorId;
+            SleepingBagZipSideId = ((SleepingBag)updatedListing).SleepingBagZipSideId;
+            SleepingBagShapeId = ((SleepingBag)updatedListing).SleepingBagZipSideId;
+            SleepingBagBrandId = ((SleepingBag)updatedListing).SleepingBagBrandId;
+            SleepingBagInsulationTypeId = ((SleepingBag)updatedListing).SleepingBagInsulationTypeId;
+            SleepingBagSeasonId = ((SleepingBag)updatedListing).SleepingBagSeasonId;
+            GenderId = ((SleepingBag)updatedListing).GenderId;
+            ComfortTemperature = ((SleepingBag)updatedListing).ComfortTemperature;
+            LimitTemperature = ((SleepingBag)updatedListing).LimitTemperature;
+            ExtremeTemperature = ((SleepingBag)updatedListing).ExtremeTemperature;
+		}
+	}
 }

@@ -31,6 +31,15 @@ namespace Domain.Entities.Listings.Clothes
         // type - pants, shirt, etc.
         public ClothesType ClothesType { get; set; }
         public Guid ClothesTypeId { get; set; }
+		public override void Update(BaseListing updatedListing) {
+            base.Update(updatedListing);
+            ClothesSizeId = ((Clothes)updatedListing).ClothesSizeId;
+            ClothesBrandId = ((Clothes)updatedListing).ClothesBrandId;
+            ColorId = ((Clothes)updatedListing).ColorId;
+            GenderId = ((Clothes)updatedListing).GenderId;
+            ClothesTypeId = ((Clothes)updatedListing).ClothesTypeId;
+        }
 
-    }
+
+	}
 }
