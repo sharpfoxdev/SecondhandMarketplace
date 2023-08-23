@@ -1,5 +1,6 @@
-﻿namespace WebApi.ApiDtos.Listings.CreateListing {
-	public class CreateShoeListingRequest : CreateCampingListingRequest {
+﻿namespace WebApi.ApiDtos.Listings.CreateListing
+{
+    public class CreateShoeListingRequest : CreateCampingListingRequest {
 		public Guid ShoeBrandId { get; set; }
 		public Guid ShoeTypeId { get; set; }
 		public Guid ShoeSizeId { get; set; }

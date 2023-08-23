@@ -1,4 +1,5 @@
-﻿namespace WebApi.ApiDtos.Listings.CreateListing {
-	public class CreateOtherSleepingListingRequest : CreateCampingListingRequest {
+﻿namespace WebApi.ApiDtos.Listings.CreateListing
+{
+    public class CreateOtherSleepingListingRequest : CreateCampingListingRequest {
 	}
 }

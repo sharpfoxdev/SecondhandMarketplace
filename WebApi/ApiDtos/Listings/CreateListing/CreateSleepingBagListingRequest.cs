@@ -1,5 +1,6 @@
-﻿namespace WebApi.ApiDtos.Listings.CreateListing {
-	public class CreateSleepingBagListingRequest : CreateCampingListingRequest {
+﻿namespace WebApi.ApiDtos.Listings.CreateListing
+{
+    public class CreateSleepingBagListingRequest : CreateCampingListingRequest {
 		public Guid ColorId { get; set; }
 		public Guid SleepingBagZipSideId { get; set; }
 		public Guid SleepingBagShapeId { get; set; }
