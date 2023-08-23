@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ApiDtos\Listings\CreateListing\" />
+    <Folder Include="ApiDtos\Listings\Dtos\" />
     <Folder Include="ApiDtos\Listings\UpdateListing\" />
     <Folder Include="Mappings\" />
   </ItemGroup>
