@@ -23,7 +23,7 @@ namespace WebApi.Controllers {
 		// GET api/<StovesController>/5
 		[HttpGet("{id}")]
 		public async Task<IActionResult> Get(Guid id) {
-			return Ok(await repository.GetByIdAsync(id));
+			return Ok(await repository.GetByIdAsync<Stove>(id));
 		}
 
 		// POST api/<StovesController>

@@ -14,11 +14,11 @@ namespace Infrastructure.Persistence.Repositories {
 		private readonly MarketplaceDbContext _dbContext;
 
 		public ListingRepository(MarketplaceDbContext dbContext)
-        {
+		{
 			this._dbContext = dbContext;
 		}
 
-        public async Task<BaseListing> CreateAsync(BaseListing listing) {
+		public async Task<BaseListing> CreateAsync(BaseListing listing) {
 			await _dbContext.Listings.AddAsync(listing);
 			await _dbContext.SaveChangesAsync();
 			return listing;
@@ -36,14 +36,24 @@ namespace Infrastructure.Persistence.Repositories {
 		}
 
 		public async Task<List<T>> GetAllAsync<T>() where T : BaseListing {
-			// implement this correctly to retun the type of the list, that we specify
-			// I think this might list all listings, not just a sub tree
-			return (await _dbContext.Listings.OfType<T>().ToListAsync());//.Cast<T>().ToList();
+			// how to deal with navigation properties with generic types
+			// https://github.com/dotnet/efcore/issues/3910#issuecomment-346149850
+			var query = _dbContext.Listings.OfType<T>();
+			foreach(var navigationProperty in _dbContext.Model.FindEntityType(typeof(T)).GetNavigations()) {
+				query = query.Include(navigationProperty.Name);
+			}
+			return await query.ToListAsync();
+			//return (await _dbContext.Listings.OfType<T>().ToListAsync());//.Cast<T>().ToList();
 		}
 		
 
-		public async Task<BaseListing?> GetByIdAsync(Guid id) {
-			return await _dbContext.Listings.FirstOrDefaultAsync(x => x.Id == id);
+		public async Task<T?> GetByIdAsync<T>(Guid id) where T : BaseListing {
+			var query = _dbContext.Listings.OfType<T>();
+			foreach (var navigationProperty in _dbContext.Model.FindEntityType(typeof(T)).GetNavigations()) {
+				query = query.Include(navigationProperty.Name);
+			}
+			return await query.FirstOrDefaultAsync(x => x.Id == id);
+			//return await _dbContext.Listings.FirstOrDefaultAsync(x => x.Id == id);
 		}
 
 		public async Task<BaseListing?> UpdateAsync(Guid id, BaseListing listing) {

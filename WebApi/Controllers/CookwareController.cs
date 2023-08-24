@@ -22,7 +22,7 @@ namespace WebApi.Controllers {
 		// GET api/<CookwareController>/5
 		[HttpGet("{id}")]
 		public async Task<IActionResult> Get(Guid id) {
-			return Ok(await repository.GetByIdAsync(id));
+			return Ok(await repository.GetByIdAsync<Cookware>(id));
 		}
 
 		// POST api/<CookwareController>
