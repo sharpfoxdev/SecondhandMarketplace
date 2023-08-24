@@ -55,7 +55,7 @@
 	public class SleepingBagBrandDto : ListingPropertyWithNameDto { }
 	public class SleepingBagInsulationTypeDto : ListingPropertyWithNameDto { }
 	public class SleepingBagSeasonDto : ListingPropertyWithNameDto { }
-	public class SleepingBagShapenDto : ListingPropertyWithNameDto { }
+	public class SleepingBagShapeDto : ListingPropertyWithNameDto { }
 	public class SleepingBagZipSideDto : ListingPropertyWithNameDto { }
 	// Sleeping Pads
 	public class SleepingPadBrandDto : ListingPropertyWithNameDto { }
