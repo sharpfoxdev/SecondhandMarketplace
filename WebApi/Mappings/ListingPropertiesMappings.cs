@@ -4,8 +4,8 @@ using WebApi.ApiDtos.ListingsProperties;
 
 namespace WebApi.Mappings
 {
-    public class ListingPropertiesMappingProfiles : Profile {
-		public ListingPropertiesMappingProfiles() {
+    public class ListingPropertiesMappings : Profile {
+		public ListingPropertiesMappings() {
 			// backpack
 			CreateMap<BackpackBrandDto, BackpackBrand>().ReverseMap();
 			CreateMap<BackpackTypeDto, BackpackType>().ReverseMap();
