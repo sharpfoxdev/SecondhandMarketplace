@@ -53,7 +53,7 @@ namespace WebApi.Mappings
 			// Hammocks
 			CreateMap<HammockBrandDto, HammockBrand>().ReverseMap();
 			// Sleep accessory
-			CreateMap<SleepAccessoryTypeDto, SleepAccessory>().ReverseMap();
+			CreateMap<SleepAccessoryTypeDto, SleepAccessoryType>().ReverseMap();
 			// Sleeping bag
 			CreateMap<SleepingBagBrandDto, SleepingBagBrand>().ReverseMap();
 			CreateMap<SleepingBagInsulationTypeDto, SleepingBagInsulationType>().ReverseMap();
