@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.Listings.Cooking.Stoves
+﻿namespace Domain.Entities.Listings
 {
     public class Stove : Cooking
     {
@@ -7,10 +7,11 @@
         public StoveFuelType StoveFuelType { get; set; }
         public Guid StoveFuelTypeId { get; set; }
 
-		public override void Update(BaseListing updatedListing) {
-			base.Update(updatedListing);
+        public override void Update(BaseListing updatedListing)
+        {
+            base.Update(updatedListing);
             StoveBrandId = ((Stove)updatedListing).StoveBrandId;
             StoveFuelTypeId = ((Stove)updatedListing).StoveFuelTypeId;
-		}
-	}
+        }
+    }
 }

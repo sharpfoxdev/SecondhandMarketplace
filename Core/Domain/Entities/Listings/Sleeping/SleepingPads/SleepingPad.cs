@@ -1,6 +1,5 @@
-﻿using Domain.Entities.Listings.CommonProperties;
-
-namespace Domain.Entities.Listings.Sleeping.SleepingPads
+﻿
+namespace Domain.Entities.Listings
 {
     public class SleepingPad : Sleeping
     {
@@ -11,7 +10,8 @@ namespace Domain.Entities.Listings.Sleeping.SleepingPads
         public Color Color { get; set; }
         public Guid ColorId { get; set; }
 
-        public override void Update(BaseListing updatedListing) {
+        public override void Update(BaseListing updatedListing)
+        {
             base.Update(updatedListing);
             SleepingPadBrandId = ((SleepingPad)updatedListing).SleepingPadBrandId;
             SleepingPadTypeId = ((SleepingPad)updatedListing).SleepingPadTypeId;

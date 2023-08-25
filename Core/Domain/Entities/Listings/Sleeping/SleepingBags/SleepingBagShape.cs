@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.SleepingBags
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Shape of sleeping bag - mummy, rectangular, underquilt, overquilt, etc.

@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.Listings.Cooking
+﻿namespace Domain.Entities.Listings
 {
     public class OtherCooking : Cooking
     {

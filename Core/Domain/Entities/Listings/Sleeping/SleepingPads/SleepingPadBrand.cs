@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.SleepingPads
+namespace Domain.Entities.Listings
 {
     public class SleepingPadBrand : IEntity
     {

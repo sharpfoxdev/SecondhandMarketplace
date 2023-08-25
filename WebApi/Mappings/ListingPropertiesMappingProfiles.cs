@@ -1,25 +1,10 @@
 ﻿using AutoMapper;
-using Domain.Entities.Listings.Backpack;
-using Domain.Entities.Listings.Clothes;
-using Domain.Entities.Listings.CommonProperties;
-using Domain.Entities.Listings.Cooking.Cookware;
-using Domain.Entities.Listings.Cooking.Stoves;
-using Domain.Entities.Listings.Gear.Binoculars;
-using Domain.Entities.Listings.Gear.Electronics;
-using Domain.Entities.Listings.Gear.KnivesMultitools;
-using Domain.Entities.Listings.Gear.Lighting;
-using Domain.Entities.Listings.Gear.TrekkingPoles;
-using Domain.Entities.Listings.Shoes;
-using Domain.Entities.Listings.Sleeping.Hammocks;
-using Domain.Entities.Listings.Sleeping.SleepAccessories;
-using Domain.Entities.Listings.Sleeping.SleepingBags;
-using Domain.Entities.Listings.Sleeping.SleepingPads;
-using Domain.Entities.Listings.Sleeping.Tarps;
-using Domain.Entities.Listings.Sleeping.Tents;
+using Domain.Entities.Listings;
 using WebApi.ApiDtos.ListingsProperties;
 
-namespace WebApi.Mappings {
-	public class ListingPropertiesMappingProfiles : Profile {
+namespace WebApi.Mappings
+{
+    public class ListingPropertiesMappingProfiles : Profile {
 		public ListingPropertiesMappingProfiles() {
 			// backpack
 			CreateMap<BackpackBrandDto, BackpackBrand>().ReverseMap();

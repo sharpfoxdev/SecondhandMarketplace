@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.Tents
+namespace Domain.Entities.Listings
 {
     public class TentBrand : IEntity
     {

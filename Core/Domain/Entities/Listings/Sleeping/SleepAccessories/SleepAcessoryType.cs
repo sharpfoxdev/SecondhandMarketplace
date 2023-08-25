@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.SleepAccessories
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Pillow, ground sheet, stakes, cordage, ... 

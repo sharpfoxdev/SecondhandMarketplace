@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.Listings.Sleeping
+﻿namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Placeholder for quering subtree of this class

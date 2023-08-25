@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Gear.Binoculars
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Monoculars, binoculars

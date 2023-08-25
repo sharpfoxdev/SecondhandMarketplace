@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Gear.KnivesMultitools
+namespace Domain.Entities.Listings
 {
     public class KnifeMultitoolBrand : IEntity
     {

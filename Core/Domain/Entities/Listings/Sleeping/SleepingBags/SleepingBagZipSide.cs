@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.SleepingBags
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Side of zip - left, right, both

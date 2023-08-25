@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Cooking.Cookware
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Sea to summit, Esbit, ...

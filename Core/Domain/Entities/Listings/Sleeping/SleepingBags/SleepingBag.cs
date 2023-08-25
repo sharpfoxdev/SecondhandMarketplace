@@ -1,6 +1,5 @@
-﻿using Domain.Entities.Listings.CommonProperties;
-
-namespace Domain.Entities.Listings.Sleeping.SleepingBags
+﻿
+namespace Domain.Entities.Listings
 {
     public class SleepingBag : Sleeping
     {
@@ -37,8 +36,9 @@ namespace Domain.Entities.Listings.Sleeping.SleepingBags
         public int? LimitTemperature { get; set; }
         public int? ExtremeTemperature { get; set; }
 
-		public override void Update(BaseListing updatedListing) {
-			base.Update(updatedListing);
+        public override void Update(BaseListing updatedListing)
+        {
+            base.Update(updatedListing);
             ColorId = ((SleepingBag)updatedListing).ColorId;
             SleepingBagZipSideId = ((SleepingBag)updatedListing).SleepingBagZipSideId;
             SleepingBagShapeId = ((SleepingBag)updatedListing).SleepingBagZipSideId;
@@ -49,6 +49,6 @@ namespace Domain.Entities.Listings.Sleeping.SleepingBags
             ComfortTemperature = ((SleepingBag)updatedListing).ComfortTemperature;
             LimitTemperature = ((SleepingBag)updatedListing).LimitTemperature;
             ExtremeTemperature = ((SleepingBag)updatedListing).ExtremeTemperature;
-		}
-	}
+        }
+    }
 }

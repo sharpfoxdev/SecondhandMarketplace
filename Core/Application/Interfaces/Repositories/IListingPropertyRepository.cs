@@ -1,5 +1,4 @@
 ﻿using Domain.Common;
-using Domain.Entities.Listings;
 using System;
 using System.Collections.Generic;
 using System.Linq;

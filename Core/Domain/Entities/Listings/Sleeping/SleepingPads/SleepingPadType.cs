@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.SleepingPads
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Foam, inflatable, alupad, pillow...

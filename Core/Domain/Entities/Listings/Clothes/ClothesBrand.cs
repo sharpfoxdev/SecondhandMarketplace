@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Clothes
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Brand of clothes - nike, adidas, ...

@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Gear.Lighting
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Petzl, Fenix, ...

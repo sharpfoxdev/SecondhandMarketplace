@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.CommonProperties
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Currently just a czech name of color, might add more columns with different language mutations

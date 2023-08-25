@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.Listings.Gear
+﻿namespace Domain.Entities.Listings
 {
     public class OtherGear : Gear
     {

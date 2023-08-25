@@ -1,5 +1,4 @@
 ﻿using Domain.Common;
-using Domain.Entities.Listings.CommonProperties;
 
 namespace Domain.Entities.Listings
 {

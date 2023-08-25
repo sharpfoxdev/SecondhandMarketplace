@@ -1,6 +1,4 @@
-﻿using Domain.Entities.Listings.CommonProperties;
-
-namespace Domain.Entities.Listings.Clothes
+﻿namespace Domain.Entities.Listings
 {
 
     /// <summary>
@@ -31,7 +29,8 @@ namespace Domain.Entities.Listings.Clothes
         // type - pants, shirt, etc.
         public ClothesType ClothesType { get; set; }
         public Guid ClothesTypeId { get; set; }
-		public override void Update(BaseListing updatedListing) {
+        public override void Update(BaseListing updatedListing)
+        {
             base.Update(updatedListing);
             ClothesSizeId = ((Clothes)updatedListing).ClothesSizeId;
             ClothesBrandId = ((Clothes)updatedListing).ClothesBrandId;
@@ -41,5 +40,5 @@ namespace Domain.Entities.Listings.Clothes
         }
 
 
-	}
+    }
 }

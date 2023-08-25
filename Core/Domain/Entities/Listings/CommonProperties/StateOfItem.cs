@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.CommonProperties
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// State of the item - new, used, good, ...

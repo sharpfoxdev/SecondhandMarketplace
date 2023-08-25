@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.Hammocks
+namespace Domain.Entities.Listings
 {
 
     /// <summary>

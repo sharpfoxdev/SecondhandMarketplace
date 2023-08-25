@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Gear.Electronics
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Watch, gps, camera, powerbank, ...

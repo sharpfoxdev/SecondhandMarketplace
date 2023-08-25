@@ -1,6 +1,5 @@
-﻿using Domain.Entities.Listings.CommonProperties;
-
-namespace Domain.Entities.Listings.Sleeping.Tarps
+﻿
+namespace Domain.Entities.Listings
 {
     public class Tarp : Sleeping
     {
@@ -16,14 +15,15 @@ namespace Domain.Entities.Listings.Sleeping.Tarps
         public float? SizeXMetres { get; set; }
         public float? SizeYMetres { get; set; }
 
-        public override void Update(BaseListing updatedListing) {
-			base.Update(updatedListing);
-			TarpBrandId = ((Tarp)updatedListing).TarpBrandId;
-			ColorId = ((Tarp)updatedListing).ColorId;
-			TarpShapeId = ((Tarp)updatedListing).TarpShapeId;
-			SizeXMetres = ((Tarp)updatedListing).SizeXMetres;
-			SizeYMetres = ((Tarp)updatedListing).SizeYMetres;
-		}
+        public override void Update(BaseListing updatedListing)
+        {
+            base.Update(updatedListing);
+            TarpBrandId = ((Tarp)updatedListing).TarpBrandId;
+            ColorId = ((Tarp)updatedListing).ColorId;
+            TarpShapeId = ((Tarp)updatedListing).TarpShapeId;
+            SizeXMetres = ((Tarp)updatedListing).SizeXMetres;
+            SizeYMetres = ((Tarp)updatedListing).SizeYMetres;
+        }
 
     }
 }

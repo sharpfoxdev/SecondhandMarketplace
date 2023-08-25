@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.Listings.Cooking
+﻿namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Empty placeholder class, that is used to enumerate children,

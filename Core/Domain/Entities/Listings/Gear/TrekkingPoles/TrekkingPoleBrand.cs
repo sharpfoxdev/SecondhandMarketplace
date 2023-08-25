@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Gear.TrekkingPoles
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Black Diamond, Leki, ...

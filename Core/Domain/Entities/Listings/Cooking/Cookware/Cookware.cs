@@ -1,6 +1,5 @@
-﻿using Domain.Entities.Listings.CommonProperties;
-
-namespace Domain.Entities.Listings.Cooking.Cookware
+﻿
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Anything, that you use to eat. 
@@ -23,12 +22,13 @@ namespace Domain.Entities.Listings.Cooking.Cookware
         public Color Color { get; set; }
         public Guid ColorId { get; set; }
 
-		public override void Update(BaseListing updatedListing) {
-			base.Update(updatedListing);
+        public override void Update(BaseListing updatedListing)
+        {
+            base.Update(updatedListing);
             CookwareBrandId = ((Cookware)updatedListing).CookwareBrandId;
             CookwareTypeId = ((Cookware)updatedListing).CookwareTypeId;
             CookwareMaterialId = ((Cookware)updatedListing).CookwareMaterialId;
             ColorId = ((Cookware)updatedListing).ColorId;
-		}
-	}
+        }
+    }
 }

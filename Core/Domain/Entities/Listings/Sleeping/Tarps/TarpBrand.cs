@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.Tarps
+namespace Domain.Entities.Listings
 {
     public class TarpBrand : IEntity
     {

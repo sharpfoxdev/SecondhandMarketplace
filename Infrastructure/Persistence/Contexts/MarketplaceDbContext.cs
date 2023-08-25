@@ -5,25 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities.Listings;
-using Domain.Entities.Listings.Backpack;
-using Domain.Entities.Listings.Clothes;
-using Domain.Entities.Listings.Cooking;
-using Domain.Entities.Listings.Cooking.Cookware;
-using Domain.Entities.Listings.Cooking.Stoves;
-using Domain.Entities.Listings.Gear;
-using Domain.Entities.Listings.Gear.Binoculars;
-using Domain.Entities.Listings.Gear.Electronics;
-using Domain.Entities.Listings.Gear.KnivesMultitools;
-using Domain.Entities.Listings.Gear.Lighting;
-using Domain.Entities.Listings.Gear.TrekkingPoles;
-using Domain.Entities.Listings.Shoes;
-using Domain.Entities.Listings.Sleeping;
-using Domain.Entities.Listings.Sleeping.Hammocks;
-using Domain.Entities.Listings.Sleeping.SleepAccessories;
-using Domain.Entities.Listings.Sleeping.SleepingBags;
-using Domain.Entities.Listings.Sleeping.SleepingPads;
-using Domain.Entities.Listings.Sleeping.Tarps;
-using Domain.Entities.Listings.Sleeping.Tents;
 
 namespace Infrastructure.Persistence.Contexts
 {

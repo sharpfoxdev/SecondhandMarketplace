@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.Listings.Sleeping
+﻿namespace Domain.Entities.Listings
 {
     public class OtherSleeping : Sleeping
     {

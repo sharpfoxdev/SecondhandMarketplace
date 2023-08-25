@@ -1,12 +1,13 @@
 ﻿using Application.Interfaces.Repositories;
-using Domain.Entities.Listings.Cooking;
+using Domain.Entities.Listings;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace WebApi.Controllers {
-	[Route("api/[controller]")]
+namespace WebApi.Controllers
+{
+    [Route("api/[controller]")]
 	[ApiController]
 	public class CookingController : ControllerBase {
 

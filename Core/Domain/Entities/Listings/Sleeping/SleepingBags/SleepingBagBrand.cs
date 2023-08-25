@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.SleepingBags
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Brands of sleeping bags, Husky, Warmpeace, ...

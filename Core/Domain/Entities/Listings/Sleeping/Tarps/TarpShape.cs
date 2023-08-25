@@ -1,6 +1,6 @@
 ﻿using Domain.Common;
 
-namespace Domain.Entities.Listings.Sleeping.Tarps
+namespace Domain.Entities.Listings
 {
     /// <summary>
     /// Rectangle, hexagon, ...
