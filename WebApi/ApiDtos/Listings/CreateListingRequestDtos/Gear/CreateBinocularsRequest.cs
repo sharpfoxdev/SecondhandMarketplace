@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.CreateListing
 {
-    public class CreateBinocularsListingRequest : CreateCampingListingRequest {
+    public class CreateBinocularsRequest : CreateCampingListingRequest {
 		public Guid BinocularsTypeId { get; set; }
 
 	}

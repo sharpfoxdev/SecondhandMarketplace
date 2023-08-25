@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.CreateListing
 {
-    public class CreateSleepAccessoryListingRequest : CreateCampingListingRequest {
+    public class CreateSleepAccessoryRequest : CreateCampingListingRequest {
 		public Guid SleepAcessoryTypeId { get; set; }
 	}
 }

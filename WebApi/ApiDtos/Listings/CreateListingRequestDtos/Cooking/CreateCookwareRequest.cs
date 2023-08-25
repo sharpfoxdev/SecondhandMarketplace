@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.CreateListing
 {
-    public class CreateCookwareListingRequest : CreateCampingListingRequest {
+    public class CreateCookwareRequest : CreateCampingListingRequest {
 		public Guid CookwareBrandId { get; set; }
 		public Guid CookwareTypeId { get; set; }
 		public Guid CookwareMaterialId { get; set; }

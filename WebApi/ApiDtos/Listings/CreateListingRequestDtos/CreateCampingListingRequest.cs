@@ -1,6 +1,5 @@
 ﻿namespace WebApi.ApiDtos.Listings.CreateListing {
 	public class CreateCampingListingRequest {
-		public Guid Id { get; set; }
 		public decimal Price { get; set; }
 
 		//public UserProfile Seller { get; set; }

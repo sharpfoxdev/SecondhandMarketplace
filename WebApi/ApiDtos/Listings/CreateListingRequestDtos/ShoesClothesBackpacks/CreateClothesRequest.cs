@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.CreateListing
 {
-    public class CreateClothesListingRequest : CreateCampingListingRequest {
+    public class CreateClothesRequest : CreateCampingListingRequest {
 		public Guid ClothesSizeId { get; set; }
 		public Guid ClothesBrandId { get; set; }
 		public Guid ColorId { get; set; }
