@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.UpdateListing
 {
-    public class UpdateKnifeMultitoolListingRequest : UpdateCampingListingRequest
+    public class UpdateKnifeMultitoolRequest : UpdateCampingListingRequest
     {
         public Guid KnifeMultitoolBrandId { get; set; }
         public Guid KnifeMultitoolTypeId { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.UpdateListing
 {
-    public class UpdateSleepingBagListingRequest : UpdateCampingListingRequest
+    public class UpdateSleepingBagRequest : UpdateCampingListingRequest
     {
         public Guid ColorId { get; set; }
         public Guid SleepingBagZipSideId { get; set; }

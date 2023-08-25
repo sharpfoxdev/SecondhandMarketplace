@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.UpdateListing
 {
-    public class UpdateTentListingRequest : UpdateCampingListingRequest
+    public class UpdateTentRequest : UpdateCampingListingRequest
     {
         public int NumberOfPeople { get; set; }
         public int NumberOfDoors { get; set; }

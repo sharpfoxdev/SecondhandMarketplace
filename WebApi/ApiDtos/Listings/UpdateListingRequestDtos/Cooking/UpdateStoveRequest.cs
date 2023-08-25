@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.UpdateListing
 {
-    public class UpdateStoveListingRequest : UpdateCampingListingRequest
+    public class UpdateStoveRequest : UpdateCampingListingRequest
     {
         public Guid StoveBrandId { get; set; }
         public Guid StoveFuelTypeId { get; set; }

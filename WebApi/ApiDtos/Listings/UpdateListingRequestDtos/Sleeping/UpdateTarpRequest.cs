@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.UpdateListing
 {
-    public class UpdateTarpListingRequest : UpdateCampingListingRequest
+    public class UpdateTarpRequest : UpdateCampingListingRequest
     {
         public Guid TarpBrandId { get; set; }
         public Guid ColorId { get; set; }

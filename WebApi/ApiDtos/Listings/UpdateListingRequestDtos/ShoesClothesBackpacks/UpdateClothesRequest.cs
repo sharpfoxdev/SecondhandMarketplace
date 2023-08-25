@@ -1,6 +1,6 @@
 ﻿namespace WebApi.ApiDtos.Listings.UpdateListing
 {
-    public class UpdateClothesListingRequest : UpdateCampingListingRequest
+    public class UpdateClothesRequest : UpdateCampingListingRequest
     {
         public Guid ClothesSizeId { get; set; }
         public Guid ClothesBrandId { get; set; }
