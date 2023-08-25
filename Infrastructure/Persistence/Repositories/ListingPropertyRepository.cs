@@ -16,7 +16,7 @@ namespace Infrastructure.Persistence.Repositories {
 			this._dbContext = dbContext;
 		}
 		public async Task<List<T>> GetAllAsync<T>() where T : class, IEntity {
-			var query = _dbContext.Listings.OfType<T>();
+			var query = _dbContext.Set<T>().OfType<T>();
 			foreach (var navigationProperty in _dbContext.Model.FindEntityType(typeof(T)).GetNavigations()) {
 				query = query.Include(navigationProperty.Name);
 			}
@@ -24,7 +24,7 @@ namespace Infrastructure.Persistence.Repositories {
 		}
 
 		public async Task<T?> GetByIdAsync<T>(Guid id) where T : class, IEntity {
-			var query = _dbContext.Listings.OfType<T>();
+			var query = _dbContext.Set<T>().OfType<T>();
 			foreach (var navigationProperty in _dbContext.Model.FindEntityType(typeof(T)).GetNavigations()) {
 				query = query.Include(navigationProperty.Name);
 			}
