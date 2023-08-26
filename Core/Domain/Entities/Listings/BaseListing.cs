@@ -31,7 +31,6 @@ namespace Domain.Entities.Listings
 		public string ListingImageUrl { get; set; }
 
 		public virtual void Update(BaseListing updatedListing) {
-			Id = updatedListing.Id;
 			Price = updatedListing.Price;
 			SellerId = updatedListing.SellerId;
 			StateOfItemId = updatedListing.StateOfItemId;
