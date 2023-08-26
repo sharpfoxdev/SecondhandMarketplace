@@ -2,7 +2,6 @@
 {
     public class UpdateCampingListingRequest
     {
-        public Guid Id { get; set; }
         public decimal Price { get; set; }
 
         //public UserProfile Seller { get; set; }
