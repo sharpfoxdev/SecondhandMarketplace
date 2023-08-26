@@ -58,7 +58,7 @@ namespace Infrastructure.Persistence.Repositories {
 
 		public async Task<BaseListing?> UpdateAsync(Guid id, BaseListing listing) {
 			// todo create update methods inside listings
-			var existingListing = await _dbContext.Listings.FindAsync(listing.Id);
+			var existingListing = await _dbContext.Listings.FindAsync(id);
 			if (existingListing == null) {
 				return null;
 			}
