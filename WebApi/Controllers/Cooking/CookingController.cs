@@ -1,7 +1,9 @@
 ﻿using Application.Interfaces.Repositories;
+using AutoMapper;
 using Domain.Entities.Listings;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
+using WebApi.ApiDtos.Listings.ListingDtos;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,24 +11,21 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
 	[ApiController]
-	public class CookingController : ControllerBase {
+	public class CookingController : BaseListingController {
 
-		private readonly IListingRepository repository;
-
-		public CookingController(IListingRepository repository) {
-			this.repository = repository;
+		public CookingController(IListingRepository repository, IMapper mapper) : base(repository, mapper) {
 		}
-
 		// GET: api/<CookingController>
 		[HttpGet]
-		public async Task<IActionResult> Get() {
-			return Ok(await repository.GetAllAsync<Cooking>());
+		public async Task<IActionResult> GetAll() {
+			return await GenericGetAllAsync<Cooking, CookingDto>();
+
 		}
 
 		// GET api/<CookingController>/5
 		[HttpGet("{id}")]
-		public async Task<IActionResult> Get(Guid id) {
-			return Ok(await repository.GetByIdAsync<Cooking>(id));
+		public async Task<IActionResult> GetById(Guid id) {
+			return await GenericGetByIdAsync<Cooking, CookingDto>(id);
 		}
 
 	}

@@ -15,21 +15,36 @@ namespace WebApi.Controllers {
 			this._repository = repository;
 			this._mapper = mapper;
 		}
-		protected async Task<IActionResult> GenericGetAll<DomainType, DtoType>() where DomainType : BaseListing {
+		protected async Task<IActionResult> GenericGetAllAsync<DomainType, ReturnDtoType>() where DomainType : BaseListing {
 			var domainObject = await _repository.GetAllAsync<DomainType>();
-			return Ok(_mapper.Map<List<DtoType>>(domainObject));
+			return Ok(_mapper.Map<List<ReturnDtoType>>(domainObject));
 		}
-		protected async Task<IActionResult> GenericGetById<DomainType, DtoType>(Guid id) where DomainType : BaseListing {
+		protected async Task<IActionResult> GenericGetByIdAsync<DomainType, ReturnDtoType>(Guid id) where DomainType : BaseListing {
 			var domainObject = await _repository.GetByIdAsync<DomainType>(id);
 			if (domainObject == null) {
 				return NotFound();
 			}
-			return Ok(_mapper.Map<DtoType>(domainObject));
+			return Ok(_mapper.Map<ReturnDtoType>(domainObject));
 		}
-		protected async Task<IActionResult> GenericCreate<DomainType, ReturnDtoType, RequestDtoType>(RequestDtoType requestDto) where DomainType : BaseListing {
+		protected async Task<IActionResult> GenericCreateAsync<DomainType, ReturnDtoType, RequestDtoType>(RequestDtoType requestDto) where DomainType : BaseListing {
 			var domain = _mapper.Map<DomainType>(requestDto);
 			domain = (DomainType)await _repository.CreateAsync(domain);
-			return Ok(_mapper.Map<DtoType>(domain));
+			return Ok(_mapper.Map<ReturnDtoType>(domain));
+		}
+		protected async Task<IActionResult> GenericUpdateAsync<DomainType, ReturnDtoType, RequestDtoType>(Guid id, RequestDtoType requestDto) where DomainType : BaseListing {
+			var domain = _mapper.Map<DomainType>(requestDto);
+			domain = (DomainType)await _repository.UpdateAsync(id, domain);
+			if(domain == null) {
+				return NotFound();
+			}
+			return Ok(_mapper.Map<ReturnDtoType>(domain));
+		}
+		protected async Task<IActionResult> GenericDeleteAsync<ReturnDtoType>(Guid id) {
+			var domain = await _repository.DeleteAsync(id);
+			if(domain == null) {
+				return NotFound();
+			}
+			return Ok(_mapper.Map<ReturnDtoType>(domain));
 		}
 	}
 }
