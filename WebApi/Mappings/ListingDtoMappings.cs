@@ -9,6 +9,7 @@ namespace WebApi.Mappings {
 			CreateMap<BaseListing, CampingListingDto>().ReverseMap();
 			CreateMap<CampingListing, CampingListingDto>().ReverseMap();
 
+
 			CreateMap<Backpack, BackpackDto>().ReverseMap();
 			CreateMap<Clothes, ClothesDto>().ReverseMap();
 

@@ -5,6 +5,7 @@ namespace WebApi.ApiDtos.Listings.ListingDtos {
 		public Guid Id { get; set; }
 		public decimal Price { get; set; }
 		public Guid SellerId { get; set; }
+		public string Title { get; set; }
 		public StateOfItemDto StateOfItem { get; set; }
 		public string Description { get; set; }
 		public string ReasonOfSale { get; set; }

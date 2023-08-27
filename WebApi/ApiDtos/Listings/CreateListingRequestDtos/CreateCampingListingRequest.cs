@@ -5,10 +5,12 @@
 		//public UserProfile Seller { get; set; }
 		public Guid SellerId { get; set; }
 		public Guid StateOfItemId { get; set; }
+		public string Title { get; set; }
+
 
 		public string Description { get; set; }
 		public string ReasonOfSale { get; set; }
-		public string ListingImageUrl { get; set; }
+		public IFormFile File { get; set; }
 		public bool Ultralight { get; set; }
 		public float? Weight { get; set; }
 	}

@@ -27,13 +27,13 @@ namespace WebApi.Controllers {
 
 		// POST api/<TentsController>
 		[HttpPost]
-		public async Task<IActionResult> Post([FromBody] CreateTentRequest requestDto) {
+		public async Task<IActionResult> Post([FromForm] CreateTentRequest requestDto) {
 			return await GenericCreateAsync<Tent, TentDto, CreateTentRequest>(requestDto);
 		}
 
 		// PUT api/<TentsController>/5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Put(Guid id, [FromBody] UpdateTentRequest requestDto) {
+		public async Task<IActionResult> Put(Guid id, [FromForm] UpdateTentRequest requestDto) {
 			return await GenericUpdateAsync<Tent, TentDto, UpdateTentRequest>(id, requestDto);
 		}
 

@@ -3,6 +3,7 @@ using AutoMapper;
 using Domain.Entities.Listings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using WebApi.ApiDtos.Listings.CreateListing;
 using WebApi.ApiDtos.Listings.ListingDtos;
 using WebApi.ApiDtos.Listings.UpdateListing;
@@ -15,7 +16,8 @@ namespace WebApi.Controllers {
 		}
 		// GET: api/<TarpsController>
 		[HttpGet]
-		public async Task<IActionResult> GetAll() {
+		public async Task<IActionResult> GetAll([FromHeader(Name = "Auth-Token")] string jwt) {
+			Console.WriteLine(jwt);
 			return await GenericGetAllAsync<Tarp, TarpDto>();
 		}
 
@@ -33,7 +35,8 @@ namespace WebApi.Controllers {
 
 		// PUT api/<TarpsController>/5
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Put(Guid id, [FromBody] UpdateTarpRequest requestDto) {
+		public async Task<IActionResult> Put(Guid id, [FromBody] UpdateTarpRequest requestDto, [FromHeader(Name = "Auth-Token")] string jwt) {
+			Console.WriteLine(jwt);
 			return await GenericUpdateAsync<Tarp, TarpDto, UpdateTarpRequest>(id, requestDto);
 		}
 
