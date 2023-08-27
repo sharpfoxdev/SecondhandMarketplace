@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Interfaces.Repositories {
-	public interface IAttributeRepository {
+	public interface IListingAttributeRepository {
 		public Task<List<ListingAttribute>> GetAllAsync();
 		public Task<ListingAttribute?> GetByIdAsync(Guid id);
 		public Task<ListingAttribute> CreateAsync(ListingAttribute listing);
