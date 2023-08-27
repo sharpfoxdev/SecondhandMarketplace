@@ -19,6 +19,7 @@ namespace Domain.Entities.Listings
 		public StateOfItem StateOfItem { get; set; }
 		public Guid StateOfItemId { get; set; }
 
+		public string Title { get; set; }
 		public string Description { get; set; }
 		public string ReasonOfSale { get; set; }
 
