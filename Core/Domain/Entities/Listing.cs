@@ -1,5 +1,4 @@
 ﻿using Domain.Common;
-using Domain.Entities.Listings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +20,6 @@ namespace Domain.Entities {
 
 		public Guid CategoryId { get; set; }
 		public Category Category { get; set; }
-		public List<Attribute> SelectedAttributes { get; set; }
+		public List<ListingAttribute> SelectedAttributes { get; set; }
 	}
 }

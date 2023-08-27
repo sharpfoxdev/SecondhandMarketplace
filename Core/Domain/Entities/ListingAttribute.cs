@@ -6,12 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Entities {
-	public class AttributeGroup : IEntity {
+	public class ListingAttribute : IEntity {
 		public Guid Id { get; set; }
 		public string Name { get; set; }
-		// possibly list of categories
-		//public Guid CategoryId { get; set; }
-		public List<Category> Categories { get; set; }
-		public List<ListingAttribute> Attributes { get; set; }
+		public Guid AttributeGroupId { get; set; }
+		public AttributeGroup AttributeGroup { get; set; }
+		public List<Listing> Listings { get; set; }
 	}
 }

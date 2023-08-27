@@ -28,4 +28,9 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ApiDtos\Categories\" />
+    <Folder Include="Mappings\" />
+  </ItemGroup>
+
 </Project>
