@@ -46,10 +46,14 @@ namespace Infrastructure.Persistence.Repositories {
 		}
 
 		public async Task<AttributeGroup?> GetByIdAsync(Guid id) {
-			return await dbContext.AttributeGroups
+			var existing = await dbContext.AttributeGroups
 				.Include(x => x.Attributes)
 				.Include(x => x.Categories)
 				.FirstOrDefaultAsync(x => x.Id == id);
+			if(existing == null) {
+				return null;
+			}
+			return existing;
 		}
 		public async Task<AttributeGroup?> AddAttributesAsync(Guid id, List<ListingAttribute> attributes) {
 			var group = await dbContext.AttributeGroups
