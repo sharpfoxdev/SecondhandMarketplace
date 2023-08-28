@@ -27,6 +27,7 @@ namespace WebApi.Mappings {
 			CreateMap<Listing, CreateListingRequest>().ReverseMap();
 			CreateMap<Category, CreateCategoryRequest>().ReverseMap();
 			CreateMap<AttributeGroup, CreateAttributeGroupRequest>().ReverseMap();
+			CreateMap<ListingAttribute, CreateListingAttributeInsideGroupRequest>().ReverseMap();
 
 			// Mapping between domain and Update Request Dtos
 			CreateMap<ListingAttribute, UpdateListingAttributeRequest>().ReverseMap();

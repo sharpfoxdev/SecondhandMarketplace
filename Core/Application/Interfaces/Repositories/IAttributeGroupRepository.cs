@@ -12,5 +12,6 @@ namespace Application.Interfaces.Repositories {
 		public Task<AttributeGroup> CreateAsync(AttributeGroup listing);
 		public Task<AttributeGroup?> UpdateAsync(Guid id, AttributeGroup listing);
 		public Task<AttributeGroup?> DeleteAsync(Guid id);
+		public Task<AttributeGroup?> AddAttributesAsync(Guid id, List<ListingAttribute> attributes);
 	}
 }

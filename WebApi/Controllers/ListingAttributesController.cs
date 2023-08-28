@@ -5,7 +5,7 @@ namespace WebApi.Controllers {
 	[Route("api/[controller]")]
 	[ApiController]
 	public class ListingAttributesController : ControllerBase {
-        public ListingAttributesController(IAttribute)
+        public ListingAttributesController()
         {
             
         }

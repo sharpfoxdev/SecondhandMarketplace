@@ -13,5 +13,6 @@ namespace Domain.Entities {
 		public Category? ParentCategory { get; set; }
 		public List<Category> ChildrenCategories { get; set; }
 		public List<AttributeGroup> AttributeGroups { get; set; }
+		public List<Listing> Listings { get; set; }
 	}
 }

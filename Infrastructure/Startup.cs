@@ -31,7 +31,10 @@ namespace Infrastructure
 					.LogTo(Console.WriteLine, LogLevel.Information)
 					.EnableSensitiveDataLogging()
 					.EnableDetailedErrors()
-			).AddScoped<IListingRepository, ListingRepository>();
+			).AddScoped<IListingRepository, ListingRepository>()
+			.AddScoped<IAttributeGroupRepository, AttributeGroupRepository>()
+			.AddScoped<ICategoryRepository, CategoryRepository>()
+			.AddScoped<IListingAttributeRepository, ListingAttributeRepository>();				;
 		}
 	}
 }

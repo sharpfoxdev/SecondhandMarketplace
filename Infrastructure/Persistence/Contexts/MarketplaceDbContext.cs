@@ -99,7 +99,7 @@ namespace Infrastructure.Persistence.Contexts
 					}
 				},
 			};
-			modelBuilder.Entity<Category>().HasData(categories);
+			//modelBuilder.Entity<Category>().HasData(categories);
 
 		}
 

@@ -21,16 +21,16 @@ namespace WebApi.Controllers {
 			return Ok(result);
 		}
 		[HttpGet]
-		[Route("{id:guid}")]
+		[Route("{id:Guid}")]
 		public async Task<IActionResult> GetById(Guid id) {
 			var result = await repository.GetByIdAsync(id);
 			return Ok(result);
 		}
-		[HttpGet]
-		[Route("{name:string}")]
+		/*[HttpGet]
+		[Route("{name:String}")]
 		public async Task<IActionResult> GetListingsByCategoryName(string name) {
 			var result = await repository.GetListingsByCategoryNameAsync(name);
 			return Ok(result);
-		}
+		}*/
 	}
 }

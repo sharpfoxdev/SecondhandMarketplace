@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using WebApi.ApiDtos.AttributeGroups;
+using WebApi.ApiDtos.Listings;
 
 namespace WebApi.ApiDtos.Categories {
 	public class CategoryDto {
@@ -8,5 +9,6 @@ namespace WebApi.ApiDtos.Categories {
 		public CategoryDto? ParentCategory { get; set; }
 		public List<CategoryDto> ChildrenCategories { get; set; }
 		public List<AttributeGroupDto> AttributeGroups { get; set; }
+		public List<ListingDto> Listings { get; set; }
 	}
 }
