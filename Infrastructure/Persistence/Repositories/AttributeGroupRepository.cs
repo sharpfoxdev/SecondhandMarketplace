@@ -64,6 +64,7 @@ namespace Infrastructure.Persistence.Repositories {
 				// didnt find group with this id
 				return null;
 			}
+			// TODO - maybe check, that we are not adding already existing attributes
 			group.Attributes.AddRange(attributes);
 			await dbContext.SaveChangesAsync();
 			return group;

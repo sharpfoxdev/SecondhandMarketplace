@@ -10,8 +10,8 @@ namespace Application.Interfaces.Repositories {
 		public Task<List<Category>> GetAllAsync();
 		public Task<Category?> GetByIdAsync(Guid id);
 		public Task<List<Listing>> GetListingsByCategoryNameAsync(string name);
-		public Task<Category> CreateAsync(Category listing);
-		public Task<Category?> UpdateAsync(Guid id, Category listing);
+		public Task<Category> CreateAsync(Category category);
+		public Task<Category?> UpdateAsync(Guid id, Category category);
 		public Task<Category?> DeleteAsync(Guid id);
 	}
 }
