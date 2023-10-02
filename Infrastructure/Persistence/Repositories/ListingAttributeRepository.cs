@@ -60,6 +60,7 @@ namespace Infrastructure.Persistence.Repositories {
 		public async Task<ListingAttribute?> UpdateAsync(Guid id, ListingAttribute updatedAttribute) {
 			// will update just name? What about adding it to a different existing group? Possibly. 
 			// Or create a new group all together? Probably not. 
+			// For now we dont update the attribute group ids
 			var existing = await dbContext.Attributes
 				.Include(x => x.AttributeGroup)
 				.Include(x => x.Listings)
@@ -69,7 +70,7 @@ namespace Infrastructure.Persistence.Repositories {
 				return null;
 			}
 			existing.Name = updatedAttribute.Name;
-			existing.AttributeGroupId = updatedAttribute.AttributeGroupId;
+			//existing.AttributeGroupId = updatedAttribute.AttributeGroupId;
 			await dbContext.SaveChangesAsync();
 			return existing;
 		}

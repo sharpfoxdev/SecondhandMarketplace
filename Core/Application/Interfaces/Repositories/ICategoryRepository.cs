@@ -13,5 +13,6 @@ namespace Application.Interfaces.Repositories {
 		public Task<Category> CreateAsync(Category category);
 		public Task<Category?> UpdateAsync(Guid id, Category category);
 		public Task<Category?> DeleteAsync(Guid id);
+
 	}
 }
