@@ -32,7 +32,9 @@ namespace Infrastructure
 					.EnableSensitiveDataLogging()
 					.EnableDetailedErrors()
 			).AddScoped<IListingRepository, ListingRepository>()
-			.AddScoped<IListingPropertyRepository, ListingPropertyRepository>();
+			.AddScoped<IAttributeGroupRepository, AttributeGroupRepository>()
+			.AddScoped<ICategoryRepository, CategoryRepository>()
+			.AddScoped<IListingAttributeRepository, ListingAttributeRepository>();				;
 		}
 	}
 }

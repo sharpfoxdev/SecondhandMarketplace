@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MarketplaceDbContext))]
-    partial class MarketplaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230827184539_changed data to have many to many relationships")]
+    partial class changeddatatohavemanytomanyrelationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,7 +253,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Category", b =>
                 {
                     b.HasOne("Domain.Entities.Category", "ParentCategory")
-                        .WithMany("ChildrenCategories")
+                        .WithMany()
                         .HasForeignKey("ParentCategoryId");
 
                     b.Navigation("ParentCategory");
@@ -259,7 +262,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Listing", b =>
                 {
                     b.HasOne("Domain.Entities.Category", "Category")
-                        .WithMany("Listings")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -304,13 +307,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.AttributeGroup", b =>
                 {
                     b.Navigation("Attributes");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Category", b =>
-                {
-                    b.Navigation("ChildrenCategories");
-
-                    b.Navigation("Listings");
                 });
 #pragma warning restore 612, 618
         }

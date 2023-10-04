@@ -1,5 +1,5 @@
 ﻿using Domain.Common;
-using Domain.Entities.Listings;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +11,10 @@ namespace Application.Interfaces.Repositories {
 	/// Generic repository for crud operations
 	/// </summary>
 	public interface IListingRepository {
-		public Task<List<T>> GetAllAsync<T>() where T: BaseListing;
-		public Task<T?> GetByIdAsync<T>(Guid id) where T: BaseListing;
-		public Task<BaseListing> CreateAsync(BaseListing listing);
-		public Task<BaseListing?> UpdateAsync(Guid id, BaseListing listing);
-		public Task<BaseListing?> DeleteAsync(Guid id);
+		public Task<List<Listing>> GetAllAsync();
+		public Task<Listing?> GetByIdAsync(Guid id);
+		public Task<Listing> CreateAsync(Listing listing);
+		public Task<Listing?> UpdateAsync(Guid id, Listing listing);
+		public Task<Listing?> DeleteAsync(Guid id);
 	}
 }
