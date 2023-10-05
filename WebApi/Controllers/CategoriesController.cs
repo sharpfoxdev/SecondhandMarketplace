@@ -30,9 +30,9 @@ namespace WebApi.Controllers {
 			return Ok(result);
 		}
 		[HttpGet]
-		[Route("{CategoryName}")]
-		public async Task<IActionResult> GetListingsByCategoryName(string name) {
-			var result = await repository.GetListingsByCategoryNameAsync(name);
+		[Route("{categoryName}")]
+		public async Task<IActionResult> GetListingsByCategoryName(string categoryName) {
+			var result = await repository.GetListingsByCategoryNameAsync(categoryName);
 			return Ok(result);
 		}
 		[HttpPost]
