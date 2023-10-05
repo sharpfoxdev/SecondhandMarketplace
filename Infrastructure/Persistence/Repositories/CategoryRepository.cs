@@ -49,10 +49,33 @@ namespace Infrastructure.Persistence.Repositories {
 		/// Otherwise returns created Category. 
 		/// </returns>
         public async Task<Category?> CreateAsync(Category category) {
-			// TODO getting attribute groups from the parent
 			if (await IsExistingCategoryName(category.Name)) {
 				return null;
 			}
+			if(category.ParentCategoryId == null) {
+				// this is a root category
+				dbContext.Categories.Add(category);
+				await dbContext.SaveChangesAsync();
+				return category;
+			}
+			//add this category as a child to the parent category
+			Category parentCategory = dbContext.Categories.Find(category.ParentCategoryId);
+			//parentCategory.ChildrenCategories.Add(category);
+
+			// add the attribute groups from the parent category
+			var parentAttributeGroups = parentCategory.AttributeGroups;
+			if(parentAttributeGroups != null) {
+				// can be null for root category
+				category.AttributeGroups.Concat(parentAttributeGroups);
+			}
+			/*
+				await dbContext.AttributeGroups
+				.Include(x => x.Categories)
+				.Where(x => x.Categories.Contains(parentCategory))
+				.ToListAsync();*/
+			/*foreach (var group in parentAttributeGroups) {
+				category.AttributeGroups.Add(group);
+			}*/
 			dbContext.Categories.Add(category);
 			await dbContext.SaveChangesAsync();
 			return category;
@@ -104,6 +127,7 @@ namespace Infrastructure.Persistence.Repositories {
 		/// Else returns the Category.
 		/// </returns>
 		public async Task<Category?> GetByIdAsync(Guid id) {
+			// TODO add recursive query for children categories listings
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
@@ -117,14 +141,14 @@ namespace Infrastructure.Persistence.Repositories {
 		}
 
 		/// <summary>
-		/// Used to get Listings by the name of the Category they are in. 
+		/// Used to get by name
 		/// </summary>
 		/// <param name="name">Name of Category. </param>
 		/// <returns>
 		/// Null if a Category with the given name was not found.
-		/// Otherwise returns a list of Listings in the given category. 
+		/// Otherwise returns the Category.
 		/// </returns>
-		public async Task<List<Listing>> GetListingsByCategoryNameAsync(string name) {
+		public async Task<Category?> GetListingsByCategoryNameAsync(string name) {
 			// TODO THIS SHOULD ALSO ASK ALL THE SUBCATEGORIES AND LIST THEIR LISTINGS
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
@@ -133,7 +157,7 @@ namespace Infrastructure.Persistence.Repositories {
 			if (existing == null) {
 				return null;
 			}
-			return existing.Listings;
+			return existing;
 		}
 
 		/// <summary>
