@@ -31,7 +31,7 @@ namespace Infrastructure.Persistence.Repositories {
 		/// <returns>
 		/// True if the category with given name exists, otherwise returns false. 
 		/// </returns>
-		private async Task<bool> IsExistingCategoryName(string categoryName) {
+		private async Task<bool> IsExistingCategoryNameAsync(string categoryName) {
 			var existing = await dbContext.Categories
 				.FirstOrDefaultAsync(x => x.Name == categoryName);
 			if (existing == null) {
@@ -49,7 +49,7 @@ namespace Infrastructure.Persistence.Repositories {
 		/// Otherwise returns created Category. 
 		/// </returns>
         public async Task<Category?> CreateAsync(Category category) {
-			if (await IsExistingCategoryName(category.Name)) {
+			if (await IsExistingCategoryNameAsync(category.Name)) {
 				return null;
 			}
 			if(category.ParentCategoryId == null) {
@@ -58,11 +58,11 @@ namespace Infrastructure.Persistence.Repositories {
 				await dbContext.SaveChangesAsync();
 				return category;
 			}
-			//add this category as a child to the parent category
-			Category parentCategory = dbContext.Categories.Find(category.ParentCategoryId);
-			//parentCategory.ChildrenCategories.Add(category);
+			// we dont have to add this category as a child to the parent, because
+			// it is enough, when this category knows it's parent
 
 			// add the attribute groups from the parent category
+			Category parentCategory = dbContext.Categories.Find(category.ParentCategoryId);
 			var parentAttributeGroups = parentCategory.AttributeGroups;
 			if(parentAttributeGroups != null) {
 				// can be null for root category
@@ -97,10 +97,18 @@ namespace Infrastructure.Persistence.Repositories {
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
 				.Include(x => x.AttributeGroups)
+				.Include(x => x.ChildrenCategories)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {
 				return null;
 			}
+
+			// remove recursively all subcategories
+			var deleteTasks = existing.ChildrenCategories.Select(category => DeleteAsync(category.Id));
+			await Task.WhenAll(deleteTasks);
+
+			// TODO remove all listings
+
 			dbContext.Categories.Remove(existing);
 			await dbContext.SaveChangesAsync();
 			return existing;
@@ -152,7 +160,9 @@ namespace Infrastructure.Persistence.Repositories {
 			// TODO THIS SHOULD ALSO ASK ALL THE SUBCATEGORIES AND LIST THEIR LISTINGS
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
-				.Include(x => x.ChildrenCategories)
+				.Include(x => x.ParentCategory)
+				.Include(x => x.AttributeGroups)
+				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
 				.FirstOrDefaultAsync(x => x.Name == name);
 			if (existing == null) {
 				return null;
@@ -165,21 +175,38 @@ namespace Infrastructure.Persistence.Repositories {
 		/// to the Category, for that there are methods AddAttributeGroups() and
 		/// RemoveAttributeGroupFromCategory(). Checks that we don't try to change the name
 		/// of Category to the one that already exists within the database. 
+		/// 
+		/// It is also not currently possible to update the parent category of the category, as moving
+		/// the category within the tree would mess up the listings, as they would not support
+		/// the new parent categories attribute groups. TOCHECK - is this really an issue?
 		/// </summary>
 		/// <param name="id">Id of Category to update. </param>
-		/// <param name="category">Category of updated data. </param>
+		/// <param name="updatedCategory">Category of updated data. </param>
 		/// <returns>
 		/// Null if Category we want to update already exists or the name of category
 		/// already exists in the database.
 		/// Else returns the updated Category
 		/// </returns>
 		/// <exception cref="NotImplementedException"></exception>
-		public async Task<Category?> UpdateAsync(Guid id, Category category) {
-			// will not touch attribute groups
-			// gotta check again that we are not inserting already existing name
-			// careful with the names, the name can already exist in the database, if it is the one
-			// we want to change (ie not to change in this case)
-			throw new NotImplementedException();
+		public async Task<Category?> UpdateAsync(Guid id, Category updatedCategory) {
+			var existing = await dbContext.Categories
+				.FirstOrDefaultAsync(x => x.Id == id);
+			if (existing == null) {
+				// didnt find what we want to update
+				return null;
+			}
+
+			// check for the same name in the database. It is ok, to use the same name, just if
+			// it is the name of the category, we are updating (ie we are not changing the name
+			// of the category and want to keep it the same)
+			if(await IsExistingCategoryNameAsync(updatedCategory.Name) && updatedCategory.Name != existing.Name) {
+				
+				return null;
+			}
+			existing.Name = updatedCategory.Name;
+			//existing.AttributeGroupId = updatedAttribute.AttributeGroupId;
+			await dbContext.SaveChangesAsync();
+			return existing;
 		}
 		/// <summary>
 		/// Adds the list of AttributeGroups to the already existing list of AttributeGroups. Adds it also to the whole
@@ -191,14 +218,33 @@ namespace Infrastructure.Persistence.Repositories {
 		/// Updated Category. 
 		/// Null, if the category was not found. 
 		/// </returns>
-		public async Task<Category?> AddAttributeGroups(Guid categoryId, List<AttributeGroup> attributeGroups) {
-			// TODO checks, that we dont add groups, that are already existing
+		public async Task<Category?> AddAttributeGroupsAsync(Guid categoryId, List<Guid> attributeGroupIds) {
 			var existing = await dbContext.Categories
 				.Include(x => x.AttributeGroups)
 				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
 				.FirstOrDefaultAsync(x => x.Id == categoryId);
-			throw new NotImplementedException();
+			if (existing == null) {
+				return null;
+			}
 
+			// Fetch the AttributeGroups based on the provided IDs
+			var attributeGroups = await dbContext.AttributeGroups
+				.Where(ag => attributeGroupIds.Contains(ag.Id))
+				.ToListAsync();
+
+			// Add the AttributeGroups to the Category
+			foreach (var group in attributeGroups) {
+				if (existing.AttributeGroups.Any(ag => ag.Id == group.Id)) {
+					continue; // this attribute group already exists in the category
+				}
+				existing.AttributeGroups.Add(group);
+			}
+			// recursivelly add new attribute groups to the children categories
+			var updateTasks = existing.ChildrenCategories.Select(category => AddAttributeGroupsAsync(category.Id, attributeGroupIds));
+			await Task.WhenAll(updateTasks);
+
+			await dbContext.SaveChangesAsync();
+			return existing;
 		}
 		/// <summary>
 		/// Gets the Category the highest in the hierarchy and removes the group from the whole subtree
@@ -206,9 +252,31 @@ namespace Infrastructure.Persistence.Repositories {
 		/// <param name="categoryId"></param>
 		/// <param name="groupId"></param>
 		/// <returns></returns>
-		/// <exception cref="NotImplementedException"></exception>
-		public async Task<Category?> RemoveAttributeGroupFromCategory(Guid categoryId, Guid groupId) {
-			throw new NotImplementedException();
+		public async Task<Category?> RemoveAttributeGroupAsync(Guid categoryId, Guid groupId) {
+			var existingCategory = await dbContext.Categories
+				.Include(x => x.AttributeGroups)
+				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
+				.FirstOrDefaultAsync(x => x.Id == categoryId);
+			if (existingCategory == null) {
+				return null;
+			}
+
+			var existingGroupIndex = existingCategory.AttributeGroups.FindIndex(ag => ag.Id == groupId);
+			if (existingGroupIndex == -1) {
+				// we couldnt find a group with this index
+				return null;
+			}
+			// remove the group from the category
+			existingCategory.AttributeGroups.RemoveAt(existingGroupIndex);
+
+			// recursivelly remove the group from the children categories
+			var updateTasks = existingCategory.ChildrenCategories.Select(category => RemoveAttributeGroupAsync(category.Id, groupId));
+			await Task.WhenAll(updateTasks);
+
+			// TODO fix deleting the groups also from the parent categories!! ideally without messing the
+			// async recursion
+			await dbContext.SaveChangesAsync();
+			return existingCategory;
 		}
 	}
 }
