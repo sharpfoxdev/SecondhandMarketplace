@@ -67,7 +67,7 @@ namespace WebApi.Controllers {
 		/// <param name="groupIds">List of ids of groups to add. </param>
 		/// <returns>Updated category or 404, when the ids are not found. </returns>
 		[HttpPut]
-		[Route("api/[controller]/AddGroups/{id:Guid}")]
+		[Route("AddGroups/{id:Guid}")]
 		public async Task<IActionResult> AddGroups(Guid id, List<Guid> groupIds) {
 			var domain = await repository.AddAttributeGroupsAsync(id, groupIds);
 			if (domain == null) {
@@ -87,7 +87,7 @@ namespace WebApi.Controllers {
 		/// <param name="groupIds">List of ids of groups to add. </param>
 		/// <returns>Updated category or 404, when the ids are not found. </returns>
 		[HttpPut]
-		[Route("api/[controller]/RemoveGroup/{id:Guid}")]
+		[Route("RemoveGroup/{id:Guid}")]
 		public async Task<IActionResult> RemoveGroup(Guid id, Guid groupId) {
 			var domain = await repository.RemoveAttributeGroupAsync(id, groupId);
 			if (domain == null) {
