@@ -178,7 +178,8 @@ namespace Infrastructure.Persistence.Repositories {
 		/// 
 		/// It is also not currently possible to update the parent category of the category, as moving
 		/// the category within the tree would mess up the listings, as they would not support
-		/// the new parent categories attribute groups. TOCHECK - is this really an issue?
+		/// the new parent categories attribute groups. 
+		/// TOCHECK - is this really an issue?
 		/// </summary>
 		/// <param name="id">Id of Category to update. </param>
 		/// <param name="updatedCategory">Category of updated data. </param>
@@ -247,14 +248,17 @@ namespace Infrastructure.Persistence.Repositories {
 			return existing;
 		}
 		/// <summary>
-		/// Gets the Category the highest in the hierarchy and removes the group from the whole subtree
+		/// Gets the Category the highest in the hierarchy, that has this group
+		/// and removes the group from the whole subtree
+		/// TODO, might need a bit of refactoring to make it clearer
 		/// </summary>
-		/// <param name="categoryId"></param>
-		/// <param name="groupId"></param>
+		/// <param name="categoryId">Id of category anywhere in the tree</param>
+		/// <param name="groupId">Id of group to remove. </param>
 		/// <returns></returns>
 		public async Task<Category?> RemoveAttributeGroupAsync(Guid categoryId, Guid groupId) {
 			var existingCategory = await dbContext.Categories
 				.Include(x => x.AttributeGroups)
+				.Include(x => x.ParentCategory)
 				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
 				.FirstOrDefaultAsync(x => x.Id == categoryId);
 			if (existingCategory == null) {
@@ -263,6 +267,9 @@ namespace Infrastructure.Persistence.Repositories {
 
 			var existingGroupIndex = existingCategory.AttributeGroups.FindIndex(ag => ag.Id == groupId);
 			if (existingGroupIndex == -1) {
+				// this also works as a base of recursion for traversing the children and parents
+				// so that we dont end up in an infinite loop where we would traverse from the
+				// parent to the child and back to the parent
 				// we couldnt find a group with this index
 				return null;
 			}
@@ -270,11 +277,16 @@ namespace Infrastructure.Persistence.Repositories {
 			existingCategory.AttributeGroups.RemoveAt(existingGroupIndex);
 
 			// recursivelly remove the group from the children categories
-			var updateTasks = existingCategory.ChildrenCategories.Select(category => RemoveAttributeGroupAsync(category.Id, groupId));
-			await Task.WhenAll(updateTasks);
+			var updateTasksChildren = existingCategory.ChildrenCategories.Select(category => RemoveAttributeGroupAsync(category.Id, groupId));
+			await Task.WhenAll(updateTasksChildren);
 
-			// TODO fix deleting the groups also from the parent categories!! ideally without messing the
-			// async recursion
+			// Update also parents, if they also have the same attribute groups, as otherwise it wouldnt
+			// be determinitstic, what hap
+			if(existingCategory.ParentCategory != null) {
+				var updateTasksParents = RemoveAttributeGroupAsync(existingCategory.ParentCategory.Id, groupId);
+				await Task.WhenAll(updateTasksParents);
+			}
+
 			await dbContext.SaveChangesAsync();
 			return existingCategory;
 		}
