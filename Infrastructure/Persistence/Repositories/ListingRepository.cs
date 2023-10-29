@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Repositories;
+﻿using Application.Interfaces;
+using Application.Interfaces.Repositories;
 using Domain.Common;
 using Domain.Entities;
 using Domain.Entities.Listings;
@@ -19,7 +20,7 @@ namespace Infrastructure.Persistence.Repositories {
 			this._dbContext = dbContext;
 		}
 
-		public async Task<Listing> CreateAsync(Listing listing) {
+		public async Task<Listing> CreateAsync(Listing listing, List<IAttributeSelection> attributeSelection) {
 			await _dbContext.Listings.AddAsync(listing);
 			await _dbContext.SaveChangesAsync();
 			return listing;

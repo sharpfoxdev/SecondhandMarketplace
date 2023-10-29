@@ -36,7 +36,7 @@ namespace WebApi.Controllers {
 		[HttpPost]
 		public async Task<IActionResult> Post(CreateListingRequest request) {
 			var domain = mapper.Map<Listing>(request);
-			domain = await repository.CreateAsync(domain);
+			domain = await repository.CreateAsync(domain, request.AttributeSelections);
 			return Ok(mapper.Map<ListingDto>(domain));
 		}
 		[HttpPut]
