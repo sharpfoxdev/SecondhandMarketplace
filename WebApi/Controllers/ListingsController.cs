@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Repositories;
+﻿using Application.Interfaces;
+using Application.Interfaces.Repositories;
 using AutoMapper;
 using Azure.Core;
 using Domain.Entities;
@@ -36,7 +37,9 @@ namespace WebApi.Controllers {
 		[HttpPost]
 		public async Task<IActionResult> Post(CreateListingRequest request) {
 			var domain = mapper.Map<Listing>(request);
-			domain = await repository.CreateAsync(domain, request.AttributeSelections);
+			// converting, because I cannot use interface directly in the API inside the request, as it cannot be deserialized
+			List<IAttributeSelection> interfaceListSelections = request.AttributeSelections.Cast<IAttributeSelection>().ToList();
+			domain = await repository.CreateAsync(domain, interfaceListSelections);
 			return Ok(mapper.Map<ListingDto>(domain));
 		}
 		[HttpPut]

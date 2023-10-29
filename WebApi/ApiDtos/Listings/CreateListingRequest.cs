@@ -11,6 +11,6 @@ namespace WebApi.ApiDtos.Listings {
 		public string ReasonOfSale { get; set; }
 		public string ListingImageUrl { get; set; }
 		public Guid CategoryId { get; set; }
-		public List<IAttributeSelection> AttributeSelections { get; set; }
+		public List<AttributeSelectionDto> AttributeSelections { get; set; }
 	}
 }
