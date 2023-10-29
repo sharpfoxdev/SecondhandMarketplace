@@ -58,7 +58,7 @@ namespace Infrastructure.Persistence.Repositories {
 		}
 
 		public async Task<ListingAttribute?> UpdateAsync(Guid id, ListingAttribute updatedAttribute) {
-			// will update just name? What about adding it to a different existing group? Possibly. 
+			// TOCHECK will update just name? What about adding it to a different existing group? Possibly. 
 			// Or create a new group all together? Probably not. 
 			// For now we dont update the attribute group ids
 			var existing = await dbContext.Attributes
