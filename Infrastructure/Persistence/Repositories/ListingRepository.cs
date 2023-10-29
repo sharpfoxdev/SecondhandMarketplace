@@ -2,7 +2,6 @@
 using Application.Interfaces.Repositories;
 using Domain.Common;
 using Domain.Entities;
-using Domain.Entities.Listings;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.Entities.Listings;
 using Domain.Entities;
 
 namespace Infrastructure.Persistence.Contexts
@@ -18,7 +17,7 @@ namespace Infrastructure.Persistence.Contexts
         public DbSet<AttributeGroup> AttributeGroups { get; set; }
         public DbSet<ListingAttribute> Attributes { get; set; }
         public DbSet<StateOfItem> StateOfItem { get; set; }
-
+		public DbSet<Image> Images { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
 			base.OnModelCreating(modelBuilder);
 

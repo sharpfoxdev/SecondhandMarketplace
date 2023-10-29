@@ -1,4 +1,5 @@
 using Infrastructure;
+using Microsoft.Extensions.FileProviders;
 using System.Text.Json.Serialization;
 using WebApi.Mappings;
 
@@ -11,6 +12,7 @@ builder.Services.AddControllers().AddJsonOptions(options => {
 	options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 builder.Services.AddInfrastructure();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -22,7 +24,10 @@ if (app.Environment.IsDevelopment()) {
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
-
+app.UseStaticFiles(new StaticFileOptions {
+	FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+	RequestPath = "/Images" //routes from localhost/images to the physical path above
+});
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

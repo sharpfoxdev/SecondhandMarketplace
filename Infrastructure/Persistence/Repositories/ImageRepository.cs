@@ -1,0 +1,74 @@
+﻿using Application.Interfaces.Repositories;
+using Domain.Entities;
+using Infrastructure.Interfaces;
+using Infrastructure.Persistence.Contexts;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Infrastructure.Persistence.Repositories
+{
+    public class ImageRepository : IImageRepository {
+		private readonly IWebHostEnvironment webHostEnvironment;
+		private readonly IHttpContextAccessor httpContextAccessor;
+		private readonly MarketplaceDbContext dbContext;
+
+		public ImageRepository(IWebHostEnvironment webHostEnvironment,
+			IHttpContextAccessor httpContextAccessor,
+			MarketplaceDbContext dbContext) {
+			// to get access to images folder on file system
+			this.webHostEnvironment = webHostEnvironment;
+			// to create URL to image we uploaded 
+			// https://localhost:1234/images/image.jpg
+			this.httpContextAccessor = httpContextAccessor;
+			// db context to save changes to SQL database
+			this.dbContext = this.dbContext;
+		}
+		public async Task<Image?> UploadAsync(Guid listingId, IFormFile file) {
+
+			// check, that listing to which we want to add image is existing
+			var listing = await dbContext.Listings.FindAsync(listingId);
+			if(listing == null) {
+				// couldnt find the image
+				return null;
+			}
+			var image = new Image {
+
+				FileName = $@"{Guid.NewGuid()}",
+				FileExtension = Path.GetExtension(file.FileName),
+				FileSizeInBytes = file.Length,
+				ListingId = listingId
+			};
+
+			var localFilePath = Path.Combine(
+				webHostEnvironment.ContentRootPath,
+				"Images",
+				$"{image.FileName}{image.FileExtension}"
+			);
+			// uploading image
+			using var stream = new FileStream(localFilePath, FileMode.Create);
+			await file.CopyToAsync(stream);
+
+			// create url file path
+			// https://localhost:1234/images/image.jpg
+			string scheme = httpContextAccessor.HttpContext.Request.Scheme;
+			string host = httpContextAccessor.HttpContext.Request.Host.ToString();
+			string pathBase = httpContextAccessor.HttpContext.Request.PathBase;
+			var urlFilePath =
+				$"{scheme}://{host}{pathBase}/Images/{image.FileName}{image.FileExtension}";
+
+			image.FilePath = urlFilePath;
+
+			// Save to the database (Image table)
+			await dbContext.Images.AddAsync(image);
+			await dbContext.SaveChangesAsync();
+
+			return image;
+		}
+	
+	}
+}

@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces.Repositories;
+using Infrastructure.Interfaces;
 using Infrastructure.Persistence.Contexts;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,9 @@ namespace Infrastructure
 			).AddScoped<IListingRepository, ListingRepository>()
 			.AddScoped<IAttributeGroupRepository, AttributeGroupRepository>()
 			.AddScoped<ICategoryRepository, CategoryRepository>()
-			.AddScoped<IListingAttributeRepository, ListingAttributeRepository>();				;
+			.AddScoped<IListingAttributeRepository, ListingAttributeRepository>()
+			.AddScoped<IImageRepository, ImageRepository>()
+			.AddHttpContextAccessor();
 		}
 	}
 }
