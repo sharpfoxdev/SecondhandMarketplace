@@ -86,6 +86,7 @@ namespace Infrastructure.Persistence.Repositories {
 			return await dbContext.Listings
 				.Include(x => x.Category)
 				.Include(x => x.SelectedAttributes)
+				.Include(x => x.Images)
 				.ToListAsync();
 		}
 		
@@ -94,6 +95,7 @@ namespace Infrastructure.Persistence.Repositories {
 			var existing = await dbContext.Listings
 				.Include(x => x.Category)
 				.Include(x => x.SelectedAttributes)
+				.Include(x => x.Images)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if(existing == null) {
 				return null; // couldnt find this listing

@@ -2,6 +2,7 @@
 using Domain.Entities;
 using WebApi.ApiDtos.AttributeGroups;
 using WebApi.ApiDtos.Categories;
+using WebApi.ApiDtos.Image;
 using WebApi.ApiDtos.ListingAttribute;
 using WebApi.ApiDtos.Listings;
 using WebApi.ApiDtos.StateOfItem;
@@ -21,6 +22,7 @@ namespace WebApi.Mappings {
 			CreateMap<Category, CategoryDto>().ReverseMap();
 			CreateMap<AttributeGroup, AttributeGroupDto>().ReverseMap();
 			CreateMap<StateOfItem, StateOfItemDto>().ReverseMap();
+			CreateMap<Image, ImageDto>().ReverseMap();
 
 			// Mapping between domain and Create Request Dtos
 			CreateMap<ListingAttribute, CreateListingAttributeRequest>().ReverseMap();

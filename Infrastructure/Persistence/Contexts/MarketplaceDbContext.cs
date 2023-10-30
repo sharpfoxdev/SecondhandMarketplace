@@ -19,6 +19,20 @@ namespace Infrastructure.Persistence.Contexts
         public DbSet<StateOfItem> StateOfItem { get; set; }
 		public DbSet<Image> Images { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
+
+			// without this for some reason the EF couldnt determine
+			// the relationship between Listing and Image
+			modelBuilder.Entity<Image>()
+			.HasOne(i => i.Listing)  // Image has one Listing
+			.WithMany(l => l.Images) // Listing has many Images
+			.HasForeignKey(i => i.ListingId); // Foreign key on Image
+
+			// Additional configurations for your Listing entity (if needed)
+			modelBuilder.Entity<Listing>()
+				.HasMany(l => l.Images) // Listing has many Images
+				.WithOne(i => i.Listing) // Images have one Listing
+				.HasForeignKey(i => i.ListingId); // Foreign key on Image
+
 			base.OnModelCreating(modelBuilder);
 
             List<AttributeGroup> attributeGroups = new List<AttributeGroup>() {

@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MarketplaceDbContext))]
-    partial class MarketplaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231030141318_test")]
+    partial class test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,14 +113,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("ListingId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("ListingId1")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ListingId");
-
-                    b.HasIndex("ListingId1");
 
                     b.ToTable("Images");
                 });
@@ -291,14 +289,10 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Image", b =>
                 {
                     b.HasOne("Domain.Entities.Listing", "Listing")
-                        .WithMany("Images")
+                        .WithMany("ListingImageUrl")
                         .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Domain.Entities.Listing", null)
-                        .WithMany("ListingImageUrl")
-                        .HasForeignKey("ListingId1");
 
                     b.Navigation("Listing");
                 });
@@ -362,8 +356,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Listing", b =>
                 {
-                    b.Navigation("Images");
-
                     b.Navigation("ListingImageUrl");
                 });
 #pragma warning restore 612, 618

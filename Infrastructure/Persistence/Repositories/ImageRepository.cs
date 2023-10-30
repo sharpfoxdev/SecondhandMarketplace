@@ -98,5 +98,20 @@ namespace Infrastructure.Persistence.Repositories
 			return existing;
 		}
 
+		public async Task<List<Image>> GetAllAsync() {
+			return await dbContext.Images
+				.Include(x => x.Listing)
+				.ToListAsync();
+		}
+
+		public async Task<Image?> GetByIdAsync(Guid id) {
+			var existing = await dbContext.Images
+				.Include(x => x.Listing)
+				.FirstOrDefaultAsync(x => x.Id == id);
+			if (existing == null) {
+				return null;
+			}
+			return existing;
+		}
 	}
 }

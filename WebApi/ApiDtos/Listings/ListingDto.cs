@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using WebApi.ApiDtos.Categories;
+using WebApi.ApiDtos.Image;
 using WebApi.ApiDtos.ListingAttribute;
 using WebApi.ApiDtos.StateOfItem;
 
@@ -18,6 +19,7 @@ namespace WebApi.ApiDtos.Listings
 		public bool IsSold { get; set; }
 		public CategoryDto Category { get; set; }
 		public List<ListingAttributeDto> SelectedAttributes { get; set; }
+		public List<ImageDto> Images { get; set; }
 
 	}
 }

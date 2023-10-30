@@ -3,18 +3,39 @@ using Domain.Entities;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
+using WebApi.ApiDtos.AttributeGroups;
 using WebApi.ApiDtos.Categories;
-using WebApi.ApiDtos.Listings;
+using WebApi.ApiDtos.Image;
+using WebApi.ApiDtos.ListingAttribute;
 
-namespace WebApi.Controllers {
-	[Route("api/[controller]")]
+namespace WebApi.Controllers
+{
+    [Route("api/[controller]")]
 	[ApiController]
 	public class ImagesController : ControllerBase {
 		private readonly IImageRepository repository;
+		private readonly IMapper mapper;
 
-		public ImagesController(IImageRepository repository) {
+		public ImagesController(IImageRepository repository, IMapper mapper) {
 			this.repository = repository;
+			this.mapper = mapper;
 		}
+		[HttpGet]
+		public async Task<IActionResult> GetAll() {
+			var domain = await repository.GetAllAsync();
+			return Ok(mapper.Map<List<ImageDto>>(domain));
+		}
+
+		[HttpGet]
+		[Route("{id:Guid}")]
+		public async Task<IActionResult> GetById(Guid id) {
+			var domain = await repository.GetByIdAsync(id);
+			if (domain == null) {
+				return NotFound();
+			}
+			return Ok(mapper.Map<ImageDto>(domain));
+		}
+
 
 		//POST: /api/Images/Upload
 		[HttpPost]
@@ -25,8 +46,8 @@ namespace WebApi.Controllers {
 				return BadRequest(ModelState);
 			}
 
-			var imageDomain = await repository.UploadAsync(request.ListingId, request.File);
-			return Ok(imageDomain);
+			var domain = await repository.UploadAsync(request.ListingId, request.File);
+			return Ok(mapper.Map<ImageDto>(domain));
 		}
 		[HttpDelete]
 		[Route("{id:Guid}")]
@@ -35,8 +56,9 @@ namespace WebApi.Controllers {
 			if (domain == null) {
 				return NotFound();
 			}
-			return Ok(domain);
+			return Ok(mapper.Map<ImageDto>(domain));
 		}
+		
 		private void ValidateFileUpload(AddImageRequest imageUploadRequestDto) {
 			var allowedExtensions = new string[] { ".jpg", "jpeg", ".png" };
 			if (!allowedExtensions.Contains(Path.GetExtension(imageUploadRequestDto.File.FileName).ToLower())) {

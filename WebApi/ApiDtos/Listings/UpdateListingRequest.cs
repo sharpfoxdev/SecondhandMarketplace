@@ -7,7 +7,6 @@ namespace WebApi.ApiDtos.Listings {
 		public string Title { get; set; }
 		public string Description { get; set; }
 		public string ReasonOfSale { get; set; }
-		public string ListingImageUrl { get; set; }
 		public bool IsSold { get; set; }
 
 		// TODO add possibility to change attribute selections
