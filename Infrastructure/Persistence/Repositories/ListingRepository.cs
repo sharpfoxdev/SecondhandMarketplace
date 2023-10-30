@@ -2,6 +2,7 @@
 using Application.Interfaces.Repositories;
 using Domain.Common;
 using Domain.Entities;
+using Infrastructure.Interfaces;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,10 +14,12 @@ using System.Threading.Tasks;
 namespace Infrastructure.Persistence.Repositories {
 	public class ListingRepository : IListingRepository {
 		private readonly MarketplaceDbContext dbContext;
+		private readonly IImageRepository imageRepository;
 
-		public ListingRepository(MarketplaceDbContext dbContext)
+		public ListingRepository(MarketplaceDbContext dbContext, IImageRepository imageRepository)
 		{
 			this.dbContext = dbContext;
+			this.imageRepository = imageRepository;
 		}
 
 		private async Task<Listing?> ValidateAndAddAttributes(Listing listing, List<IAttributeSelection> attributeSelections, Category category) {
@@ -45,9 +48,9 @@ namespace Infrastructure.Persistence.Repositories {
 		public async Task<Listing?> CreateAsync(Listing listing, List<IAttributeSelection> attributeSelections) {
 
 			// we get the category of listing we want to create
-			var category = dbContext.Categories
+			var category = await dbContext.Categories
 				.Include(c => c.AttributeGroups)
-				.FirstOrDefault(c => c.Id == listing.CategoryId);
+				.FirstOrDefaultAsync(c => c.Id == listing.CategoryId);
 
 			if (category == null) {
 				return null; // couldnt find the category
@@ -63,11 +66,17 @@ namespace Infrastructure.Persistence.Repositories {
 		}
 
 		public async Task<Listing?> DeleteAsync(Guid id) {
-			var existingListing = await dbContext.Listings.FindAsync(id);
+			var existingListing = await dbContext.Listings
+				.Include(x => x.Images)
+				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existingListing == null) {
 				return null;
 			}
-
+			// delete images from the filesystem
+			// (we dont have to delete them from the database, because of the cascade delete)
+			foreach(Image image in existingListing.Images) {
+				imageRepository.DeleteAsync(image.Id);
+			}
 			dbContext.Listings.Remove(existingListing);
 			await dbContext.SaveChangesAsync();
 			return existingListing;

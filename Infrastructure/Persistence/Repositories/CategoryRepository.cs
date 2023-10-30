@@ -54,7 +54,7 @@ namespace Infrastructure.Persistence.Repositories {
 			}
 			if(category.ParentCategoryId == null) {
 				// this is a root category
-				dbContext.Categories.Add(category);
+				await dbContext.Categories.AddAsync(category);
 				await dbContext.SaveChangesAsync();
 				return category;
 			}
@@ -62,21 +62,13 @@ namespace Infrastructure.Persistence.Repositories {
 			// it is enough, when this category knows it's parent
 
 			// add the attribute groups from the parent category
-			Category parentCategory = dbContext.Categories.Find(category.ParentCategoryId);
+			Category parentCategory = await dbContext.Categories.FindAsync(category.ParentCategoryId);
 			var parentAttributeGroups = parentCategory.AttributeGroups;
 			if(parentAttributeGroups != null) {
 				// can be null for root category
 				category.AttributeGroups.Concat(parentAttributeGroups);
 			}
-			/*
-				await dbContext.AttributeGroups
-				.Include(x => x.Categories)
-				.Where(x => x.Categories.Contains(parentCategory))
-				.ToListAsync();*/
-			/*foreach (var group in parentAttributeGroups) {
-				category.AttributeGroups.Add(group);
-			}*/
-			dbContext.Categories.Add(category);
+			await dbContext.Categories.AddAsync(category);
 			await dbContext.SaveChangesAsync();
 			return category;
 		}

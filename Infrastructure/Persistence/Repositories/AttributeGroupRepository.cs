@@ -19,7 +19,7 @@ namespace Infrastructure.Persistence.Repositories {
 
         public async Task<AttributeGroup> CreateAsync(AttributeGroup group) {
 			// we can create with some attributes
-			dbContext.AttributeGroups.Add(group);
+			await dbContext.AttributeGroups.AddAsync(group);
 			await dbContext.SaveChangesAsync();
 			return group;
 		}

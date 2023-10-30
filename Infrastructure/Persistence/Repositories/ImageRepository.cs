@@ -4,6 +4,7 @@ using Infrastructure.Interfaces;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,28 @@ namespace Infrastructure.Persistence.Repositories
 			// https://localhost:1234/images/image.jpg
 			this.httpContextAccessor = httpContextAccessor;
 			// db context to save changes to SQL database
-			this.dbContext = this.dbContext;
+			this.dbContext = dbContext;
+		}
+
+		public async Task SaveImageToFileSystem(Image image, IFormFile file) {
+			var localFilePath = Path.Combine(
+				webHostEnvironment.ContentRootPath,
+				"Images",
+				$"{image.FileName}{image.FileExtension}"
+			);
+			// uploading image
+			using var stream = new FileStream(localFilePath, FileMode.Create);
+			await file.CopyToAsync(stream);
+		}
+		public string CreateImageUrl(Image image) {
+			// create url file path
+			// https://localhost:1234/images/image.jpg
+			string scheme = httpContextAccessor.HttpContext.Request.Scheme; //https
+			string host = httpContextAccessor.HttpContext.Request.Host.ToString();//localhost:7192
+			string pathBase = httpContextAccessor.HttpContext.Request.PathBase;//""
+			var urlFilePath =
+				$"{scheme}://{host}{pathBase}/Images/{image.FileName}{image.FileExtension}";
+			return urlFilePath;
 		}
 		public async Task<Image?> UploadAsync(Guid listingId, IFormFile file) {
 
@@ -44,24 +66,8 @@ namespace Infrastructure.Persistence.Repositories
 				ListingId = listingId
 			};
 
-			var localFilePath = Path.Combine(
-				webHostEnvironment.ContentRootPath,
-				"Images",
-				$"{image.FileName}{image.FileExtension}"
-			);
-			// uploading image
-			using var stream = new FileStream(localFilePath, FileMode.Create);
-			await file.CopyToAsync(stream);
-
-			// create url file path
-			// https://localhost:1234/images/image.jpg
-			string scheme = httpContextAccessor.HttpContext.Request.Scheme;
-			string host = httpContextAccessor.HttpContext.Request.Host.ToString();
-			string pathBase = httpContextAccessor.HttpContext.Request.PathBase;
-			var urlFilePath =
-				$"{scheme}://{host}{pathBase}/Images/{image.FileName}{image.FileExtension}";
-
-			image.FilePath = urlFilePath;
+			await SaveImageToFileSystem(image, file);
+			image.ImageUrl = CreateImageUrl(image);
 
 			// Save to the database (Image table)
 			await dbContext.Images.AddAsync(image);
@@ -69,6 +75,28 @@ namespace Infrastructure.Persistence.Repositories
 
 			return image;
 		}
-	
+		public void DeleteImageFromFileSystem(Image image) {
+			// remove the image from the filesystem
+			var localFilePath = Path.Combine(
+				webHostEnvironment.ContentRootPath,
+				"Images",
+				$"{image.FileName}{image.FileExtension}"
+			);
+			File.Delete(localFilePath);
+		}
+		public async Task<Image?> DeleteAsync(Guid id) {
+			var existing = await dbContext.Images
+				.Include(x => x.Listing)
+				.FirstOrDefaultAsync(x => x.Id == id);
+			if (existing == null) {
+				return null;
+			}
+			DeleteImageFromFileSystem(existing);
+			// delete from database
+			dbContext.Images.Remove(existing);
+			await dbContext.SaveChangesAsync();
+			return existing;
+		}
+
 	}
 }

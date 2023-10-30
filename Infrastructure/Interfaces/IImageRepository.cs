@@ -15,6 +15,6 @@ namespace Infrastructure.Interfaces
     public interface IImageRepository
     {
         Task<Image?> UploadAsync(Guid listingId, IFormFile file);
-
+        Task<Image?> DeleteAsync(Guid id);
     }
 }

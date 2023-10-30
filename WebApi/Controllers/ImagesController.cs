@@ -1,16 +1,19 @@
-﻿using Domain.Entities;
+﻿using AutoMapper;
+using Domain.Entities;
 using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Core.Types;
+using WebApi.ApiDtos.Categories;
 using WebApi.ApiDtos.Listings;
 
 namespace WebApi.Controllers {
 	[Route("api/[controller]")]
 	[ApiController]
 	public class ImagesController : ControllerBase {
-		private readonly IImageRepository imageRepository;
+		private readonly IImageRepository repository;
 
-		public ImagesController(IImageRepository imageRepository) {
-			this.imageRepository = imageRepository;
+		public ImagesController(IImageRepository repository) {
+			this.repository = repository;
 		}
 
 		//POST: /api/Images/Upload
@@ -22,8 +25,17 @@ namespace WebApi.Controllers {
 				return BadRequest(ModelState);
 			}
 
-			var imageDomain = await imageRepository.UploadAsync(request.ListingId, request.File);
+			var imageDomain = await repository.UploadAsync(request.ListingId, request.File);
 			return Ok(imageDomain);
+		}
+		[HttpDelete]
+		[Route("{id:Guid}")]
+		public async Task<IActionResult> Delete(Guid id) {
+			var domain = await repository.DeleteAsync(id);
+			if (domain == null) {
+				return NotFound();
+			}
+			return Ok(domain);
 		}
 		private void ValidateFileUpload(AddImageRequest imageUploadRequestDto) {
 			var allowedExtensions = new string[] { ".jpg", "jpeg", ".png" };

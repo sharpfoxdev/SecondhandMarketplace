@@ -12,7 +12,6 @@ namespace Domain.Entities {
 		public string FileName { get; set; }
 		public string FileExtension { get; set; }
 		public long FileSizeInBytes { get; set; }
-		public string FilePath { get; set; }
 		public Guid ListingId { get; set; }
 		public Listing Listing { get; set; }
 	}

@@ -18,7 +18,7 @@ namespace Infrastructure.Persistence.Repositories {
 			this.dbContext = dbContext;
 		}
         public async Task<ListingAttribute> CreateAsync(ListingAttribute attribute) {
-			dbContext.Attributes.Add(attribute);
+			await dbContext.Attributes.AddAsync(attribute);
 			await dbContext.SaveChangesAsync();
 			return attribute;
 		}
