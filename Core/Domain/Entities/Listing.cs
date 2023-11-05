@@ -1,6 +1,8 @@
 ﻿using Domain.Common;
+using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +24,6 @@ namespace Domain.Entities {
 		public decimal Price { get; set; }
 		// TODO will be mapped to Ids of users, just placeholders for now
 		public Guid SellerId { get; set; }
-
 
 		public StateOfItem StateOfItem { get; set; }
 		public Guid StateOfItemId { get; set; }
