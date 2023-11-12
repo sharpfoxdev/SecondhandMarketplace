@@ -1,6 +1,6 @@
 ﻿using Application.Interfaces.Repositories;
 using Domain.Entities;
-using Infrastructure.Interfaces;
+using Infrastructure.FileStorage.Interfaces;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

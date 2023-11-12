@@ -1,5 +1,4 @@
 ﻿using Domain.Common;
-using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;

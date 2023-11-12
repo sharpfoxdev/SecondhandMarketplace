@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Entities;
-using Infrastructure.Interfaces;
+using Infrastructure.FileStorage.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
 using WebApi.ApiDtos.AttributeGroups;

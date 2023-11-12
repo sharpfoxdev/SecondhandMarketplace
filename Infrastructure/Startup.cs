@@ -1,16 +1,21 @@
 ﻿using Application.Interfaces.Repositories;
-using Infrastructure.Interfaces;
+using Infrastructure.FileStorage.Interfaces;
+using Infrastructure.Identity;
+using Infrastructure.Identity.Interfaces;
 using Infrastructure.Persistence.Contexts;
 using Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace Infrastructure
 {
@@ -37,7 +42,25 @@ namespace Infrastructure
 			.AddScoped<ICategoryRepository, CategoryRepository>()
 			.AddScoped<IListingAttributeRepository, ListingAttributeRepository>()
 			.AddScoped<IImageRepository, ImageRepository>()
-			.AddHttpContextAccessor();
+			.AddScoped<ITokenRepository, TokenRepository>()
+			.AddHttpContextAccessor()
+			.AddIdentity(); //possibly move elsewhere
+		}
+		public static IServiceCollection AddIdentity(this IServiceCollection services) {
+			return (IServiceCollection)services
+				.AddIdentityCore<ApplicationUser>(options => {
+						options.Password.RequireDigit = false;
+						options.Password.RequireLowercase = false;
+						options.Password.RequireNonAlphanumeric = false;
+						options.Password.RequireUppercase = false;
+						options.Password.RequiredLength = 6;
+						options.Password.RequiredUniqueChars = 1;
+						options.User.RequireUniqueEmail = true;
+					})
+				.AddRoles<IdentityRole>()
+				.AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("Marketplace")
+				.AddEntityFrameworkStores<MarketplaceDbContext>()
+				.AddDefaultTokenProviders();
 		}
 	}
 }

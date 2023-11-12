@@ -2,7 +2,7 @@
 using Application.Interfaces.Repositories;
 using Domain.Common;
 using Domain.Entities;
-using Infrastructure.Interfaces;
+using Infrastructure.FileStorage.Interfaces;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,8 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Persistence.Repositories {
-	public class ListingRepository : IListingRepository {
+namespace Infrastructure.Persistence.Repositories
+{
+    public class ListingRepository : IListingRepository {
 		private readonly MarketplaceDbContext dbContext;
 		private readonly IImageRepository imageRepository;
 

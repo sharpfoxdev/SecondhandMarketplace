@@ -42,7 +42,25 @@ namespace Infrastructure.Persistence.Contexts
 				.HasForeignKey("SellerId");
 			base.OnModelCreating(modelBuilder);
 
-            List<AttributeGroup> attributeGroups = new List<AttributeGroup>() {
+			var adminRoleId = "eb40d90b-a879-4582-a19f-d2732b324b2f";
+			var userRoleId = "037456a1-ed87-45ab-9ca2-4d04ddcbd456";
+			var roles = new List<IdentityRole> {
+				new IdentityRole {
+					Id = adminRoleId,
+					ConcurrencyStamp = adminRoleId,
+					Name = "Admin",
+					NormalizedName = "Admin".ToUpper()
+				},
+				new IdentityRole {
+					Id = userRoleId,
+					ConcurrencyStamp = userRoleId,
+					Name = "User",
+					NormalizedName = "User".ToUpper()
+				}
+			};
+			modelBuilder.Entity<IdentityRole>().HasData(roles);
+
+			List<AttributeGroup> attributeGroups = new List<AttributeGroup>() {
                 new AttributeGroup {
                     Id = Guid.Parse("9091889f-ed33-48a0-979e-875968b305fe"),
                     Name = "BackpackBrand"
