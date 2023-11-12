@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Infrastructure.Identity;
 
 namespace Infrastructure.Persistence.Contexts
 {
-    public class MarketplaceDbContext : IdentityDbContext
+    public class MarketplaceDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
         public MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> options) : base(options) { }
 
@@ -42,23 +42,30 @@ namespace Infrastructure.Persistence.Contexts
 				.HasForeignKey("SellerId");
 			base.OnModelCreating(modelBuilder);
 
-			var adminRoleId = "eb40d90b-a879-4582-a19f-d2732b324b2f";
-			var userRoleId = "037456a1-ed87-45ab-9ca2-4d04ddcbd456";
-			var roles = new List<IdentityRole> {
-				new IdentityRole {
-					Id = adminRoleId,
+			var adminRoleId = "e8c9ac14-c7f6-4991-88aa-ad40bfe8f707";
+			var userRoleId = "2d39b4e7-843e-410b-b6e4-ae30e38039f4";
+			var devRoleId = "996f9a95-c46c-40fa-9bb6-144a05138cdc";
+			var roles = new List<ApplicationRole> {
+				new ApplicationRole {
+					Id = new Guid(adminRoleId),
 					ConcurrencyStamp = adminRoleId,
 					Name = "Admin",
 					NormalizedName = "Admin".ToUpper()
 				},
-				new IdentityRole {
-					Id = userRoleId,
+				new ApplicationRole {
+					Id = new Guid(userRoleId),
 					ConcurrencyStamp = userRoleId,
 					Name = "User",
 					NormalizedName = "User".ToUpper()
+				},
+				new ApplicationRole {
+					Id = new Guid(devRoleId),
+					ConcurrencyStamp = devRoleId,
+					Name = "Developer",
+					NormalizedName = "Developer".ToUpper()
 				}
 			};
-			modelBuilder.Entity<IdentityRole>().HasData(roles);
+			modelBuilder.Entity<ApplicationRole>().HasData(roles);
 
 			List<AttributeGroup> attributeGroups = new List<AttributeGroup>() {
                 new AttributeGroup {

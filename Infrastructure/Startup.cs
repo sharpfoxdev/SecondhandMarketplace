@@ -47,8 +47,8 @@ namespace Infrastructure
 			.AddIdentity(); //possibly move elsewhere
 		}
 		public static IServiceCollection AddIdentity(this IServiceCollection services) {
-			return (IServiceCollection)services
-				.AddIdentityCore<ApplicationUser>(options => {
+			return services
+				.AddIdentity<ApplicationUser, ApplicationRole>(options => {
 						options.Password.RequireDigit = false;
 						options.Password.RequireLowercase = false;
 						options.Password.RequireNonAlphanumeric = false;
@@ -57,10 +57,9 @@ namespace Infrastructure
 						options.Password.RequiredUniqueChars = 1;
 						options.User.RequireUniqueEmail = true;
 					})
-				.AddRoles<IdentityRole>()
 				.AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("Marketplace")
 				.AddEntityFrameworkStores<MarketplaceDbContext>()
-				.AddDefaultTokenProviders();
+				.AddDefaultTokenProviders().Services;
 		}
 	}
 }
