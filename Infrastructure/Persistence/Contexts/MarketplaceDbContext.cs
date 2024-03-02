@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.Contexts
 {
-    public class MarketplaceDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+    public class MarketplaceDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid, IdentityUserClaim<Guid>, IdentityUserRole<Guid>, IdentityUserLogin<Guid>, IdentityRoleClaim<Guid>, IdentityUserToken<Guid>>
     {
         public MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> options) : base(options) { }
 
@@ -23,19 +23,7 @@ namespace Infrastructure.Persistence.Contexts
 		public DbSet<Image> Images { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
-			// without this for some reason the EF couldnt determine
-			// the relationship between Listing and Image
-			modelBuilder.Entity<Image>()
-				.HasOne(i => i.Listing)  // Image has one Listing
-				.WithMany(l => l.Images) // Listing has many Images
-				.HasForeignKey(i => i.ListingId); // Foreign key on Image
-
-			// Additional configurations for your Listing entity (if needed)
-			modelBuilder.Entity<Listing>()
-				.HasMany(l => l.Images) // Listing has many Images
-				.WithOne(i => i.Listing) // Images have one Listing
-				.HasForeignKey(i => i.ListingId); // Foreign key on Image
-
+			
 			modelBuilder.Entity<Listing>()
 				.HasOne<ApplicationUser>()  // Define the ApplicationUser relationship
 				.WithMany()

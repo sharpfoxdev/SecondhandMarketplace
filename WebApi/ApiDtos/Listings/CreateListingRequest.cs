@@ -7,7 +7,6 @@ namespace WebApi.ApiDtos.Listings {
 	/// </summary>
 	public class CreateListingRequest {
 		public decimal Price { get; set; }
-		public Guid SellerId { get; set; }
 		public Guid StateOfItemId { get; set; }
 		public string Title { get; set; }
 		public string Description { get; set; }

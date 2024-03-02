@@ -29,7 +29,6 @@ namespace Domain.Entities {
 		public string Title { get; set; }
 		public string Description { get; set; }
 		public string ReasonOfSale { get; set; }
-		public List<Image> ListingImageUrl { get; set; }
 		public bool IsSold { get; set; }
 
 		public Guid CategoryId { get; set; }

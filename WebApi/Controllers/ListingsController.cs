@@ -3,14 +3,17 @@ using Application.Interfaces.Repositories;
 using AutoMapper;
 using Azure.Core;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebApi.ApiDtos.ListingAttribute;
 using WebApi.ApiDtos.Listings;
 
 namespace WebApi.Controllers {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	public class ListingsController : ControllerBase {
 		private readonly IListingRepository repository;
 		private readonly IMapper mapper;
@@ -37,6 +40,9 @@ namespace WebApi.Controllers {
 		[HttpPost]
 		public async Task<IActionResult> Post(CreateListingRequest request) {
 			var domain = mapper.Map<Listing>(request);
+			string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+			Guid userId = Guid.Parse(userIdString);
+			domain.SellerId = userId;
 			// converting, because I cannot use interface directly in the API inside the request, as it cannot be deserialized
 			List<IAttributeSelection> interfaceListSelections = request.AttributeSelections.Cast<IAttributeSelection>().ToList();
 			domain = await repository.CreateAsync(domain, interfaceListSelections);

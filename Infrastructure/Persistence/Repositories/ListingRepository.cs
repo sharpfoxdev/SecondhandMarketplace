@@ -110,7 +110,6 @@ namespace Infrastructure.Persistence.Repositories
 				return null;
 			}
 			existing.IsSold = updatedListing.IsSold;
-			existing.ListingImageUrl = updatedListing.ListingImageUrl;
 			existing.Title = updatedListing.Title;
 			existing.Price = updatedListing.Price;
 			existing.Description = updatedListing.Description;
