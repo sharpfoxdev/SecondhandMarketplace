@@ -50,7 +50,7 @@ namespace WebApi.Controllers {
 		/// <returns>Created attribute. </returns>
 		[HttpPost]
 		public async Task<IActionResult> Post(CreateListingAttributeRequest request) {
-			var domain = mapper.Map<ListingAttribute>(request);
+			var domain = mapper.Map<ListingPropertyValue>(request);
 			domain = await repository.CreateAsync(domain);
 			return Ok(mapper.Map<ListingAttributeDto>(domain));
 		}
@@ -68,7 +68,7 @@ namespace WebApi.Controllers {
 		[HttpPut]
 		[Route("{id:Guid}")]
 		public async Task<IActionResult> Put(Guid id, UpdateListingAttributeRequest request) {
-			var domain = mapper.Map<ListingAttribute>(request);
+			var domain = mapper.Map<ListingPropertyValue>(request);
 			domain = await repository.UpdateAsync(id, domain);
 			if (domain == null) {
 				return NotFound();

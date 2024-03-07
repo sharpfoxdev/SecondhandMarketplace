@@ -36,7 +36,7 @@ namespace Domain.Entities {
 		/// upon the creation of the Category and this is also reflected all the operations, that are done
 		/// over the Category. 
 		/// </summary>
-		public List<AttributeGroup> AttributeGroups { get; set; }
+		public List<ListingProperty> ListingProperties { get; set; }
 
 		/// <summary>
 		/// All listings that are in this Category. One to many relationship, 

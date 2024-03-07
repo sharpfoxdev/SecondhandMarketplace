@@ -17,38 +17,38 @@ namespace Infrastructure.Persistence.Repositories {
         {
 			this.dbContext = dbContext;
 		}
-        public async Task<ListingAttribute> CreateAsync(ListingAttribute attribute) {
-			await dbContext.Attributes.AddAsync(attribute);
+        public async Task<ListingPropertyValue> CreateAsync(ListingPropertyValue attribute) {
+			await dbContext.ListingPropertyValues.AddAsync(attribute);
 			await dbContext.SaveChangesAsync();
 			return attribute;
 		}
 
-		public async Task<ListingAttribute?> DeleteAsync(Guid id) {
-			var existing = await dbContext.Attributes
-				.Include(x => x.AttributeGroup)
+		public async Task<ListingPropertyValue?> DeleteAsync(Guid id) {
+			var existing = await dbContext.ListingPropertyValues
+				.Include(x => x.ListingProperty)
 				.Include(x => x.Listings)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {
 				return null;
 			}
-			dbContext.Attributes.Remove(existing);
+			dbContext.ListingPropertyValues.Remove(existing);
 			await dbContext.SaveChangesAsync();
 			return existing;
 		}
 
-		public async Task<List<ListingAttribute>> GetAllAsync() {
-			return await dbContext.Attributes
-				.Include(x => x.AttributeGroup)
+		public async Task<List<ListingPropertyValue>> GetAllAsync() {
+			return await dbContext.ListingPropertyValues
+				.Include(x => x.ListingProperty)
 				.Include(x => x.Listings)
 				.ToListAsync();
 		}
-		public async Task<List<ListingAttribute>> GetAllByAttributeGroup(Guid id) {
-			// list just the ones tied to a group. Kinda similar to AttributeGroup.GetById(), so maybe redundant?
+		public async Task<List<ListingPropertyValue>> GetAllByAttributeGroup(Guid id) {
+			// list just the ones tied to a group. Kinda similar to ListingProperty.GetById(), so maybe redundant?
 			throw new NotImplementedException();
 		}
-		public async Task<ListingAttribute?> GetByIdAsync(Guid id) {
-			var existing = await dbContext.Attributes
-				.Include(x => x.AttributeGroup)
+		public async Task<ListingPropertyValue?> GetByIdAsync(Guid id) {
+			var existing = await dbContext.ListingPropertyValues
+				.Include(x => x.ListingProperty)
 				.Include(x => x.Listings)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {
@@ -57,12 +57,12 @@ namespace Infrastructure.Persistence.Repositories {
 			return existing;
 		}
 
-		public async Task<ListingAttribute?> UpdateAsync(Guid id, ListingAttribute updatedAttribute) {
+		public async Task<ListingPropertyValue?> UpdateAsync(Guid id, ListingPropertyValue updatedAttribute) {
 			// TOCHECK will update just name? What about adding it to a different existing group? Possibly. 
 			// Or create a new group all together? Probably not. 
 			// For now we dont update the attribute group ids
-			var existing = await dbContext.Attributes
-				.Include(x => x.AttributeGroup)
+			var existing = await dbContext.ListingPropertyValues
+				.Include(x => x.ListingProperty)
 				.Include(x => x.Listings)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {

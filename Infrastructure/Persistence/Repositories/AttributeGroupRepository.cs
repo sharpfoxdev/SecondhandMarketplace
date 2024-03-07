@@ -17,37 +17,37 @@ namespace Infrastructure.Persistence.Repositories {
 			this.dbContext = dbContext;
 		}
 
-        public async Task<AttributeGroup> CreateAsync(AttributeGroup group) {
+        public async Task<ListingProperty> CreateAsync(ListingProperty group) {
 			// we can create with some attributes
-			await dbContext.AttributeGroups.AddAsync(group);
+			await dbContext.ListingProperties.AddAsync(group);
 			await dbContext.SaveChangesAsync();
 			return group;
 		}
 
-		public async Task<AttributeGroup?> DeleteAsync(Guid id) {
+		public async Task<ListingProperty?> DeleteAsync(Guid id) {
 			// when we delete group, we also want to delete all associated attributes
-			var existing = await dbContext.AttributeGroups
-				.Include(x => x.Attributes)
+			var existing = await dbContext.ListingProperties
+				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {
 				return null;
 			}
-			dbContext.AttributeGroups.Remove(existing);
+			dbContext.ListingProperties.Remove(existing);
 			await dbContext.SaveChangesAsync();
 			return existing;
 		}
 
-		public async Task<List<AttributeGroup>> GetAllAsync() {
-			return await dbContext.AttributeGroups
-				.Include(x => x.Attributes)
+		public async Task<List<ListingProperty>> GetAllAsync() {
+			return await dbContext.ListingProperties
+				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)
 				.ToListAsync();
 		}
 
-		public async Task<AttributeGroup?> GetByIdAsync(Guid id) {
-			var existing = await dbContext.AttributeGroups
-				.Include(x => x.Attributes)
+		public async Task<ListingProperty?> GetByIdAsync(Guid id) {
+			var existing = await dbContext.ListingProperties
+				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if(existing == null) {
@@ -55,9 +55,9 @@ namespace Infrastructure.Persistence.Repositories {
 			}
 			return existing;
 		}
-		public async Task<AttributeGroup?> AddAttributesAsync(Guid id, List<ListingAttribute> attributes) {
-			var group = await dbContext.AttributeGroups
-				.Include(x => x.Attributes)
+		public async Task<ListingProperty?> AddAttributesAsync(Guid id, List<ListingPropertyValue> attributes) {
+			var group = await dbContext.ListingProperties
+				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (group == null) {
@@ -65,14 +65,14 @@ namespace Infrastructure.Persistence.Repositories {
 				return null;
 			}
 			// TODO - maybe check, that we are not adding already existing attributes
-			group.Attributes.AddRange(attributes);
+			group.ListingPropertyValues.AddRange(attributes);
 			await dbContext.SaveChangesAsync();
 			return group;
 		}
-		public async Task<AttributeGroup?> UpdateAsync(Guid id, AttributeGroup updatedGroup) {
+		public async Task<ListingProperty?> UpdateAsync(Guid id, ListingProperty updatedGroup) {
 			// we will not be updating attributes
-			var existingGroup = await dbContext.AttributeGroups
-				.Include(x => x.Attributes)
+			var existingGroup = await dbContext.ListingProperties
+				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if(existingGroup == null) {

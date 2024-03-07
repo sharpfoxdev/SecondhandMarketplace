@@ -33,7 +33,7 @@ namespace Domain.Entities {
 
 		public Guid CategoryId { get; set; }
 		public Category Category { get; set; }
-		public List<ListingAttribute> SelectedAttributes { get; set; }
+		public List<ListingPropertyValue> SelectedListingPropertyValues { get; set; }
 		public List<Image> Images { get; set; }
 	}
 }

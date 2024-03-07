@@ -63,10 +63,10 @@ namespace Infrastructure.Persistence.Repositories {
 
 			// add the attribute groups from the parent category
 			Category parentCategory = await dbContext.Categories.FindAsync(category.ParentCategoryId);
-			var parentAttributeGroups = parentCategory.AttributeGroups;
+			var parentAttributeGroups = parentCategory.ListingProperties;
 			if(parentAttributeGroups != null) {
 				// can be null for root category
-				category.AttributeGroups.Concat(parentAttributeGroups);
+				category.ListingProperties.Concat(parentAttributeGroups);
 			}
 			await dbContext.Categories.AddAsync(category);
 			await dbContext.SaveChangesAsync();
@@ -88,7 +88,7 @@ namespace Infrastructure.Persistence.Repositories {
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
-				.Include(x => x.AttributeGroups)
+				.Include(x => x.ListingProperties)
 				.Include(x => x.ChildrenCategories)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {
@@ -115,7 +115,7 @@ namespace Infrastructure.Persistence.Repositories {
 			return await dbContext.Categories
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
-				.Include(x => x.AttributeGroups)
+				.Include(x => x.ListingProperties)
 				.ToListAsync();
 		}
 		/// <summary>
@@ -131,7 +131,7 @@ namespace Infrastructure.Persistence.Repositories {
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
-				.Include(x => x.AttributeGroups)
+				.Include(x => x.ListingProperties)
 				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {
@@ -153,7 +153,7 @@ namespace Infrastructure.Persistence.Repositories {
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
-				.Include(x => x.AttributeGroups)
+				.Include(x => x.ListingProperties)
 				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
 				.FirstOrDefaultAsync(x => x.Name == name);
 			if (existing == null) {
@@ -163,7 +163,7 @@ namespace Infrastructure.Persistence.Repositories {
 		}
 
 		/// <summary>
-		/// Updates the already existing Category. Does not touch AttributeGroups related
+		/// Updates the already existing Category. Does not touch ListingProperties related
 		/// to the Category, for that there are methods AddAttributeGroups() and
 		/// RemoveAttributeGroupFromCategory(). Checks that we don't try to change the name
 		/// of Category to the one that already exists within the database. 
@@ -202,7 +202,7 @@ namespace Infrastructure.Persistence.Repositories {
 			return existing;
 		}
 		/// <summary>
-		/// Adds the list of AttributeGroups to the already existing list of AttributeGroups. Adds it also to the whole
+		/// Adds the list of ListingProperties to the already existing list of ListingProperties. Adds it also to the whole
 		/// subtree. 
 		/// </summary>
 		/// <param name="id">Id of Category to update. </param>
@@ -213,24 +213,24 @@ namespace Infrastructure.Persistence.Repositories {
 		/// </returns>
 		public async Task<Category?> AddAttributeGroupsAsync(Guid categoryId, List<Guid> attributeGroupIds) {
 			var existing = await dbContext.Categories
-				.Include(x => x.AttributeGroups)
+				.Include(x => x.ListingProperties)
 				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
 				.FirstOrDefaultAsync(x => x.Id == categoryId);
 			if (existing == null) {
 				return null;
 			}
 
-			// Fetch the AttributeGroups based on the provided IDs
-			var attributeGroups = await dbContext.AttributeGroups
+			// Fetch the ListingProperties based on the provided IDs
+			var attributeGroups = await dbContext.ListingProperties
 				.Where(ag => attributeGroupIds.Contains(ag.Id))
 				.ToListAsync();
 
-			// Add the AttributeGroups to the Category
+			// Add the ListingProperties to the Category
 			foreach (var group in attributeGroups) {
-				if (existing.AttributeGroups.Any(ag => ag.Id == group.Id)) {
+				if (existing.ListingProperties.Any(ag => ag.Id == group.Id)) {
 					continue; // this attribute group already exists in the category
 				}
-				existing.AttributeGroups.Add(group);
+				existing.ListingProperties.Add(group);
 			}
 			// recursivelly add new attribute groups to the children categories
 			var updateTasks = existing.ChildrenCategories.Select(category => AddAttributeGroupsAsync(category.Id, attributeGroupIds));
@@ -249,7 +249,7 @@ namespace Infrastructure.Persistence.Repositories {
 		/// <returns></returns>
 		public async Task<Category?> RemoveAttributeGroupAsync(Guid categoryId, Guid groupId) {
 			var existingCategory = await dbContext.Categories
-				.Include(x => x.AttributeGroups)
+				.Include(x => x.ListingProperties)
 				.Include(x => x.ParentCategory)
 				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
 				.FirstOrDefaultAsync(x => x.Id == categoryId);
@@ -257,7 +257,7 @@ namespace Infrastructure.Persistence.Repositories {
 				return null;
 			}
 
-			var existingGroupIndex = existingCategory.AttributeGroups.FindIndex(ag => ag.Id == groupId);
+			var existingGroupIndex = existingCategory.ListingProperties.FindIndex(ag => ag.Id == groupId);
 			if (existingGroupIndex == -1) {
 				// this also works as a base of recursion for traversing the children and parents
 				// so that we dont end up in an infinite loop where we would traverse from the
@@ -266,7 +266,7 @@ namespace Infrastructure.Persistence.Repositories {
 				return null;
 			}
 			// remove the group from the category
-			existingCategory.AttributeGroups.RemoveAt(existingGroupIndex);
+			existingCategory.ListingProperties.RemoveAt(existingGroupIndex);
 
 			// recursivelly remove the group from the children categories
 			var updateTasksChildren = existingCategory.ChildrenCategories.Select(category => RemoveAttributeGroupAsync(category.Id, groupId));

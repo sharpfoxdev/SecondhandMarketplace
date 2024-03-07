@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MarketplaceDbContext))]
-    [Migration("20240302231144_fresh start again")]
-    partial class freshstartagain
+    [Migration("20240307233051_fresh start once more1")]
+    partial class freshstartoncemore1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,51 +22,19 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("AttributeGroupCategory", b =>
+            modelBuilder.Entity("CategoryListingProperty", b =>
                 {
-                    b.Property<Guid>("AttributeGroupsId")
-                        .HasColumnType("char(36)");
-
                     b.Property<Guid>("CategoriesId")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("AttributeGroupsId", "CategoriesId");
-
-                    b.HasIndex("CategoriesId");
-
-                    b.ToTable("AttributeGroupCategory");
-                });
-
-            modelBuilder.Entity("Domain.Entities.AttributeGroup", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("ListingPropertiesId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.HasKey("CategoriesId", "ListingPropertiesId");
 
-                    b.HasKey("Id");
+                    b.HasIndex("ListingPropertiesId");
 
-                    b.ToTable("AttributeGroups");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
-                            Name = "BackpackBrand"
-                        },
-                        new
-                        {
-                            Id = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
-                            Name = "BackpackType"
-                        },
-                        new
-                        {
-                            Id = new Guid("72697394-56b3-4ed8-851f-b74e28454616"),
-                            Name = "BinocularsType"
-                        });
+                    b.ToTable("CategoryListingProperty");
                 });
 
             modelBuilder.Entity("Domain.Entities.Category", b =>
@@ -169,13 +137,10 @@ namespace Infrastructure.Migrations
                     b.ToTable("Listings");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ListingAttribute", b =>
+            modelBuilder.Entity("Domain.Entities.ListingProperty", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid>("AttributeGroupId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
@@ -184,57 +149,92 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AttributeGroupId");
+                    b.ToTable("ListingProperties");
 
-                    b.ToTable("Attributes");
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
+                            Name = "BackpackBrand"
+                        },
+                        new
+                        {
+                            Id = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
+                            Name = "BackpackType"
+                        },
+                        new
+                        {
+                            Id = new Guid("72697394-56b3-4ed8-851f-b74e28454616"),
+                            Name = "BinocularsType"
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.ListingPropertyValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ListingPropertyId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingPropertyId");
+
+                    b.ToTable("ListingPropertyValues");
 
                     b.HasData(
                         new
                         {
                             Id = new Guid("b567cbd5-d49d-427d-a90f-1d94f8cd5c8e"),
-                            AttributeGroupId = new Guid("72697394-56b3-4ed8-851f-b74e28454616"),
+                            ListingPropertyId = new Guid("72697394-56b3-4ed8-851f-b74e28454616"),
                             Name = "Monokulár"
                         },
                         new
                         {
                             Id = new Guid("c62d49f3-0294-4e9a-9411-5a392f719b76"),
-                            AttributeGroupId = new Guid("72697394-56b3-4ed8-851f-b74e28454616"),
+                            ListingPropertyId = new Guid("72697394-56b3-4ed8-851f-b74e28454616"),
                             Name = "Binokulár"
                         },
                         new
                         {
                             Id = new Guid("8dd8cbb6-03a9-4220-b343-d4c5a283283b"),
-                            AttributeGroupId = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
+                            ListingPropertyId = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
                             Name = "Batoh"
                         },
                         new
                         {
                             Id = new Guid("ba38e3c6-777c-4dbd-87bd-450206c7e49a"),
-                            AttributeGroupId = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
+                            ListingPropertyId = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
                             Name = "Sumka"
                         },
                         new
                         {
                             Id = new Guid("d882ac03-d93e-41c6-8503-2d2fd47acac5"),
-                            AttributeGroupId = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
+                            ListingPropertyId = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
                             Name = "Taška"
                         },
                         new
                         {
                             Id = new Guid("13b902a9-c0e4-4799-80d8-56206eb1acc8"),
-                            AttributeGroupId = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
+                            ListingPropertyId = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
                             Name = "Patizon"
                         },
                         new
                         {
                             Id = new Guid("3f5fd110-e73f-46fe-bb92-3a8094e3cbcb"),
-                            AttributeGroupId = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
+                            ListingPropertyId = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
                             Name = "Sir Joseph"
                         },
                         new
                         {
                             Id = new Guid("4f53489e-90b3-43ad-b51c-aa65f301b984"),
-                            AttributeGroupId = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
+                            ListingPropertyId = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
                             Name = "Prima"
                         });
                 });
@@ -252,6 +252,13 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StateOfItem");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("2e0e5d47-2ff5-421e-945e-9fdc08cc762d"),
+                            Name = "Nový"
+                        });
                 });
 
             modelBuilder.Entity("Infrastructure.Identity.ApplicationRole", b =>
@@ -369,19 +376,19 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("ListingListingAttribute", b =>
+            modelBuilder.Entity("ListingListingPropertyValue", b =>
                 {
                     b.Property<Guid>("ListingsId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("SelectedAttributesId")
+                    b.Property<Guid>("SelectedListingPropertyValuesId")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("ListingsId", "SelectedAttributesId");
+                    b.HasKey("ListingsId", "SelectedListingPropertyValuesId");
 
-                    b.HasIndex("SelectedAttributesId");
+                    b.HasIndex("SelectedListingPropertyValuesId");
 
-                    b.ToTable("ListingListingAttribute");
+                    b.ToTable("ListingListingPropertyValue");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -483,17 +490,17 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AttributeGroupCategory", b =>
+            modelBuilder.Entity("CategoryListingProperty", b =>
                 {
-                    b.HasOne("Domain.Entities.AttributeGroup", null)
-                        .WithMany()
-                        .HasForeignKey("AttributeGroupsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.ListingProperty", null)
+                        .WithMany()
+                        .HasForeignKey("ListingPropertiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -547,18 +554,18 @@ namespace Infrastructure.Migrations
                     b.Navigation("StateOfItem");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ListingAttribute", b =>
+            modelBuilder.Entity("Domain.Entities.ListingPropertyValue", b =>
                 {
-                    b.HasOne("Domain.Entities.AttributeGroup", "AttributeGroup")
-                        .WithMany("Attributes")
-                        .HasForeignKey("AttributeGroupId")
+                    b.HasOne("Domain.Entities.ListingProperty", "ListingProperty")
+                        .WithMany("ListingPropertyValues")
+                        .HasForeignKey("ListingPropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AttributeGroup");
+                    b.Navigation("ListingProperty");
                 });
 
-            modelBuilder.Entity("ListingListingAttribute", b =>
+            modelBuilder.Entity("ListingListingPropertyValue", b =>
                 {
                     b.HasOne("Domain.Entities.Listing", null)
                         .WithMany()
@@ -566,9 +573,9 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.ListingAttribute", null)
+                    b.HasOne("Domain.Entities.ListingPropertyValue", null)
                         .WithMany()
-                        .HasForeignKey("SelectedAttributesId")
+                        .HasForeignKey("SelectedListingPropertyValuesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -624,11 +631,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Entities.AttributeGroup", b =>
-                {
-                    b.Navigation("Attributes");
-                });
-
             modelBuilder.Entity("Domain.Entities.Category", b =>
                 {
                     b.Navigation("ChildrenCategories");
@@ -639,6 +641,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Listing", b =>
                 {
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ListingProperty", b =>
+                {
+                    b.Navigation("ListingPropertyValues");
                 });
 
             modelBuilder.Entity("Infrastructure.Identity.ApplicationUser", b =>

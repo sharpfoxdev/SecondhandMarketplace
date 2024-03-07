@@ -13,7 +13,7 @@ namespace Domain.Entities {
 	/// Each category has a list of attribute groups. For example category "Clothes" 
 	/// can have attribute groups "ClothesColor", "ClothesSize", "Color" etc.
 	/// </summary>
-	public class AttributeGroup : IEntity {
+	public class ListingProperty : IEntity {
 		public Guid Id { get; set; }
 		/// <summary>
 		/// Name of the attribute group. For example "Color", "ClothesSize" etc.
@@ -28,6 +28,6 @@ namespace Domain.Entities {
 		/// <summary>
 		/// List of attributes of this attribute group. It is a one to many relationship.
 		/// </summary>
-		public List<ListingAttribute> Attributes { get; set; }
+		public List<ListingPropertyValue> ListingPropertyValues { get; set; }
 	}
 }

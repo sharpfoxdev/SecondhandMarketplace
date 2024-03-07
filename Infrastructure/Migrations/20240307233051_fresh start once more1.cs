@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class freshstartagain : Migration
+    public partial class freshstartoncemore1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -70,20 +70,6 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AttributeGroups",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AttributeGroups", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -100,6 +86,20 @@ namespace Infrastructure.Migrations
                         column: x => x.ParentCategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ListingProperties",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ListingProperties", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -239,46 +239,46 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Attributes",
+                name: "CategoryListingProperty",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    AttributeGroupId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    CategoriesId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ListingPropertiesId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Attributes", x => x.Id);
+                    table.PrimaryKey("PK_CategoryListingProperty", x => new { x.CategoriesId, x.ListingPropertiesId });
                     table.ForeignKey(
-                        name: "FK_Attributes_AttributeGroups_AttributeGroupId",
-                        column: x => x.AttributeGroupId,
-                        principalTable: "AttributeGroups",
+                        name: "FK_CategoryListingProperty_Categories_CategoriesId",
+                        column: x => x.CategoriesId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryListingProperty_ListingProperties_ListingPropertiesId",
+                        column: x => x.ListingPropertiesId,
+                        principalTable: "ListingProperties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AttributeGroupCategory",
+                name: "ListingPropertyValues",
                 columns: table => new
                 {
-                    AttributeGroupsId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    CategoriesId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ListingPropertyId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AttributeGroupCategory", x => new { x.AttributeGroupsId, x.CategoriesId });
+                    table.PrimaryKey("PK_ListingPropertyValues", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AttributeGroupCategory_AttributeGroups_AttributeGroupsId",
-                        column: x => x.AttributeGroupsId,
-                        principalTable: "AttributeGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AttributeGroupCategory_Categories_CategoriesId",
-                        column: x => x.CategoriesId,
-                        principalTable: "Categories",
+                        name: "FK_ListingPropertyValues_ListingProperties_ListingPropertyId",
+                        column: x => x.ListingPropertyId,
+                        principalTable: "ListingProperties",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -358,23 +358,23 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ListingListingAttribute",
+                name: "ListingListingPropertyValue",
                 columns: table => new
                 {
                     ListingsId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    SelectedAttributesId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    SelectedListingPropertyValuesId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ListingListingAttribute", x => new { x.ListingsId, x.SelectedAttributesId });
+                    table.PrimaryKey("PK_ListingListingPropertyValue", x => new { x.ListingsId, x.SelectedListingPropertyValuesId });
                     table.ForeignKey(
-                        name: "FK_ListingListingAttribute_Attributes_SelectedAttributesId",
-                        column: x => x.SelectedAttributesId,
-                        principalTable: "Attributes",
+                        name: "FK_ListingListingPropertyValue_ListingPropertyValues_SelectedLi~",
+                        column: x => x.SelectedListingPropertyValuesId,
+                        principalTable: "ListingPropertyValues",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ListingListingAttribute_Listings_ListingsId",
+                        name: "FK_ListingListingPropertyValue_Listings_ListingsId",
                         column: x => x.ListingsId,
                         principalTable: "Listings",
                         principalColumn: "Id",
@@ -393,7 +393,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "AttributeGroups",
+                table: "ListingProperties",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
                 {
@@ -403,8 +403,13 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Attributes",
-                columns: new[] { "Id", "AttributeGroupId", "Name" },
+                table: "StateOfItem",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { new Guid("2e0e5d47-2ff5-421e-945e-9fdc08cc762d"), "Nový" });
+
+            migrationBuilder.InsertData(
+                table: "ListingPropertyValues",
+                columns: new[] { "Id", "ListingPropertyId", "Name" },
                 values: new object[,]
                 {
                     { new Guid("13b902a9-c0e4-4799-80d8-56206eb1acc8"), new Guid("9091889f-ed33-48a0-979e-875968b305fe"), "Patizon" },
@@ -455,19 +460,14 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttributeGroupCategory_CategoriesId",
-                table: "AttributeGroupCategory",
-                column: "CategoriesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Attributes_AttributeGroupId",
-                table: "Attributes",
-                column: "AttributeGroupId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Categories_ParentCategoryId",
                 table: "Categories",
                 column: "ParentCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryListingProperty_ListingPropertiesId",
+                table: "CategoryListingProperty",
+                column: "ListingPropertiesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Images_ListingId",
@@ -475,9 +475,14 @@ namespace Infrastructure.Migrations
                 column: "ListingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ListingListingAttribute_SelectedAttributesId",
-                table: "ListingListingAttribute",
-                column: "SelectedAttributesId");
+                name: "IX_ListingListingPropertyValue_SelectedListingPropertyValuesId",
+                table: "ListingListingPropertyValue",
+                column: "SelectedListingPropertyValuesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ListingPropertyValues_ListingPropertyId",
+                table: "ListingPropertyValues",
+                column: "ListingPropertyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Listings_ApplicationUserId",
@@ -519,25 +524,25 @@ namespace Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "AttributeGroupCategory");
+                name: "CategoryListingProperty");
 
             migrationBuilder.DropTable(
                 name: "Images");
 
             migrationBuilder.DropTable(
-                name: "ListingListingAttribute");
+                name: "ListingListingPropertyValue");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Attributes");
+                name: "ListingPropertyValues");
 
             migrationBuilder.DropTable(
                 name: "Listings");
 
             migrationBuilder.DropTable(
-                name: "AttributeGroups");
+                name: "ListingProperties");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

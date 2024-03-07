@@ -9,7 +9,7 @@ using WebApi.ApiDtos.ListingAttribute;
 namespace WebApi.Controllers {
 
 	/// <summary>
-	/// Endpoints for manipulating AttributeGroups
+	/// Endpoints for manipulating ListingProperties
 	/// </summary>
 	[Route("api/[controller]")]
 	[ApiController]
@@ -58,7 +58,7 @@ namespace WebApi.Controllers {
 		/// </returns>
 		[HttpPost]
 		public async Task<IActionResult> Post(CreateAttributeGroupRequest request) {
-			var domain = mapper.Map<AttributeGroup>(request);
+			var domain = mapper.Map<ListingProperty>(request);
 			domain = await repository.CreateAsync(domain);
 			return Ok(mapper.Map<AttributeGroupDto>(domain));
 		}
@@ -79,7 +79,7 @@ namespace WebApi.Controllers {
 		[HttpPut]
 		[Route("{id:Guid}")]
 		public async Task<IActionResult> Put(Guid id, UpdateAttributeGroupRequest request) {
-			var domain = mapper.Map<AttributeGroup>(request);
+			var domain = mapper.Map<ListingProperty>(request);
 			domain = await repository.UpdateAsync(id, domain);
 			if (domain == null) {
 				return NotFound();
@@ -113,7 +113,7 @@ namespace WebApi.Controllers {
 		[HttpPost]
 		[Route("AddAttributes/{id:Guid}")]
 		public async Task<IActionResult> AddAttributes(Guid id, List<CreateListingAttributeInsideGroupRequest> attributes) {
-			var listAttrDomain = mapper.Map<List<ListingAttribute>>(attributes);
+			var listAttrDomain = mapper.Map<List<ListingPropertyValue>>(attributes);
 			var groupDomain = await repository.AddAttributesAsync(id, listAttrDomain);
 			if(groupDomain == null) {
 				// couldnt find the group

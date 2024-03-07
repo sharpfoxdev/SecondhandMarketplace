@@ -24,25 +24,25 @@ namespace Infrastructure.Persistence.Repositories
 		}
 
 		private async Task<Listing?> ValidateAndAddAttributes(Listing listing, List<IAttributeSelection> attributeSelections, Category category) {
-			listing.SelectedAttributes = new List<ListingAttribute>();
+			listing.SelectedListingPropertyValues = new List<ListingPropertyValue>();
 			// we have to have matching selection for each group in the category
-			foreach (var group in category.AttributeGroups) {
+			foreach (var group in category.ListingProperties) {
 				var selection = attributeSelections.Find(selection => selection.AttributeGroupId == group.Id);
 				if (selection == null) {
 					// matching selection wasnt provided
 					return null;
 				}
 				// check, that the attribute is indeed a part of attribute group
-				var attribute = await dbContext.Attributes
-					.Include(x => x.AttributeGroup)
+				var attribute = await dbContext.ListingPropertyValues
+					.Include(x => x.ListingProperty)
 					.FirstOrDefaultAsync(x => x.Id == selection.SelectedAttributeId);
 				if (attribute == null) {
 					return null; // couldnt find such attribute
 				}
-				if (attribute.AttributeGroup.Id != group.Id) {
+				if (attribute.ListingProperty.Id != group.Id) {
 					return null; // the group of attribute is not matching required 
 				}
-				listing.SelectedAttributes.Add(attribute); // creats n to n relationship between listing and attribute
+				listing.SelectedListingPropertyValues.Add(attribute); // creats n to n relationship between listing and attribute
 			}
 			return listing;
 		}
@@ -50,7 +50,7 @@ namespace Infrastructure.Persistence.Repositories
 
 			// we get the category of listing we want to create
 			var category = await dbContext.Categories
-				.Include(c => c.AttributeGroups)
+				.Include(c => c.ListingProperties)
 				.FirstOrDefaultAsync(c => c.Id == listing.CategoryId);
 
 			if (category == null) {
@@ -86,7 +86,7 @@ namespace Infrastructure.Persistence.Repositories
 		public async Task<List<Listing>> GetAllAsync() {
 			return await dbContext.Listings
 				.Include(x => x.Category)
-				.Include(x => x.SelectedAttributes)
+				.Include(x => x.SelectedListingPropertyValues)
 				.Include(x => x.Images)
 				.ToListAsync();
 		}
@@ -95,7 +95,7 @@ namespace Infrastructure.Persistence.Repositories
 		public async Task<Listing?> GetByIdAsync(Guid id) {
 			var existing = await dbContext.Listings
 				.Include(x => x.Category)
-				.Include(x => x.SelectedAttributes)
+				.Include(x => x.SelectedListingPropertyValues)
 				.Include(x => x.Images)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if(existing == null) {

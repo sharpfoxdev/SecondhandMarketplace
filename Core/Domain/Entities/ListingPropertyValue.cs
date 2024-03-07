@@ -10,7 +10,7 @@ namespace Domain.Entities {
 	/// Attribute is a concrete value of an attribute group.
 	/// For example article group "Color" can have attributes "Red", "Blue", "Green" etc.
 	/// </summary>
-	public class ListingAttribute : IEntity {
+	public class ListingPropertyValue : IEntity {
 		public Guid Id { get; set; }
 
 		/// <summary>
@@ -20,8 +20,8 @@ namespace Domain.Entities {
 		/// <summary>
 		/// Attribute group to which this attribute belongs. It is a one to many relationship. 
 		/// </summary>
-		public Guid AttributeGroupId { get; set; }
-		public AttributeGroup AttributeGroup { get; set; }
+		public Guid ListingPropertyId { get; set; }
+		public ListingProperty ListingProperty { get; set; }
 		/// <summary>
 		/// Listings, that use this attribute. It is a many to many relationship.
 		/// </summary>
