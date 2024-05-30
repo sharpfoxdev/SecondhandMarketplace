@@ -7,13 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Interfaces.Repositories {
-	/// <summary>
-	/// Generic repository for crud operations
-	/// </summary>
+
 	public interface IListingRepository {
 		public Task<List<Listing>> GetAllAsync();
 		public Task<Listing?> GetByIdAsync(Guid id);
-		public Task<Listing?> CreateAsync(Listing listing, List<IAttributeSelection> attributeSelections);
+		public Task<Listing?> CreateAsync(Listing listing, List<IListingPropertyValueSelection> attributeSelections);
 		public Task<Listing?> UpdateAsync(Guid id, Listing listing);
 		public Task<Listing?> DeleteAsync(Guid id);
 	}

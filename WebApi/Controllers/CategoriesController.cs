@@ -69,7 +69,7 @@ namespace WebApi.Controllers {
 		[HttpPut]
 		[Route("AddGroups/{id:Guid}")]
 		public async Task<IActionResult> AddGroups(Guid id, List<Guid> groupIds) {
-			var domain = await repository.AddAttributeGroupsAsync(id, groupIds);
+			var domain = await repository.AddListingPropertiesAsync(id, groupIds);
 			if (domain == null) {
 				return NotFound();
 			}
@@ -89,7 +89,7 @@ namespace WebApi.Controllers {
 		[HttpPut]
 		[Route("RemoveGroup/{id:Guid}")]
 		public async Task<IActionResult> RemoveGroup(Guid id, Guid groupId) {
-			var domain = await repository.RemoveAttributeGroupAsync(id, groupId);
+			var domain = await repository.RemoveListingPropertyAsync(id, groupId);
 			if (domain == null) {
 				return NotFound();
 			}

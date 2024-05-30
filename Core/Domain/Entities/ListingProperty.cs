@@ -6,28 +6,28 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Entities {
-	/// <summary>
-	/// Attribute group is a group of attributes. For example "Color"
-	/// is an attribute group, that can have attributes "Red", "Blue", "Green" etc.
-	/// 
-	/// Each category has a list of attribute groups. For example category "Clothes" 
-	/// can have attribute groups "ClothesColor", "ClothesSize", "Color" etc.
-	/// </summary>
-	public class ListingProperty : IEntity {
+    /// <summary>
+    /// ListingProperty is a property of Listing. For example "Color"
+    /// is a ListingProperty, that can have ListingPropertyValues "Red", "Blue", "Green" etc.
+    /// 
+    /// Each category has a list of ListingProperties. For example category "Clothes" 
+    /// can have ListingProperties, "ClothesSize", "Color" etc.
+    /// </summary>
+    public class ListingProperty : IEntity {
 		public Guid Id { get; set; }
-		/// <summary>
-		/// Name of the attribute group. For example "Color", "ClothesSize" etc.
-		/// </summary>
-		public string Name { get; set; }
+        /// <summary>
+        /// Name of the ListingProperty. For example "Color", "ClothesSize" etc.
+        /// </summary>
+        public string Name { get; set; }
 
-		/// <summary>
-		/// List of categories, that use this attribute group. It is a many to many relationship.
-		/// </summary>
-		public List<Category> Categories { get; set; }
+        /// <summary>
+        /// List of categories, that use this ListingProperty. It is a many to many relationship.
+        /// </summary>
+        public List<Category> Categories { get; set; }
 
-		/// <summary>
-		/// List of attributes of this attribute group. It is a one to many relationship.
-		/// </summary>
-		public List<ListingPropertyValue> ListingPropertyValues { get; set; }
+        /// <summary>
+        /// List of values of this ListingProperty. It is a one to many relationship.
+        /// </summary>
+        public List<ListingPropertyValue> ListingPropertyValues { get; set; }
 	}
 }

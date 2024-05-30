@@ -44,7 +44,7 @@ namespace WebApi.Controllers {
 			Guid userId = Guid.Parse(userIdString);
 			domain.SellerId = userId;
 			// converting, because I cannot use interface directly in the API inside the request, as it cannot be deserialized
-			List<IAttributeSelection> interfaceListSelections = request.AttributeSelections.Cast<IAttributeSelection>().ToList();
+			List<IListingPropertyValueSelection> interfaceListSelections = request.AttributeSelections.Cast<IListingPropertyValueSelection>().ToList();
 			domain = await repository.CreateAsync(domain, interfaceListSelections);
 			return Ok(mapper.Map<ListingDto>(domain));
 		}

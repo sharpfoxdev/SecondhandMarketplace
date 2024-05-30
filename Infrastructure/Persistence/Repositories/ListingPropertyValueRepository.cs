@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Infrastructure.Persistence.Repositories {
-	internal class ListingAttributeRepository : IListingAttributeRepository {
+	internal class ListingPropertyValueRepository : IListingPropertyValueRepository {
 		private readonly MarketplaceDbContext dbContext;
 
-		public ListingAttributeRepository(MarketplaceDbContext dbContext)
+		public ListingPropertyValueRepository(MarketplaceDbContext dbContext)
         {
 			this.dbContext = dbContext;
 		}
-        public async Task<ListingPropertyValue> CreateAsync(ListingPropertyValue attribute) {
-			await dbContext.ListingPropertyValues.AddAsync(attribute);
+        public async Task<ListingPropertyValue> CreateAsync(ListingPropertyValue value) {
+			await dbContext.ListingPropertyValues.AddAsync(value);
 			await dbContext.SaveChangesAsync();
-			return attribute;
+			return value;
 		}
 
 		public async Task<ListingPropertyValue?> DeleteAsync(Guid id) {
@@ -60,7 +60,7 @@ namespace Infrastructure.Persistence.Repositories {
 		public async Task<ListingPropertyValue?> UpdateAsync(Guid id, ListingPropertyValue updatedAttribute) {
 			// TOCHECK will update just name? What about adding it to a different existing group? Possibly. 
 			// Or create a new group all together? Probably not. 
-			// For now we dont update the attribute group ids
+			// For now we dont update the value group ids
 			var existing = await dbContext.ListingPropertyValues
 				.Include(x => x.ListingProperty)
 				.Include(x => x.Listings)

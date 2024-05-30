@@ -7,7 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Identity {
-	public class ApplicationUser : IdentityUser<Guid> {
+    /// <summary>
+    /// Setup, so that users use Guid as a key instead of a string
+    /// </summary>
+    public class ApplicationUser : IdentityUser<Guid> {
+        /// <summary>
+        /// One to many relation with listings
+        /// </summary>
 		public List<Listing> Listings { get; set; }
 	}
 }

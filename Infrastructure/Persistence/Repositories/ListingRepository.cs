@@ -23,11 +23,11 @@ namespace Infrastructure.Persistence.Repositories
 			this.imageRepository = imageRepository;
 		}
 
-		private async Task<Listing?> ValidateAndAddAttributes(Listing listing, List<IAttributeSelection> attributeSelections, Category category) {
+		private async Task<Listing?> ValidateAndAddAttributes(Listing listing, List<IListingPropertyValueSelection> attributeSelections, Category category) {
 			listing.SelectedListingPropertyValues = new List<ListingPropertyValue>();
 			// we have to have matching selection for each group in the category
 			foreach (var group in category.ListingProperties) {
-				var selection = attributeSelections.Find(selection => selection.AttributeGroupId == group.Id);
+				var selection = attributeSelections.Find(selection => selection.ListringPropertyId == group.Id);
 				if (selection == null) {
 					// matching selection wasnt provided
 					return null;
@@ -35,7 +35,7 @@ namespace Infrastructure.Persistence.Repositories
 				// check, that the attribute is indeed a part of attribute group
 				var attribute = await dbContext.ListingPropertyValues
 					.Include(x => x.ListingProperty)
-					.FirstOrDefaultAsync(x => x.Id == selection.SelectedAttributeId);
+					.FirstOrDefaultAsync(x => x.Id == selection.SelectedListingPropertyValueId);
 				if (attribute == null) {
 					return null; // couldnt find such attribute
 				}
@@ -46,7 +46,7 @@ namespace Infrastructure.Persistence.Repositories
 			}
 			return listing;
 		}
-		public async Task<Listing?> CreateAsync(Listing listing, List<IAttributeSelection> attributeSelections) {
+		public async Task<Listing?> CreateAsync(Listing listing, List<IListingPropertyValueSelection> attributeSelections) {
 
 			// we get the category of listing we want to create
 			var category = await dbContext.Categories

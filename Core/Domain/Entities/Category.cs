@@ -29,14 +29,14 @@ namespace Domain.Entities {
 		/// </summary>
 		public List<Category> ChildrenCategories { get; set; }
 
-		/// <summary>
-		/// Has all the attribute groups that the parent categories have in the tree
-		/// of categories as well as the attribute groups specific for this category. 
-		/// Attribute groups are kind of fakely "inherited" from the parent categories
-		/// upon the creation of the Category and this is also reflected all the operations, that are done
-		/// over the Category. 
-		/// </summary>
-		public List<ListingProperty> ListingProperties { get; set; }
+        /// <summary>
+        /// Has all the ListingProperties that the parent categories have in the tree
+        /// of categories as well as the ListingProperties specific for this category. 
+        /// ListingProperties are kind of fakely "inherited" from the parent categories
+        /// upon the creation of the Category and this is also reflected all the operations, that are done
+        /// over the Category. 
+        /// </summary>
+        public List<ListingProperty> ListingProperties { get; set; }
 
 		/// <summary>
 		/// All listings that are in this Category. One to many relationship, 

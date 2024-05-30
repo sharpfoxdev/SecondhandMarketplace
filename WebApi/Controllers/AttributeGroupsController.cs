@@ -14,10 +14,10 @@ namespace WebApi.Controllers {
 	[Route("api/[controller]")]
 	[ApiController]
 	public class AttributeGroupsController : ControllerBase {
-		private readonly IAttributeGroupRepository repository;
+		private readonly IListingPropertyRepository repository;
 		private readonly IMapper mapper;
 
-		public AttributeGroupsController(IAttributeGroupRepository repository, IMapper mapper)
+		public AttributeGroupsController(IListingPropertyRepository repository, IMapper mapper)
         {
 			this.repository = repository;
 			this.mapper = mapper;
@@ -114,7 +114,7 @@ namespace WebApi.Controllers {
 		[Route("AddAttributes/{id:Guid}")]
 		public async Task<IActionResult> AddAttributes(Guid id, List<CreateListingAttributeInsideGroupRequest> attributes) {
 			var listAttrDomain = mapper.Map<List<ListingPropertyValue>>(attributes);
-			var groupDomain = await repository.AddAttributesAsync(id, listAttrDomain);
+			var groupDomain = await repository.AddListingPropertyValueAsync(id, listAttrDomain);
 			if(groupDomain == null) {
 				// couldnt find the group
 				return NotFound();

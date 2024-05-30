@@ -13,9 +13,9 @@ namespace WebApi.Controllers {
 	[ApiController]
 	public class ListingAttributesController : ControllerBase {
 		private readonly IMapper mapper;
-		private readonly IListingAttributeRepository repository;
+		private readonly IListingPropertyValueRepository repository;
 
-		public ListingAttributesController(IMapper mapper, IListingAttributeRepository repository)
+		public ListingAttributesController(IMapper mapper, IListingPropertyValueRepository repository)
         {
 			this.mapper = mapper;
 			this.repository = repository;
