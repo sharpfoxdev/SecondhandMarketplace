@@ -25,10 +25,13 @@ namespace Infrastructure
     /// </summary>
     public static class Startup {
 		public static IServiceCollection AddInfrastructure(this IServiceCollection services) {
-			// TODO MOVE CONNECTION STRING
-			var connectionString = "server=localhost;user=testUser;password=testPassword;database=marketplace;";
+            var host = Environment.GetEnvironmentVariable("MYSQL_HOST");
+            //var port = Environment.GetEnvironmentVariable("MYSQL_PORT");
+            var database = Environment.GetEnvironmentVariable("MYSQL_DATABASE");
+            var user = Environment.GetEnvironmentVariable("MYSQL_USER");
+            var password = Environment.GetEnvironmentVariable("MYSQL_PASSWORD");
+            var connectionString = $"server={host};user={user};database={database};password={password};";
 			var serverVersion = new MySqlServerVersion(new Version(8, 0, 34));
-			// Replace 'YourDbContext' with the name of your own DbContext derived class.
 			return services.AddDbContext<MarketplaceDbContext>(
 				dbContextOptions => dbContextOptions
 					.UseMySql(connectionString, serverVersion, options => options.UseNetTopologySuite())

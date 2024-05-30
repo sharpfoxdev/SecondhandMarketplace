@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 using WebApi.Mappings;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddControllers().AddJsonOptions(options => {
 	// this is needed, otherwise api throws an exception, when two related objects reference each other
 	options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+Env.Load();
 builder.Services.AddInfrastructure();
 builder.Services.AddAuthentication(options => {
 	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
