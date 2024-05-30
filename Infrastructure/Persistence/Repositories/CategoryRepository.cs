@@ -73,18 +73,18 @@ namespace Infrastructure.Persistence.Repositories {
 			return category;
 		}
 
-		/// <summary>
-		/// Deletes the category, but doesn't delete the asociated attribute groups.
-		/// As attribute groups can be tied to multiple categories (n to n relationship). 
-		/// It should just delete entries in the joint table between attribute group and category
-		/// in the database. 
-		/// </summary>
-		/// <param name="id">Id of Category to delete. </param>
-		/// <returns>
-		/// Null if the Category with the given id was not found.
-		/// Otherwise returns the just deleted object. 
-		/// </returns>
-		public async Task<Category?> DeleteAsync(Guid id) {
+        /// <summary>
+        /// Deletes the category, but doesn't delete the asociated ListingProperties.
+        /// As ListingProperties can be tied to multiple categories (n to n relationship). 
+        /// It should just delete entries in the joint table between ListingProperty and category
+        /// in the database. 
+        /// </summary>
+        /// <param name="id">Id of Category to delete. </param>
+        /// <returns>
+        /// Null if the Category with the given id was not found.
+        /// Otherwise returns the just deleted object. 
+        /// </returns>
+        public async Task<Category?> DeleteAsync(Guid id) {
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
@@ -162,26 +162,26 @@ namespace Infrastructure.Persistence.Repositories {
 			return existing;
 		}
 
-		/// <summary>
-		/// Updates the already existing Category. Does not touch ListingProperties related
-		/// to the Category, for that there are methods AddAttributeGroups() and
-		/// RemoveAttributeGroupFromCategory(). Checks that we don't try to change the name
-		/// of Category to the one that already exists within the database. 
-		/// 
-		/// It is also not currently possible to update the parent category of the category, as moving
-		/// the category within the tree would mess up the listings, as they would not support
-		/// the new parent categories attribute groups. 
-		/// TOCHECK - is this really an issue?
-		/// </summary>
-		/// <param name="id">Id of Category to update. </param>
-		/// <param name="updatedCategory">Category of updated data. </param>
-		/// <returns>
-		/// Null if Category we want to update already exists or the name of category
-		/// already exists in the database.
-		/// Else returns the updated Category
-		/// </returns>
-		/// <exception cref="NotImplementedException"></exception>
-		public async Task<Category?> UpdateAsync(Guid id, Category updatedCategory) {
+        /// <summary>
+        /// Updates the already existing Category. Does not touch ListingProperties related
+        /// to the Category, for that there are methods AddListingPropertiesAsync() and
+        /// RemoveListingPropertyAsync(). Checks that we don't try to change the name
+        /// of Category to the one that already exists within the database. 
+        /// 
+        /// It is also not currently possible to update the parent category of the category, as moving
+        /// the category within the tree would mess up the listings, as they would not support
+        /// the new parent categories ListingProperties. 
+        /// TOCHECK - is this really an issue?
+        /// </summary>
+        /// <param name="id">Id of Category to update. </param>
+        /// <param name="updatedCategory">Category of updated data. </param>
+        /// <returns>
+        /// Null if Category we want to update already exists or the name of category
+        /// already exists in the database.
+        /// Else returns the updated Category
+        /// </returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<Category?> UpdateAsync(Guid id, Category updatedCategory) {
 			var existing = await dbContext.Categories
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {
@@ -211,7 +211,7 @@ namespace Infrastructure.Persistence.Repositories {
 		/// Updated Category. 
 		/// Null, if the category was not found. 
 		/// </returns>
-		public async Task<Category?> AddAttributeGroupsAsync(Guid categoryId, List<Guid> attributeGroupIds) {
+		public async Task<Category?> AddListingPropertiesAsync(Guid categoryId, List<Guid> attributeGroupIds) {
 			var existing = await dbContext.Categories
 				.Include(x => x.ListingProperties)
 				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
@@ -221,33 +221,33 @@ namespace Infrastructure.Persistence.Repositories {
 			}
 
 			// Fetch the ListingProperties based on the provided IDs
-			var attributeGroups = await dbContext.ListingProperties
+			var listingProperties = await dbContext.ListingProperties
 				.Where(ag => attributeGroupIds.Contains(ag.Id))
 				.ToListAsync();
 
 			// Add the ListingProperties to the Category
-			foreach (var group in attributeGroups) {
-				if (existing.ListingProperties.Any(ag => ag.Id == group.Id)) {
-					continue; // this attribute group already exists in the category
-				}
-				existing.ListingProperties.Add(group);
+			foreach (var property in listingProperties) {
+				if (existing.ListingProperties.Any(ag => ag.Id == property.Id)) {
+					continue; // this ListingProperty already exists in the category
+                }
+				existing.ListingProperties.Add(property);
 			}
-			// recursivelly add new attribute groups to the children categories
-			var updateTasks = existing.ChildrenCategories.Select(category => AddAttributeGroupsAsync(category.Id, attributeGroupIds));
+            // recursivelly add new ListingProperties to the children categories
+            var updateTasks = existing.ChildrenCategories.Select(category => AddListingPropertiesAsync(category.Id, attributeGroupIds));
 			await Task.WhenAll(updateTasks);
 
 			await dbContext.SaveChangesAsync();
 			return existing;
 		}
-		/// <summary>
-		/// Gets the Category the highest in the hierarchy, that has this group
-		/// and removes the group from the whole subtree
-		/// TODO, might need a bit of refactoring to make it clearer
-		/// </summary>
-		/// <param name="categoryId">Id of category anywhere in the tree</param>
-		/// <param name="groupId">Id of group to remove. </param>
-		/// <returns></returns>
-		public async Task<Category?> RemoveAttributeGroupAsync(Guid categoryId, Guid groupId) {
+        /// <summary>
+        /// Gets the Category the highest in the hierarchy, that has this ListingProperty
+        /// and removes the ListingProperty from the whole subtree
+        /// TODO, might need a bit of refactoring to make it clearer
+        /// </summary>
+        /// <param name="categoryId">Id of category anywhere in the tree</param>
+        /// <param name="propertyId">Id of group to remove. </param>
+        /// <returns></returns>
+        public async Task<Category?> RemoveListingPropertyAsync(Guid categoryId, Guid propertyId) {
 			var existingCategory = await dbContext.Categories
 				.Include(x => x.ListingProperties)
 				.Include(x => x.ParentCategory)
@@ -257,25 +257,25 @@ namespace Infrastructure.Persistence.Repositories {
 				return null;
 			}
 
-			var existingGroupIndex = existingCategory.ListingProperties.FindIndex(ag => ag.Id == groupId);
-			if (existingGroupIndex == -1) {
-				// this also works as a base of recursion for traversing the children and parents
-				// so that we dont end up in an infinite loop where we would traverse from the
-				// parent to the child and back to the parent
-				// we couldnt find a group with this index
-				return null;
+			var existingPropertyIndex = existingCategory.ListingProperties.FindIndex(ag => ag.Id == propertyId);
+			if (existingPropertyIndex == -1) {
+                // this also works as a base of recursion for traversing the children and parents
+                // so that we dont end up in an infinite loop where we would traverse from the
+                // parent to the child and back to the parent
+                // we couldnt find a ListingProperty with this index
+                return null;
 			}
-			// remove the group from the category
-			existingCategory.ListingProperties.RemoveAt(existingGroupIndex);
+			// remove the property from the category
+			existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
 
-			// recursivelly remove the group from the children categories
-			var updateTasksChildren = existingCategory.ChildrenCategories.Select(category => RemoveAttributeGroupAsync(category.Id, groupId));
+			// recursivelly remove the property from the children categories
+			var updateTasksChildren = existingCategory.ChildrenCategories.Select(category => RemoveListingPropertyAsync(category.Id, propertyId));
 			await Task.WhenAll(updateTasksChildren);
 
-			// Update also parents, if they also have the same attribute groups, as otherwise it wouldnt
-			// be determinitstic, what hap
-			if(existingCategory.ParentCategory != null) {
-				var updateTasksParents = RemoveAttributeGroupAsync(existingCategory.ParentCategory.Id, groupId);
+            // Update also parents, if they also have the same ListingProperties, as otherwise it wouldnt
+            // be determinitstic, what hap
+            if (existingCategory.ParentCategory != null) {
+				var updateTasksParents = RemoveListingPropertyAsync(existingCategory.ParentCategory.Id, propertyId);
 				await Task.WhenAll(updateTasksParents);
 			}
 

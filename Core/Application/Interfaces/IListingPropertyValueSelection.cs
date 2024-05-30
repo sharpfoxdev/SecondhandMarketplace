@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Interfaces {
-	public interface IAttributeSelection {
-		public Guid AttributeGroupId { get; set; }
-		public Guid SelectedAttributeId { get; set; }
+	public interface IListingPropertyValueSelection {
+		public Guid ListringPropertyId { get; set; }
+		public Guid SelectedListingPropertyValueId { get; set; }
 	}
 }

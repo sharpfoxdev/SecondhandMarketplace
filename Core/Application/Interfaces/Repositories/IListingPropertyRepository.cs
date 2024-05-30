@@ -10,12 +10,12 @@ namespace Application.Interfaces.Repositories {
 	/// Interface defining what operations should we be able to do over ListingProperty objects.
 	/// The implementation of these operations is in Infrastructure/Persistence layer, as it touches the database.
 	/// </summary>
-	public interface IAttributeGroupRepository {
+	public interface IListingPropertyRepository {
 		public Task<List<ListingProperty>> GetAllAsync();
 		public Task<ListingProperty?> GetByIdAsync(Guid id);
-		public Task<ListingProperty> CreateAsync(ListingProperty group);
-		public Task<ListingProperty?> UpdateAsync(Guid id, ListingProperty group);
+		public Task<ListingProperty> CreateAsync(ListingProperty property);
+		public Task<ListingProperty?> UpdateAsync(Guid id, ListingProperty property);
 		public Task<ListingProperty?> DeleteAsync(Guid id);
-		public Task<ListingProperty?> AddAttributesAsync(Guid id, List<ListingPropertyValue> attributes);
+		public Task<ListingProperty?> AddListingPropertyValueAsync(Guid id, List<ListingPropertyValue> attributes);
 	}
 }

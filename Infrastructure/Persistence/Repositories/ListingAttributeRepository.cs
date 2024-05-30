@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Infrastructure.Persistence.Repositories {
-	internal class ListingAttributeRepository : IListingAttributeRepository {
+	internal class ListingAttributeRepository : IListingPropertyValueRepository {
 		private readonly MarketplaceDbContext dbContext;
 
 		public ListingAttributeRepository(MarketplaceDbContext dbContext)

@@ -13,7 +13,7 @@ namespace Application.Interfaces.Repositories {
 		public Task<Category> CreateAsync(Category category);
 		public Task<Category?> UpdateAsync(Guid id, Category category);
 		public Task<Category?> DeleteAsync(Guid id);
-		public Task<Category?> AddAttributeGroupsAsync(Guid categoryId, List<Guid> attributeGroupIds);
-		public Task<Category?> RemoveAttributeGroupAsync(Guid categoryId, Guid groupId);
+		public Task<Category?> AddListingPropertiesAsync(Guid categoryId, List<Guid> ListingPropertyIds);
+		public Task<Category?> RemoveListingPropertyAsync(Guid categoryId, Guid groupId);
 	}
 }

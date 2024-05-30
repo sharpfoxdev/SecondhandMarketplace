@@ -9,23 +9,23 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Persistence.Repositories {
-	internal class AttributeGroupRepository : IAttributeGroupRepository {
+	internal class ListingPropertyRepository : IListingPropertyRepository {
 		private readonly MarketplaceDbContext dbContext;
 
-		public AttributeGroupRepository(MarketplaceDbContext dbContext)
+		public ListingPropertyRepository(MarketplaceDbContext dbContext)
         {
 			this.dbContext = dbContext;
 		}
 
-        public async Task<ListingProperty> CreateAsync(ListingProperty group) {
-			// we can create with some attributes
-			await dbContext.ListingProperties.AddAsync(group);
+        public async Task<ListingProperty> CreateAsync(ListingProperty property) {
+            // we can create with some ListingPropertyValues
+            await dbContext.ListingProperties.AddAsync(property);
 			await dbContext.SaveChangesAsync();
-			return group;
+			return property;
 		}
 
 		public async Task<ListingProperty?> DeleteAsync(Guid id) {
-			// when we delete group, we also want to delete all associated attributes
+			// when we delete property, we also want to delete all associated values
 			var existing = await dbContext.ListingProperties
 				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)
@@ -55,33 +55,33 @@ namespace Infrastructure.Persistence.Repositories {
 			}
 			return existing;
 		}
-		public async Task<ListingProperty?> AddAttributesAsync(Guid id, List<ListingPropertyValue> attributes) {
+		public async Task<ListingProperty?> AddListingPropertyValueAsync(Guid id, List<ListingPropertyValue> values) {
 			var group = await dbContext.ListingProperties
 				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (group == null) {
-				// didnt find group with this id
+				// didnt find property with this id
 				return null;
 			}
-			// TODO - maybe check, that we are not adding already existing attributes
-			group.ListingPropertyValues.AddRange(attributes);
+			// TODO - maybe check, that we are not adding already existing values
+			group.ListingPropertyValues.AddRange(values);
 			await dbContext.SaveChangesAsync();
 			return group;
 		}
-		public async Task<ListingProperty?> UpdateAsync(Guid id, ListingProperty updatedGroup) {
-			// we will not be updating attributes
-			var existingGroup = await dbContext.ListingProperties
+		public async Task<ListingProperty?> UpdateAsync(Guid id, ListingProperty updatedProperty) {
+			// we will not be updating values
+			var existingProperty = await dbContext.ListingProperties
 				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)
 				.FirstOrDefaultAsync(x => x.Id == id);
-			if(existingGroup == null) {
+			if(existingProperty == null) {
 				// didnt find what we want to update
 				return null;
 			}
-			existingGroup.Name = updatedGroup.Name;
+			existingProperty.Name = updatedProperty.Name;
 			await dbContext.SaveChangesAsync();
-			return existingGroup;
+			return existingProperty;
 		}
 	}
 }
