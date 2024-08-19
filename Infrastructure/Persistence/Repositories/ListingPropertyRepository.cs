@@ -25,7 +25,7 @@ namespace Infrastructure.Persistence.Repositories {
 		}
 
 		public async Task<ListingProperty?> DeleteAsync(Guid id) {
-			// when we delete existing, we also want to delete all associated values
+			// when we delete property, we also want to delete all associated values
 			var existing = await dbContext.ListingProperties
 				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)
