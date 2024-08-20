@@ -11,7 +11,15 @@ using DotNetEnv;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
 builder.Services.AddControllers().AddJsonOptions(options => {
 	// this is needed, otherwise api throws an exception, when two related objects reference each other
 	options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -73,6 +81,7 @@ app.UseStaticFiles(new StaticFileOptions {
 	RequestPath = "/Images" //routes from localhost/images to the physical path above
 });
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend"); 
 
 app.UseAuthentication();
 app.UseAuthorization();
