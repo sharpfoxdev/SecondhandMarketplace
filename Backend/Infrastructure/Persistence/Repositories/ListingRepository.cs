@@ -23,30 +23,30 @@ namespace Infrastructure.Persistence.Repositories
 			this.imageRepository = imageRepository;
 		}
 
-		private async Task<Listing?> ValidateAndAddAttributes(Listing listing, List<IListingPropertyValueSelection> attributeSelections, Category category) {
+		private async Task<Listing?> ValidateAndAddPropertyValue(Listing listing, List<IListingPropertyValueSelection> valueSelection, Category category) {
 			listing.SelectedListingPropertyValues = new List<ListingPropertyValue>();
-			// we have to have matching selection for each group in the category
-			foreach (var group in category.ListingProperties) {
-				var selection = attributeSelections.Find(selection => selection.ListringPropertyId == group.Id);
+			// we have to have matching selection for each property in the category
+			foreach (var property in category.ListingProperties) {
+				var selection = valueSelection.Find(selection => selection.ListringPropertyId == property.Id);
 				if (selection == null) {
 					// matching selection wasnt provided
 					return null;
 				}
-				// check, that the attribute is indeed a part of attribute group
-				var attribute = await dbContext.ListingPropertyValues
+				// check, that the value is indeed a part of property
+				var propertyValue = await dbContext.ListingPropertyValues
 					.Include(x => x.ListingProperty)
 					.FirstOrDefaultAsync(x => x.Id == selection.SelectedListingPropertyValueId);
-				if (attribute == null) {
-					return null; // couldnt find such attribute
+				if (propertyValue == null) {
+					return null; // couldnt find such propertyValue
 				}
-				if (attribute.ListingProperty.Id != group.Id) {
-					return null; // the group of attribute is not matching required 
+				if (propertyValue.ListingProperty.Id != property.Id) {
+					return null; // the property of propertyValue is not matching required 
 				}
-				listing.SelectedListingPropertyValues.Add(attribute); // creats n to n relationship between listing and attribute
+				listing.SelectedListingPropertyValues.Add(propertyValue); // creats n to n relationship between listing and propertyValue
 			}
 			return listing;
 		}
-		public async Task<Listing?> CreateAsync(Listing listing, List<IListingPropertyValueSelection> attributeSelections) {
+		public async Task<Listing?> CreateAsync(Listing listing, List<IListingPropertyValueSelection> valueSelections) {
 
 			// we get the category of listing we want to create
 			var category = await dbContext.Categories
@@ -57,8 +57,8 @@ namespace Infrastructure.Persistence.Repositories
 				return null; // couldnt find the category
 			}
 
-			Listing? listingWithAttributes = await ValidateAndAddAttributes(listing, attributeSelections, category);
-			if(listingWithAttributes == null) {
+			Listing? listingWithPropertyValues = await ValidateAndAddPropertyValue(listing, valueSelections, category);
+			if(listingWithPropertyValues == null) {
 				return null; // validation failed
 			}
 			await dbContext.Listings.AddAsync(listing);

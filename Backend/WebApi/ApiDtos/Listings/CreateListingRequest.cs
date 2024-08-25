@@ -12,6 +12,6 @@ namespace WebApi.ApiDtos.Listings {
 		public string Description { get; set; }
 		public string ReasonOfSale { get; set; }
 		public Guid CategoryId { get; set; }
-		public List<AttributeSelectionDto> AttributeSelections { get; set; }
+		public List<ListingPropertyValueSelectionDto> PropertyValueSelection { get; set; }
 	}
 }

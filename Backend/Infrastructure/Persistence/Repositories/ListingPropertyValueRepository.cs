@@ -42,8 +42,8 @@ namespace Infrastructure.Persistence.Repositories {
 				.Include(x => x.Listings)
 				.ToListAsync();
 		}
-		public async Task<List<ListingPropertyValue>> GetAllByAttributeGroup(Guid id) {
-			// list just the ones tied to a group. Kinda similar to ListingProperty.GetById(), so maybe redundant?
+		public async Task<List<ListingPropertyValue>> GetAllByListingProperty(Guid id) {
+			// list just the ones tied to a listing property. Kinda similar to ListingProperty.GetById(), so maybe redundant?
 			throw new NotImplementedException();
 		}
 		public async Task<ListingPropertyValue?> GetByIdAsync(Guid id) {
@@ -57,10 +57,10 @@ namespace Infrastructure.Persistence.Repositories {
 			return existing;
 		}
 
-		public async Task<ListingPropertyValue?> UpdateAsync(Guid id, ListingPropertyValue updatedAttribute) {
-			// TOCHECK will update just name? What about adding it to a different existing group? Possibly. 
-			// Or create a new group all together? Probably not. 
-			// For now we dont update the value group ids
+		public async Task<ListingPropertyValue?> UpdateAsync(Guid id, ListingPropertyValue updatedPropertyValue) {
+			// TOCHECK will update just name? What about adding it to a different existing listing property? Possibly. 
+			// Or create a new listring property all together? Probably not. 
+			// For now we dont update the value listing property ids
 			var existing = await dbContext.ListingPropertyValues
 				.Include(x => x.ListingProperty)
 				.Include(x => x.Listings)
@@ -69,8 +69,8 @@ namespace Infrastructure.Persistence.Repositories {
 				// didnt find what we want to update
 				return null;
 			}
-			existing.Name = updatedAttribute.Name;
-			//existing.AttributeGroupId = updatedAttribute.AttributeGroupId;
+			existing.Name = updatedPropertyValue.Name;
+			//existing.ListingPropertyId = updatedPropertyValue.ListingPropertyId;
 			await dbContext.SaveChangesAsync();
 			return existing;
 		}

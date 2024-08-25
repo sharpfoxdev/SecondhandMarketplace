@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using WebApi.ApiDtos.ListingAttribute;
+using WebApi.ApiDtos.ListingPropertyValues;
 using WebApi.ApiDtos.Listings;
 
 namespace WebApi.Controllers {
@@ -44,7 +44,7 @@ namespace WebApi.Controllers {
 			Guid userId = Guid.Parse(userIdString);
 			domain.SellerId = userId;
 			// converting, because I cannot use interface directly in the API inside the request, as it cannot be deserialized
-			List<IListingPropertyValueSelection> interfaceListSelections = request.AttributeSelections.Cast<IListingPropertyValueSelection>().ToList();
+			List<IListingPropertyValueSelection> interfaceListSelections = request.PropertyValueSelection.Cast<IListingPropertyValueSelection>().ToList();
 			domain = await repository.CreateAsync(domain, interfaceListSelections);
 			return Ok(mapper.Map<ListingDto>(domain));
 		}

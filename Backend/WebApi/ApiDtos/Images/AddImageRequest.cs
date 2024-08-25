@@ -1,4 +1,4 @@
-﻿namespace WebApi.ApiDtos.Image
+﻿namespace WebApi.ApiDtos.Images
 {
     public class AddImageRequest
     {

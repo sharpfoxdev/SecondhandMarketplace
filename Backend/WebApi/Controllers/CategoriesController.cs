@@ -4,8 +4,9 @@ using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
-using WebApi.ApiDtos.AttributeGroups;
+using WebApi.ApiDtos.ListingProperties;
 using WebApi.ApiDtos.Categories;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace WebApi.Controllers {
 	[Route("api/[controller]")]
@@ -42,9 +43,9 @@ namespace WebApi.Controllers {
 			return Ok(mapper.Map<CategoryDto>(domain));
 		}
 		/// <summary>
-		/// Updates the category. It is not possible to change attribute groups tied to this category.
+		/// Updates the category. It is not possible to change listing properties tied to this category.
 		/// For that use other endpoints. It currently is not supported to move category within the
-		/// tree of categories, as that would mess up the listings and what attributes they should have
+		/// tree of categories, as that would mess up the listings and what property values they should have
 		/// </summary>
 		/// <param name="id">Id of category to update</param>
 		/// <param name="request"></param>
@@ -59,37 +60,37 @@ namespace WebApi.Controllers {
 			}
 			return Ok(mapper.Map<CategoryDto>(domain));
 		}
-		/// <summary>
-		/// Adds attribute groups to the category. Recursivelly adds these
-		/// attribute groups also to the sub categories. 
-		/// </summary>
-		/// <param name="id">Id of category to add groups to. </param>
-		/// <param name="groupIds">List of ids of groups to add. </param>
-		/// <returns>Updated category or 404, when the ids are not found. </returns>
-		[HttpPut]
-		[Route("AddGroups/{id:Guid}")]
-		public async Task<IActionResult> AddGroups(Guid id, List<Guid> groupIds) {
-			var domain = await repository.AddListingPropertiesAsync(id, groupIds);
+        /// <summary>
+        /// Adds listing properties to the category. Recursivelly adds these
+        /// listing properties also to the sub categories. 
+        /// </summary>
+        /// <param name="id">Id of category to add properties to. </param>
+        /// <param name="propertyIds">List of ids of properties to add. </param>
+        /// <returns>Updated category or 404, when the ids are not found. </returns>
+        [HttpPut]
+		[Route("AddListingProperties/{id:Guid}")]
+		public async Task<IActionResult> AddListingProperties(Guid id, List<Guid> propertyIds) {
+			var domain = await repository.AddListingPropertiesAsync(id, propertyIds);
 			if (domain == null) {
 				return NotFound();
 			}
 			return Ok(mapper.Map<CategoryDto>(domain));
 		}
-		/// <summary>
-		/// Removes attribute group from the category. Recursivelly removes these
-		/// attribute groups also from sub categories. Also removes the group up to
-		/// the highest parent, that has this group, to keep the data sane, 
-		/// as this is one of the properties, that gets inherited in the tree of categories.
-		/// So it would behave strangely, if suddenly parent would have some group and children
-		/// wouldn't. 
-		/// </summary>
-		/// <param name="id">Id of category to add groups to. </param>
-		/// <param name="groupIds">List of ids of groups to add. </param>
-		/// <returns>Updated category or 404, when the ids are not found. </returns>
-		[HttpPut]
-		[Route("RemoveGroup/{id:Guid}")]
-		public async Task<IActionResult> RemoveGroup(Guid id, Guid groupId) {
-			var domain = await repository.RemoveListingPropertyAsync(id, groupId);
+        /// <summary>
+        /// Removes listing property from the category. Recursivelly removes these
+        /// listing properties also from sub categories. Also removes the property up to
+        /// the highest parent, that has this property, to keep the data sane, 
+        /// as this is one of the properties, that gets inherited in the tree of categories.
+        /// So it would behave strangely, if suddenly parent would have some property and children
+        /// wouldn't. 
+        /// </summary>
+        /// <param name="id">Id of category to add property to. </param>
+        /// <param name="propertyId">Listing property to remove </param>
+        /// <returns>Updated category or 404, when the ids are not found. </returns>
+        [HttpPut]
+		[Route("RemoveListingProperty/{id:Guid}")]
+		public async Task<IActionResult> RemoveListingProperty(Guid id, Guid propertyId) {
+			var domain = await repository.RemoveListingPropertyAsync(id, propertyId);
 			if (domain == null) {
 				return NotFound();
 			}
@@ -97,7 +98,7 @@ namespace WebApi.Controllers {
 		}
 		/// <summary>
 		/// Deletes the given category and cascade deletes also all subcategories.  
-		/// It doesnt delete related groups tied to this category, as they are in many-to-many
+		/// It doesnt delete listing properties related tied to this category, as they are in many-to-many
 		/// relationship. 
 		/// </summary>
 		/// <param name="id">Id of category to delete. </param>

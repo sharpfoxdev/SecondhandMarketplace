@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Domain.Entities;
-using WebApi.ApiDtos.AttributeGroups;
+using WebApi.ApiDtos.ListingProperties;
 using WebApi.ApiDtos.Categories;
-using WebApi.ApiDtos.Image;
-using WebApi.ApiDtos.ListingAttribute;
+using WebApi.ApiDtos.Images;
+using WebApi.ApiDtos.ListingPropertyValues;
 using WebApi.ApiDtos.Listings;
 using WebApi.ApiDtos.StateOfItem;
 
@@ -17,25 +17,25 @@ namespace WebApi.Mappings {
 			// TODO PUT INTO METHODS
 
 			// Mapping between Domain and return Dtos
-			CreateMap<ListingPropertyValue, ListingAttributeDto>().ReverseMap();
+			CreateMap<ListingPropertyValue, ListingPropertyValueDto>().ReverseMap();
 			CreateMap<Listing, ListingDto>().ReverseMap();
 			CreateMap<Category, CategoryDto>().ReverseMap();
-			CreateMap<ListingProperty, AttributeGroupDto>().ReverseMap();
+			CreateMap<ListingProperty, ListingPropertyDto>().ReverseMap();
 			CreateMap<StateOfItem, StateOfItemDto>().ReverseMap();
 			CreateMap<Image, ImageDto>().ReverseMap();
 
 			// Mapping between domain and Create Request Dtos
-			CreateMap<ListingPropertyValue, CreateListingAttributeRequest>().ReverseMap();
+			CreateMap<ListingPropertyValue, CreateListingPropertyValueRequest>().ReverseMap();
 			CreateMap<Listing, CreateListingRequest>().ReverseMap();
 			CreateMap<Category, CreateCategoryRequest>().ReverseMap();
-			CreateMap<ListingProperty, CreateAttributeGroupRequest>().ReverseMap();
-			CreateMap<ListingPropertyValue, CreateListingAttributeInsideGroupRequest>().ReverseMap();
+			CreateMap<ListingProperty, CreateListingPropertyRequest>().ReverseMap();
+			CreateMap<ListingPropertyValue, CreatePropertyValueInsidePropertyRequest>().ReverseMap();
 
 			// Mapping between domain and Update Request Dtos
-			CreateMap<ListingPropertyValue, UpdateListingAttributeRequest>().ReverseMap();
+			CreateMap<ListingPropertyValue, UpdateListingPropertyValueRequest>().ReverseMap();
 			CreateMap<Listing, UpdateListingRequest>().ReverseMap();
 			CreateMap<Category, UpdateCategoryRequest>().ReverseMap();
-			CreateMap<ListingProperty, UpdateAttributeGroupRequest>().ReverseMap();
+			CreateMap<ListingProperty, UpdateListingPropertyRequest>().ReverseMap();
 		}
 
 	}

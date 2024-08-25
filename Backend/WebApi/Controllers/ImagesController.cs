@@ -3,10 +3,10 @@ using Domain.Entities;
 using Infrastructure.FileStorage.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
-using WebApi.ApiDtos.AttributeGroups;
+using WebApi.ApiDtos.ListingProperties;
 using WebApi.ApiDtos.Categories;
-using WebApi.ApiDtos.Image;
-using WebApi.ApiDtos.ListingAttribute;
+using WebApi.ApiDtos.Images;
+using WebApi.ApiDtos.ListingPropertyValues;
 
 namespace WebApi.Controllers
 {

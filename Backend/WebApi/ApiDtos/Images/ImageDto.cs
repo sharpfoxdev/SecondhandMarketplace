@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using WebApi.ApiDtos.Listings;
 
-namespace WebApi.ApiDtos.Image {
+namespace WebApi.ApiDtos.Images {
 	public class ImageDto {
 		public Guid Id { get; set; }
 		public string ImageUrl { get; set; }
