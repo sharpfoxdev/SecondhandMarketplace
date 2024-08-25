@@ -1,4 +1,4 @@
-'use client'; // This marks the component as a Client Component
+'use client';
 
 import { useState } from 'react';
 import axios from 'axios';
@@ -20,7 +20,7 @@ export default function Register() {
                 roles: ['User'],
             });
             setSuccess('Registration successful! Please login.');
-            router.push('/login');
+            router.push('/auth/login');
         } catch (error) {
             setError('Registration failed. Try again.');
         }
