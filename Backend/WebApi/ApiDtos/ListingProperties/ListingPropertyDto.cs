@@ -7,6 +7,6 @@ namespace WebApi.ApiDtos.ListingProperties {
 		public Guid Id { get; set; }
 		public string Name { get; set; }
 		public List<CategoryDto> Categories { get; set; }
-		public List<ListingPropertyValueDto> Attributes { get; set; }
+		public List<ListingPropertyValueDto> ListingPropertyValues { get; set; }
 	}
 }

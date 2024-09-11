@@ -8,7 +8,7 @@ namespace WebApi.ApiDtos.Categories {
 		public string Name { get; set; }
 		public CategoryDto? ParentCategory { get; set; }
 		public List<CategoryDto> ChildrenCategories { get; set; }
-		public List<ListingPropertyDto> AttributeGroups { get; set; }
+		public List<ListingPropertyDto> ListingProperties { get; set; }
 		public List<ListingDto> Listings { get; set; }
 	}
 }
