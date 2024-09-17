@@ -17,11 +17,17 @@ namespace WebApi.Controllers {
 		private readonly IListingPropertyRepository repository;
 		private readonly IMapper mapper;
 
-		public ListingPropertiesController(IListingPropertyRepository repository, IMapper mapper)
+        /// <summary>
+        /// Initializes a new instance of ListingPropertiesController.
+        /// </summary>
+        /// <param name="repository">Repository used to access listing property data.</param>
+        /// <param name="mapper">Mapper used to convert between domain models and DTOs.</param>
+        public ListingPropertiesController(IListingPropertyRepository repository, IMapper mapper)
         {
-			this.repository = repository;
-			this.mapper = mapper;
-		}
+            this.repository = repository;
+            this.mapper = mapper;
+        }
+
         /// <summary>
         /// Lists all listing properties in the database. 
         /// </summary>

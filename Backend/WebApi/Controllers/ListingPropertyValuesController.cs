@@ -14,17 +14,22 @@ namespace WebApi.Controllers {
 	public class ListingPropertyValuesController : ControllerBase {
 		private readonly IMapper mapper;
 		private readonly IListingPropertyValueRepository repository;
-
-		public ListingPropertyValuesController(IMapper mapper, IListingPropertyValueRepository repository)
+        /// <summary>
+        /// Initializes a new instance of the ListingPropertyValuesController.
+        /// </summary>
+        /// <param name="mapper">Mapper instance used for converting between domain models and DTOs.</param>
+        /// <param name="repository">Repository for accessing listing property values data.</param>
+        public ListingPropertyValuesController(IMapper mapper, IListingPropertyValueRepository repository)
         {
-			this.mapper = mapper;
-			this.repository = repository;
-		}
-		/// <summary>
-		/// Lists all values regardles of the listing property. 
-		/// </summary>
-		/// <returns>List of ListingPropertyValueDto </returns>
-		[HttpGet]
+            this.mapper = mapper;
+            this.repository = repository;
+        }
+
+        /// <summary>
+        /// Lists all values regardles of the listing property. 
+        /// </summary>
+        /// <returns>List of ListingPropertyValueDto </returns>
+        [HttpGet]
 		public async Task<IActionResult> GetAll() {
 			var domain = await repository.GetAllAsync();
 			return Ok(mapper.Map<List<ListingPropertyValueDto>>(domain));
