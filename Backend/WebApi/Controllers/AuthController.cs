@@ -1,9 +1,12 @@
-﻿using Infrastructure.Identity;
+﻿using AutoMapper;
+using Infrastructure.Identity;
 using Infrastructure.Identity.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Core.Types;
 using WebApi.ApiDtos.Auth;
+using WebApi.ApiDtos.Categories;
 
 namespace WebApi.Controllers {
 	[Route("api/[controller]")]
@@ -61,6 +64,6 @@ namespace WebApi.Controllers {
 				JwtToken = jwtToken
 			};
 			return Ok(response);
-		}
-	}
+        }
+    }
 }
