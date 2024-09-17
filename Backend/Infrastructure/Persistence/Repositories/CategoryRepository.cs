@@ -61,12 +61,12 @@ namespace Infrastructure.Persistence.Repositories {
 			// we dont have to add this category as a child to the parent, because
 			// it is enough, when this category knows it's parent
 
-			// add the attribute groups from the parent category
+			// add the listing properties from the parent category
 			Category parentCategory = await dbContext.Categories.FindAsync(category.ParentCategoryId);
-			var parentAttributeGroups = parentCategory.ListingProperties;
-			if(parentAttributeGroups != null) {
+			var parentListingProperties = parentCategory.ListingProperties;
+			if(parentListingProperties != null) {
 				// can be null for root category
-				category.ListingProperties.Concat(parentAttributeGroups);
+				category.ListingProperties.Concat(parentListingProperties);
 			}
 			await dbContext.Categories.AddAsync(category);
 			await dbContext.SaveChangesAsync();
@@ -197,21 +197,20 @@ namespace Infrastructure.Persistence.Repositories {
 				return null;
 			}
 			existing.Name = updatedCategory.Name;
-			//existing.AttributeGroupId = updatedAttribute.AttributeGroupId;
 			await dbContext.SaveChangesAsync();
 			return existing;
 		}
-		/// <summary>
-		/// Adds the list of ListingProperties to the already existing list of ListingProperties. Adds it also to the whole
-		/// subtree. 
-		/// </summary>
-		/// <param name="id">Id of Category to update. </param>
-		/// <param name="attributeGroups">Groups to add. </param>
-		/// <returns>
-		/// Updated Category. 
-		/// Null, if the category was not found. 
-		/// </returns>
-		public async Task<Category?> AddListingPropertiesAsync(Guid categoryId, List<Guid> attributeGroupIds) {
+        /// <summary>
+        /// Adds the list of ListingProperties to the already existing list of ListingProperties. Adds it also to the whole
+        /// subtree. 
+        /// </summary>
+        /// <param name="categoryId">Id of Category to update. </param>
+        /// <param name="listingPropertyIds">Properties to add. </param>
+        /// <returns>
+        /// Updated Category. 
+        /// Null, if the category was not found. 
+        /// </returns>
+        public async Task<Category?> AddListingPropertiesAsync(Guid categoryId, List<Guid> listingPropertyIds) {
 			var existing = await dbContext.Categories
 				.Include(x => x.ListingProperties)
 				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
@@ -222,7 +221,7 @@ namespace Infrastructure.Persistence.Repositories {
 
 			// Fetch the ListingProperties based on the provided IDs
 			var listingProperties = await dbContext.ListingProperties
-				.Where(ag => attributeGroupIds.Contains(ag.Id))
+				.Where(ag => listingPropertyIds.Contains(ag.Id))
 				.ToListAsync();
 
 			// Add the ListingProperties to the Category
@@ -233,7 +232,7 @@ namespace Infrastructure.Persistence.Repositories {
 				existing.ListingProperties.Add(property);
 			}
             // recursivelly add new ListingProperties to the children categories
-            var updateTasks = existing.ChildrenCategories.Select(category => AddListingPropertiesAsync(category.Id, attributeGroupIds));
+            var updateTasks = existing.ChildrenCategories.Select(category => AddListingPropertiesAsync(category.Id, listingPropertyIds));
 			await Task.WhenAll(updateTasks);
 
 			await dbContext.SaveChangesAsync();
@@ -245,7 +244,7 @@ namespace Infrastructure.Persistence.Repositories {
         /// TODO, might need a bit of refactoring to make it clearer
         /// </summary>
         /// <param name="categoryId">Id of category anywhere in the tree</param>
-        /// <param name="propertyId">Id of group to remove. </param>
+        /// <param name="propertyId">Id of property to remove. </param>
         /// <returns></returns>
         public async Task<Category?> RemoveListingPropertyAsync(Guid categoryId, Guid propertyId) {
 			var existingCategory = await dbContext.Categories
