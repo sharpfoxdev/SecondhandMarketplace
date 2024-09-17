@@ -65,12 +65,12 @@ namespace WebApi.Controllers {
         /// listing properties also to the sub categories. 
         /// </summary>
         /// <param name="id">Id of category to add properties to. </param>
-        /// <param name="propertyIds">List of ids of properties to add. </param>
+        /// <param name="request">Request with list of ids of properties to add. </param>
         /// <returns>Updated category or 404, when the ids are not found. </returns>
         [HttpPut]
 		[Route("AddListingProperties/{id:Guid}")]
-		public async Task<IActionResult> AddListingProperties(Guid id, List<Guid> propertyIds) {
-			var domain = await repository.AddListingPropertiesAsync(id, propertyIds);
+		public async Task<IActionResult> AddListingProperties(Guid id, AddListingPropertiesToCategoryRequest request) {
+			var domain = await repository.AddListingPropertiesAsync(id, request.ListingPropertyIds);
 			if (domain == null) {
 				return NotFound();
 			}
@@ -85,12 +85,12 @@ namespace WebApi.Controllers {
         /// wouldn't. 
         /// </summary>
         /// <param name="id">Id of category to add property to. </param>
-        /// <param name="propertyId">Listing property to remove </param>
+        /// <param name="request">Request with listing property to remove </param>
         /// <returns>Updated category or 404, when the ids are not found. </returns>
         [HttpPut]
 		[Route("RemoveListingProperty/{id:Guid}")]
-		public async Task<IActionResult> RemoveListingProperty(Guid id, Guid propertyId) {
-			var domain = await repository.RemoveListingPropertyAsync(id, propertyId);
+		public async Task<IActionResult> RemoveListingProperty(Guid id, RemoveListingPropertyFromCategoryRequest request) {
+			var domain = await repository.RemoveListingPropertyAsync(id, request.Id);
 			if (domain == null) {
 				return NotFound();
 			}

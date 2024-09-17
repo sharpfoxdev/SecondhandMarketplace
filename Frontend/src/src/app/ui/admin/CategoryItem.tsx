@@ -25,7 +25,7 @@ export default function CategoryItem({
   return (
     <li className="mb-3">
       <div className="d-flex align-items-center">
-        <Link href={`/category/${category.id}`}>
+        <Link href={`/admin/category/${category.id}`}>
           <span>{category.name}</span>
         </Link>
         <button

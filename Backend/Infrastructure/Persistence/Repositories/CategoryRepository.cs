@@ -62,12 +62,20 @@ namespace Infrastructure.Persistence.Repositories {
 			// it is enough, when this category knows it's parent
 
 			// add the listing properties from the parent category
-			Category parentCategory = await dbContext.Categories.FindAsync(category.ParentCategoryId);
+			Category parentCategory = await dbContext.Categories.Include(x => x.ListingProperties).FirstOrDefaultAsync(x => x.Id == category.ParentCategoryId);
 			var parentListingProperties = parentCategory.ListingProperties;
 			if(parentListingProperties != null) {
 				// can be null for root category
-				category.ListingProperties.Concat(parentListingProperties);
-			}
+				if(category.ListingProperties == null)
+				{
+					// not properties yet in the current category
+					category.ListingProperties = parentListingProperties;
+				}
+				else
+				{
+                    category.ListingProperties.Concat(parentListingProperties);
+                }
+            }
 			await dbContext.Categories.AddAsync(category);
 			await dbContext.SaveChangesAsync();
 			return category;
@@ -221,7 +229,7 @@ namespace Infrastructure.Persistence.Repositories {
 
 			// Fetch the ListingProperties based on the provided IDs
 			var listingProperties = await dbContext.ListingProperties
-				.Where(ag => listingPropertyIds.Contains(ag.Id))
+				.Where(property => listingPropertyIds.Contains(property.Id))
 				.ToListAsync();
 
 			// Add the ListingProperties to the Category
@@ -250,7 +258,7 @@ namespace Infrastructure.Persistence.Repositories {
 			var existingCategory = await dbContext.Categories
 				.Include(x => x.ListingProperties)
 				.Include(x => x.ParentCategory)
-				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
+				.Include(x => x.ChildrenCategories)
 				.FirstOrDefaultAsync(x => x.Id == categoryId);
 			if (existingCategory == null) {
 				return null;
@@ -258,28 +266,69 @@ namespace Infrastructure.Persistence.Repositories {
 
 			var existingPropertyIndex = existingCategory.ListingProperties.FindIndex(ag => ag.Id == propertyId);
 			if (existingPropertyIndex == -1) {
-                // this also works as a base of recursion for traversing the children and parents
-                // so that we dont end up in an infinite loop where we would traverse from the
-                // parent to the child and back to the parent
-                // we couldnt find a ListingProperty with this index
                 return null;
 			}
 			// remove the property from the category
 			existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
 
 			// recursivelly remove the property from the children categories
-			var updateTasksChildren = existingCategory.ChildrenCategories.Select(category => RemoveListingPropertyAsync(category.Id, propertyId));
+			var updateTasksChildren = existingCategory.ChildrenCategories.Select(category => RemoveListingPropertyFromChildren(category.Id, propertyId));
 			await Task.WhenAll(updateTasksChildren);
 
             // Update also parents, if they also have the same ListingProperties, as otherwise it wouldnt
-            // be determinitstic, what hap
+            // be nice, as when a parent has a property, all of its children also should have it
             if (existingCategory.ParentCategory != null) {
-				var updateTasksParents = RemoveListingPropertyAsync(existingCategory.ParentCategory.Id, propertyId);
-				await Task.WhenAll(updateTasksParents);
+				await RemoveListingPropertyFromParents(existingCategory.ParentCategory.Id, propertyId);
+				//await Task.WhenAll(updateTasksParents);
 			}
 
 			await dbContext.SaveChangesAsync();
 			return existingCategory;
 		}
-	}
+		private async Task RemoveListingPropertyFromParents(Guid categoryId, Guid propertyId)
+		{
+            var existingCategory = await dbContext.Categories
+                .Include(x => x.ListingProperties)
+                .Include(x => x.ParentCategory)
+                .FirstOrDefaultAsync(x => x.Id == categoryId);
+            if (existingCategory == null)
+            {
+                return;
+            }
+            var existingPropertyIndex = existingCategory.ListingProperties.FindIndex(ag => ag.Id == propertyId);
+            if (existingPropertyIndex == -1)
+            {
+                return;
+            }
+            existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
+            if (existingCategory.ParentCategory != null)
+            {
+                await RemoveListingPropertyFromParents(existingCategory.ParentCategory.Id, propertyId);
+            }
+        }
+		private async Task RemoveListingPropertyFromChildren(Guid categoryId, Guid propertyId)
+		{
+            var existingCategory = await dbContext.Categories
+                .Include(x => x.ListingProperties)
+                .Include(x => x.ChildrenCategories)
+                .FirstOrDefaultAsync(x => x.Id == categoryId);
+            if (existingCategory == null)
+            {
+                return;
+            }
+
+            var existingPropertyIndex = existingCategory.ListingProperties.FindIndex(ag => ag.Id == propertyId);
+            if (existingPropertyIndex == -1)
+            {
+                // we couldnt find a ListingProperty with this index
+                return;
+            }
+            // remove the property from the category
+            existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
+
+            // recursivelly remove the property from the children categories
+            var updateTasksChildren = existingCategory.ChildrenCategories.Select(category => RemoveListingPropertyFromChildren(category.Id, propertyId));
+            await Task.WhenAll(updateTasksChildren);
+        }
+    }
 }
