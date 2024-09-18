@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 

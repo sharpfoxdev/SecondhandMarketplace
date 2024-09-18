@@ -98,6 +98,7 @@ namespace Infrastructure.Persistence.Repositories
 				.Include(x => x.SelectedListingPropertyValues)
 					.ThenInclude(x => x.ListingProperty)
 				.Include(x => x.Images)
+				.Include(x => x.StateOfItem)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if(existing == null) {
 				return null; // couldnt find this listing

@@ -60,7 +60,17 @@ namespace WebApi.Controllers
             }
             return Ok(mapper.Map<ListingDto>(domain));
         }
-
+        [Authorize]
+        [HttpGet]
+        [Route("GetByUser")]
+        public async Task<IActionResult> GetAllByUser()
+        {
+            var domain = await repository.GetAllAsync();
+            string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Guid userId = Guid.Parse(userIdString);
+            var filtered = domain.Where(x => x.SellerId == userId).ToList();
+            return Ok(mapper.Map<List<ListingDto>>(filtered));
+        }
         /// <summary>
         /// Creates a new listing.
         /// </summary>
@@ -86,9 +96,13 @@ namespace WebApi.Controllers
         /// <param name="request">The request object containing updated listing details.</param>
         /// <returns>The updated listing, or NotFound if the listing does not exist.</returns>
         [Authorize]
-        [HttpPut]
+        [HttpPut("{id:Guid}")]
         public async Task<IActionResult> Put(Guid id, UpdateListingRequest request)
         {
+            if (!await UserOwnsTheListing(id))
+            {
+                return Forbid();
+            }
             var domain = mapper.Map<Listing>(request);
             domain = await repository.UpdateAsync(id, domain);
             if (domain == null)
@@ -104,9 +118,13 @@ namespace WebApi.Controllers
         /// <param name="id">The unique identifier of the listing to delete.</param>
         /// <returns>The deleted listing, or NotFound if the listing does not exist.</returns>
         [HttpDelete]
+        [Authorize]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
+            if (!await UserOwnsTheListing(id)){
+                return Forbid();
+            }
             var domain = await repository.DeleteAsync(id);
             if (domain == null)
             {
@@ -114,6 +132,19 @@ namespace WebApi.Controllers
             }
             return Ok(mapper.Map<ListingDto>(domain));
         }
-
+        private async Task<bool> UserOwnsTheListing(Guid id) {
+            var domain = await repository.GetByIdAsync(id);
+            if (domain == null)
+            {
+                return false;
+            }
+            string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Guid userId = Guid.Parse(userIdString);
+            if (domain.SellerId != userId)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }
