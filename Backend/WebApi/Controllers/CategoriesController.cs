@@ -40,7 +40,8 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetAll()
         {
             var domain = await repository.GetAllAsync();
-            return Ok(mapper.Map<List<CategoryDto>>(domain));
+            var mapped = mapper.Map<List<CategoryDto>>(domain);
+            return Ok(mapped);
         }
 
         /// <summary>

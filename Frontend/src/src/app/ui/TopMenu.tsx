@@ -85,6 +85,11 @@ export default function TopMenu() {
                     {/* Right-aligned buttons */}
                     <ul className="navbar-nav ms-auto">
                         <li className="nav-item">
+                            <Link href="/listing/new" className="nav-link">
+                                New listing
+                            </Link>
+                        </li>
+                        <li className="nav-item">
                             <Link href="/auth/login" className="nav-link">
                                 Login
                             </Link>

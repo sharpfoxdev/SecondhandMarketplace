@@ -124,7 +124,8 @@ namespace Infrastructure.Persistence.Repositories {
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
 				.Include(x => x.ListingProperties)
-				.ToListAsync();
+					.ThenInclude(lp => lp.ListingPropertyValues)
+                .ToListAsync();
 		}
 		/// <summary>
 		/// Returns data about given Category by its id.  

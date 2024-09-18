@@ -61,9 +61,9 @@ namespace Infrastructure.Persistence.Repositories
 			if(listingWithPropertyValues == null) {
 				return null; // validation failed
 			}
-			await dbContext.Listings.AddAsync(listing);
+			await dbContext.Listings.AddAsync(listingWithPropertyValues);
 			await dbContext.SaveChangesAsync();
-			return listing;
+			return listingWithPropertyValues;
 		}
 
 		public async Task<Listing?> DeleteAsync(Guid id) {
