@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Repositories;
+﻿using Application.Filters;
+using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Infrastructure.Persistence.Repositories {
 	/// <summary>
@@ -141,34 +143,56 @@ namespace Infrastructure.Persistence.Repositories {
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
 				.Include(x => x.ListingProperties)
-				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
+				.Include(x => x.ChildrenCategories)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {
 				return null;
 			}
 			return existing;
 		}
-
-		/// <summary>
-		/// Used to get by name
-		/// </summary>
-		/// <param name="name">Name of Category. </param>
-		/// <returns>
-		/// Null if a Category with the given name was not found.
-		/// Otherwise returns the Category.
-		/// </returns>
-		public async Task<Category?> GetListingsByCategoryNameAsync(string name) {
-			// TODO THIS SHOULD ALSO ASK ALL THE SUBCATEGORIES AND LIST THEIR LISTINGS
+        public async Task<Category?> GetByNameAsync(string name)
+        {
+            var existing = await dbContext.Categories
+                .Include(x => x.Listings)
+                .Include(x => x.ParentCategory)
+                .Include(x => x.ListingProperties)
+					.ThenInclude(lp => lp.ListingPropertyValues)
+                .Include(x => x.ChildrenCategories)
+                .FirstOrDefaultAsync(x => x.Name == name);
+            if (existing == null)
+            {
+                return null;
+            }
+            return existing;
+        }
+        /// <summary>
+        /// Used to get by name
+        /// </summary>
+        /// <param name="name">Name of Category. </param>
+        /// <returns>
+        /// Null if a Category with the given name was not found.
+        /// Otherwise returns listings in the given category. 
+        /// </returns>
+        public async Task<List<Listing>> GetListingsByCategoryNameAsync(string name, ListingFilter filter) {
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
-				.Include(x => x.ParentCategory)
+					.ThenInclude(x => x.Images)
+                .Include(x => x.Listings)
+                    .ThenInclude(x => x.SelectedListingPropertyValues)
+                .Include(x => x.ChildrenCategories)
 				.Include(x => x.ListingProperties)
-				.Include(x => x.ChildrenCategories) // this might be dangerous, try it out
+					.ThenInclude(x => x.ListingPropertyValues)
 				.FirstOrDefaultAsync(x => x.Name == name);
 			if (existing == null) {
-				return null;
+				return new List<Listing>();
 			}
-			return existing;
+			List<Listing> listings = filter.Filter(existing.Listings, existing.ListingProperties);
+			foreach(var child in existing.ChildrenCategories)
+			{
+				var childListings = await GetListingsByCategoryNameAsync(child.Name, filter);
+				listings.AddRange(childListings);
+			}
+			return listings;
 		}
 
         /// <summary>

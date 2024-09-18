@@ -17,7 +17,6 @@ namespace WebApi.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ListingsController : ControllerBase
     {
         private readonly IListingRepository repository;
@@ -67,6 +66,7 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="request">The request object containing details of the listing to create.</param>
         /// <returns>The created listing.</returns>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post(CreateListingRequest request)
         {
@@ -85,6 +85,7 @@ namespace WebApi.Controllers
         /// <param name="id">The unique identifier of the listing to update.</param>
         /// <param name="request">The request object containing updated listing details.</param>
         /// <returns>The updated listing, or NotFound if the listing does not exist.</returns>
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Put(Guid id, UpdateListingRequest request)
         {

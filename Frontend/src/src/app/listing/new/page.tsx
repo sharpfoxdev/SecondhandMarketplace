@@ -20,8 +20,15 @@ interface ListingPropertyValue {
   name: string;
 }
 
+interface StateOfItem {
+  id: string;
+  name: string;
+}
+
 export default function CreateListing() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [statesOfItem, setStatesOfItem] = useState<StateOfItem[]>([]);
+  const [selectedStateOfItemId, setSelectedStateOfItemId] = useState<string | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [listingProperties, setListingProperties] = useState<ListingProperty[]>([]);
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<{ [propertyId: string]: string }>({});
@@ -32,20 +39,29 @@ export default function CreateListing() {
   const [photos, setPhotos] = useState<File[]>([]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get<Category[]>('https://localhost:7192/api/Categories', {
+
+        const categoryResponse = await axios.get<Category[]>('https://localhost:7192/api/Categories', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setCategories(response.data);
+
+        const stateResponse = await axios.get<StateOfItem[]>('https://localhost:7192/api/StateOfItem', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setCategories(categoryResponse.data);
+        setStatesOfItem(stateResponse.data);
       } catch (error) {
-        console.error('Failed to fetch categories', error);
+        console.error('Failed to fetch data', error);
       }
     };
-    fetchCategories();
+    fetchData();
   }, []);
 
   const handleCategorySelect = (categoryId: string) => {
@@ -76,7 +92,7 @@ export default function CreateListing() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedCategoryId || !title || !price || photos.length === 0) {
+    if (!selectedCategoryId || !title || !price || !selectedStateOfItemId || photos.length === 0) {
       alert('Please fill in all the required fields.');
       return;
     }
@@ -84,13 +100,12 @@ export default function CreateListing() {
     try {
       const token = localStorage.getItem('token');
 
-      // Prepare the listing data
       const listingData = {
         title,
         price,
         description,
         reasonOfSale,
-        stateOfItemId: "2e0e5d47-2ff5-421e-945e-9fdc08cc762d", // todo placeholder, predelat
+        stateOfItemId: selectedStateOfItemId,
         categoryId: selectedCategoryId,
         propertyValueSelection: Object.keys(selectedPropertyValues).map((propertyId) => ({
           listringPropertyId: propertyId,
@@ -183,6 +198,24 @@ export default function CreateListing() {
             value={reasonOfSale}
             onChange={(e) => setReasonOfSale(e.target.value)}
           />
+        </div>
+
+        {/* State of item selection */}
+        <div className="mb-3">
+          <label className="form-label">Select State of Item</label>
+          <select
+            className="form-select"
+            value={selectedStateOfItemId || ''}
+            onChange={(e) => setSelectedStateOfItemId(e.target.value)}
+            required
+          >
+            <option value="">Select a State of Item</option>
+            {statesOfItem.map((state) => (
+              <option key={state.id} value={state.id}>
+                {state.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Category selection */}

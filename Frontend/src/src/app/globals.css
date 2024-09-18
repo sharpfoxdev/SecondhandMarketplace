@@ -15,6 +15,33 @@
   top: 0;
   margin-top: -1px;
 }
+.card.listing-card {
+  width: 100%; /* Ensure cards take up the full column width */
+  height: 350px; /* Set a fixed height for all cards */
+  overflow: hidden;
+  cursor: pointer; /* Change cursor to indicate the card is clickable */
+}
+
+.card.listing-card img {
+  height: 150px; /* Fix the image height */
+  object-fit: cover; /* Ensure the image covers the available space without distortion */
+}
+
+.card.listing-card .card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card.listing-card h5 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.card.listing-card p {
+  margin-bottom: 0.5rem;
+}
 
 /* :root {
   --max-width: 1100px;

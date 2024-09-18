@@ -6,6 +6,7 @@ using WebApi.ApiDtos.Images;
 using WebApi.ApiDtos.ListingPropertyValues;
 using WebApi.ApiDtos.Listings;
 using WebApi.ApiDtos.StateOfItem;
+using Application.Filters;
 
 namespace WebApi.Mappings {
 	/// <summary>
@@ -23,6 +24,7 @@ namespace WebApi.Mappings {
 			CreateMap<ListingProperty, ListingPropertyDto>().ReverseMap();
 			CreateMap<StateOfItem, StateOfItemDto>().ReverseMap();
 			CreateMap<Image, ImageDto>().ReverseMap();
+			CreateMap<ListingFilter, ListingFilterDto>().ReverseMap();
 
 			// Mapping between domain and Create Request Dtos
 			CreateMap<ListingPropertyValue, CreateListingPropertyValueRequest>().ReverseMap();

@@ -7,6 +7,8 @@ using NuGet.Protocol.Core.Types;
 using WebApi.ApiDtos.ListingProperties;
 using WebApi.ApiDtos.Categories;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using WebApi.ApiDtos.Listings;
+using Application.Filters;
 
 namespace WebApi.Controllers
 {
@@ -62,14 +64,22 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="categoryName">The name of the category.</param>
         /// <returns>The listings in the requested category.</returns>
-        [HttpGet]
+        [HttpPost]
         [Route("{categoryName}")]
-        public async Task<IActionResult> GetListingsByCategoryName(string categoryName)
+        public async Task<IActionResult> GetListingsByCategoryName(string categoryName, ListingFilterDto filter)
         {
-            var domain = await repository.GetListingsByCategoryNameAsync(categoryName);
-            return Ok(mapper.Map<CategoryDto>(domain));
+            var domainFilter = mapper.Map<ListingFilter>(filter);
+            var domain = await repository.GetListingsByCategoryNameAsync(categoryName, domainFilter);
+            return Ok(mapper.Map<List<ListingDto>>(domain));
         }
-
+        [HttpGet]
+        [Route("GetByName/{categoryName}")]
+        public async Task<IActionResult> GetCategoryByCategoryName(string categoryName)
+        {
+            var domain = await repository.GetByNameAsync(categoryName);
+            var mapped = mapper.Map<CategoryDto>(domain);
+            return Ok(mapped);
+        }
         /// <summary>
         /// Creates a new category.
         /// </summary>

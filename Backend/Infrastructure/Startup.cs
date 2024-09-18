@@ -46,6 +46,7 @@ namespace Infrastructure
 			.AddScoped<IListingPropertyValueRepository, ListingPropertyValueRepository>()
 			.AddScoped<IImageRepository, ImageRepository>()
 			.AddScoped<ITokenRepository, TokenRepository>()
+			.AddScoped<IStateOfItemRepository, StateOfItemRepository>()
 			.AddHttpContextAccessor()
 			.AddIdentity(); //possibly move elsewhere
 		}

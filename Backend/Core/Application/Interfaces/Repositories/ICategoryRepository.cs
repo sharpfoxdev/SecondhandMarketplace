@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Filters;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,8 @@ namespace Application.Interfaces.Repositories {
 	public interface ICategoryRepository {
 		public Task<List<Category>> GetAllAsync();
 		public Task<Category?> GetByIdAsync(Guid id);
-		public Task<Category?> GetListingsByCategoryNameAsync(string name);
+		public Task<List<Listing>> GetListingsByCategoryNameAsync(string name, ListingFilter filter);
+		public Task<Category?> GetByNameAsync(string name);
 		public Task<Category> CreateAsync(Category category);
 		public Task<Category?> UpdateAsync(Guid id, Category category);
 		public Task<Category?> DeleteAsync(Guid id);
