@@ -21,7 +21,6 @@ namespace Domain.Entities {
     public class Listing : IEntity {
 		public Guid Id { get; set; }
 		public decimal Price { get; set; }
-		// TODO will be mapped to Ids of users, just placeholders for now
 		public Guid SellerId { get; set; }
 
 		public StateOfItem StateOfItem { get; set; }

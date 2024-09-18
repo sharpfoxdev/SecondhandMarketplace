@@ -17,15 +17,17 @@ namespace Infrastructure.Persistence.Repositories {
 	/// </summary>
 	public class CategoryRepository : ICategoryRepository {
 		private readonly MarketplaceDbContext dbContext;
+        private readonly IListingRepository listingRepository;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dbContext"></param>
-		public CategoryRepository(MarketplaceDbContext dbContext)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="dbContext"></param>
+        public CategoryRepository(MarketplaceDbContext dbContext, IListingRepository listingRepository)
         {
 			this.dbContext = dbContext;
-		}
+            this.listingRepository = listingRepository;
+        }
 
 		/// <summary>
 		/// Checks the database, whether there is a Category with such name. 
@@ -105,14 +107,18 @@ namespace Infrastructure.Persistence.Repositories {
 			if (existing == null) {
 				return null;
 			}
+			foreach(var listing in existing.Listings)
+			{
+				await listingRepository.DeleteAsync(listing.Id);
+			}
+            // remove recursively all subcategories
+            var childrenToDelete = existing.ChildrenCategories.ToList();
+            foreach (var child in childrenToDelete) // we have to iterate over a copy of the list, otherwise it breaks
+            {
+                await DeleteAsync(child.Id);
+            }
 
-			// remove recursively all subcategories
-			var deleteTasks = existing.ChildrenCategories.Select(category => DeleteAsync(category.Id));
-			await Task.WhenAll(deleteTasks);
-
-			// TODO remove all listings
-
-			dbContext.Categories.Remove(existing);
+            dbContext.Categories.Remove(existing);
 			await dbContext.SaveChangesAsync();
 			return existing;
 		}
@@ -139,7 +145,6 @@ namespace Infrastructure.Persistence.Repositories {
 		/// Else returns the Category.
 		/// </returns>
 		public async Task<Category?> GetByIdAsync(Guid id) {
-			// TODO add recursive query for children categories listings
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
@@ -269,9 +274,6 @@ namespace Infrastructure.Persistence.Repositories {
 			{
 				await AddListingPropertiesAsync (child.Id, listingPropertyIds);
 			}
-            // recursivelly add new ListingProperties to the children categories
-   //         var updateTasks = existing.ChildrenCategories.Select(category => AddListingPropertiesAsync(category.Id, listingPropertyIds));
-			//await Task.WhenAll(updateTasks);
 
 			await dbContext.SaveChangesAsync();
 			return existing;
@@ -279,7 +281,6 @@ namespace Infrastructure.Persistence.Repositories {
         /// <summary>
         /// Gets the Category the highest in the hierarchy, that has this ListingProperty
         /// and removes the ListingProperty from the whole subtree
-        /// TODO, might need a bit of refactoring to make it clearer
         /// </summary>
         /// <param name="categoryId">Id of category anywhere in the tree</param>
         /// <param name="propertyId">Id of property to remove. </param>
