@@ -15,10 +15,9 @@ namespace WebApi.ApiDtos.Listings
 		public string Title { get; set; }
 		public string Description { get; set; }
 		public string ReasonOfSale { get; set; }
-		public string ListingImageUrl { get; set; }
 		public bool IsSold { get; set; }
 		public CategoryDto Category { get; set; }
-		public List<ListingPropertyValueDto> SelectedAttributes { get; set; }
+		public List<ListingPropertyValueDto> SelectedListingPropertyValues { get; set; }
 		public List<ImageDto> Images { get; set; }
 
 	}

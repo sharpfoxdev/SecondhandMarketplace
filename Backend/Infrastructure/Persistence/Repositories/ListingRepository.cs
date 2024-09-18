@@ -96,6 +96,7 @@ namespace Infrastructure.Persistence.Repositories
 			var existing = await dbContext.Listings
 				.Include(x => x.Category)
 				.Include(x => x.SelectedListingPropertyValues)
+					.ThenInclude(x => x.ListingProperty)
 				.Include(x => x.Images)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if(existing == null) {

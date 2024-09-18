@@ -50,7 +50,7 @@ namespace WebApi.Controllers
         /// <param name="id">The unique identifier of the listing.</param>
         /// <returns>The requested listing, or NotFound if the listing does not exist.</returns>
         [HttpGet]
-        [Route("id:Guid")]
+        [Route("{id:Guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var domain = await repository.GetByIdAsync(id);
@@ -104,7 +104,7 @@ namespace WebApi.Controllers
         /// <param name="id">The unique identifier of the listing to delete.</param>
         /// <returns>The deleted listing, or NotFound if the listing does not exist.</returns>
         [HttpDelete]
-        [Route("id:Guid")]
+        [Route("{id:Guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var domain = await repository.DeleteAsync(id);

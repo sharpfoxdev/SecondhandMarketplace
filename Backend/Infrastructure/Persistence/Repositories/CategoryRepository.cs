@@ -2,6 +2,7 @@
 using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Infrastructure.Persistence.Contexts;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -264,9 +265,13 @@ namespace Infrastructure.Persistence.Repositories {
                 }
 				existing.ListingProperties.Add(property);
 			}
+			foreach(var child in existing.ChildrenCategories)
+			{
+				await AddListingPropertiesAsync (child.Id, listingPropertyIds);
+			}
             // recursivelly add new ListingProperties to the children categories
-            var updateTasks = existing.ChildrenCategories.Select(category => AddListingPropertiesAsync(category.Id, listingPropertyIds));
-			await Task.WhenAll(updateTasks);
+   //         var updateTasks = existing.ChildrenCategories.Select(category => AddListingPropertiesAsync(category.Id, listingPropertyIds));
+			//await Task.WhenAll(updateTasks);
 
 			await dbContext.SaveChangesAsync();
 			return existing;
@@ -290,21 +295,20 @@ namespace Infrastructure.Persistence.Repositories {
 			}
 
 			var existingPropertyIndex = existingCategory.ListingProperties.FindIndex(ag => ag.Id == propertyId);
-			if (existingPropertyIndex == -1) {
-                return null;
-			}
-			// remove the property from the category
-			existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
+			if (existingPropertyIndex != -1) {
+                existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
+            }
 
-			// recursivelly remove the property from the children categories
-			var updateTasksChildren = existingCategory.ChildrenCategories.Select(category => RemoveListingPropertyFromChildren(category.Id, propertyId));
-			await Task.WhenAll(updateTasksChildren);
+            // recursivelly remove the property from the children categories
+            foreach ( var child in existingCategory.ChildrenCategories)
+			{
+				await RemoveListingPropertyFromChildren(child.Id, propertyId);
+			}
 
             // Update also parents, if they also have the same ListingProperties, as otherwise it wouldnt
             // be nice, as when a parent has a property, all of its children also should have it
             if (existingCategory.ParentCategory != null) {
 				await RemoveListingPropertyFromParents(existingCategory.ParentCategory.Id, propertyId);
-				//await Task.WhenAll(updateTasksParents);
 			}
 
 			await dbContext.SaveChangesAsync();
@@ -321,11 +325,10 @@ namespace Infrastructure.Persistence.Repositories {
                 return;
             }
             var existingPropertyIndex = existingCategory.ListingProperties.FindIndex(ag => ag.Id == propertyId);
-            if (existingPropertyIndex == -1)
+            if (existingPropertyIndex != -1)
             {
-                return;
+                existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
             }
-            existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
             if (existingCategory.ParentCategory != null)
             {
                 await RemoveListingPropertyFromParents(existingCategory.ParentCategory.Id, propertyId);
@@ -343,17 +346,16 @@ namespace Infrastructure.Persistence.Repositories {
             }
 
             var existingPropertyIndex = existingCategory.ListingProperties.FindIndex(ag => ag.Id == propertyId);
-            if (existingPropertyIndex == -1)
+            if (existingPropertyIndex != -1)
             {
-                // we couldnt find a ListingProperty with this index
-                return;
+                existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
             }
-            // remove the property from the category
-            existingCategory.ListingProperties.RemoveAt(existingPropertyIndex);
 
             // recursivelly remove the property from the children categories
-            var updateTasksChildren = existingCategory.ChildrenCategories.Select(category => RemoveListingPropertyFromChildren(category.Id, propertyId));
-            await Task.WhenAll(updateTasksChildren);
+            foreach (var child in existingCategory.ChildrenCategories)
+            {
+                await RemoveListingPropertyFromChildren(child.Id, propertyId);
+            }
         }
     }
 }
