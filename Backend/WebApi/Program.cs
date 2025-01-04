@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using WebApi.Mappings;
 using DotNetEnv;
+using WebApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,7 @@ builder.Services.AddControllers().AddJsonOptions(options => {
 	options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 Env.Load();
+builder.Services.AddSignalR();
 builder.Services.AddInfrastructure();
 builder.Services.AddAuthentication(options => {
 	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,6 +78,11 @@ if (app.Environment.IsDevelopment()) {
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<ChatHub>("/chathub");
+});
+
 app.UseStaticFiles(new StaticFileOptions {
 	FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
 	RequestPath = "/Images" //routes from localhost/images to the physical path above

@@ -15,5 +15,7 @@ namespace Infrastructure.Identity {
         /// One to many relation with listings
         /// </summary>
 		public List<Listing> Listings { get; set; }
+        public List<ConversationParticipant> ConversationParticipants { get; set; }
+        public List<Message> Messages { get; set; }
 	}
 }

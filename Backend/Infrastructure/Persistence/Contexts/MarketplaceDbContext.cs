@@ -21,13 +21,34 @@ namespace Infrastructure.Persistence.Contexts
         public DbSet<ListingPropertyValue> ListingPropertyValues { get; set; }
         public DbSet<StateOfItem> StateOfItem { get; set; }
 		public DbSet<Image> Images { get; set; }
+		public DbSet<Conversation> Conversations { get; set; }
+		public DbSet<Message> Messages { get; set; }
+		public DbSet<ConversationParticipant> ConversationParticipant { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            base.OnModelCreating(modelBuilder);
 
-			modelBuilder.Entity<Listing>()
+            modelBuilder.Entity<Listing>()
 				.HasOne<ApplicationUser>()  // Define the ApplicationUser relationship
-				.WithMany()
+				.WithMany(u => u.Listings)
 				.HasForeignKey("SellerId");
-			base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ConversationParticipant>()
+                .HasKey(cp => new { cp.ConversationId, cp.UserId });
+
+            modelBuilder.Entity<ConversationParticipant>()
+                .HasOne(cp => cp.Conversation)
+                .WithMany(c => c.ConversationParticipants)
+                .HasForeignKey(cp => cp.ConversationId);
+
+            modelBuilder.Entity<ConversationParticipant>()
+                .HasOne<ApplicationUser>()
+                .WithMany(u => u.ConversationParticipants)
+                .HasForeignKey(cp => cp.UserId);
+            modelBuilder.Entity<Message>()
+                .HasOne<ApplicationUser>()
+                .WithMany(u => u.Messages)
+                .HasForeignKey(m => m.SenderId);
+
 
 			var adminRoleId = "e8c9ac14-c7f6-4991-88aa-ad40bfe8f707";
 			var userRoleId = "2d39b4e7-843e-410b-b6e4-ae30e38039f4";
