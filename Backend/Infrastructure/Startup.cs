@@ -47,6 +47,8 @@ namespace Infrastructure
 			.AddScoped<IImageRepository, ImageRepository>()
 			.AddScoped<ITokenRepository, TokenRepository>()
 			.AddScoped<IStateOfItemRepository, StateOfItemRepository>()
+            .AddScoped<IConversationRepository, ConversationRepository>()
+            .AddScoped<IMessageRepository, MessageRepository>()
 			.AddHttpContextAccessor()
 			.AddIdentity(); //possibly move elsewhere
 		}

@@ -21,13 +21,26 @@ namespace Infrastructure.Persistence.Contexts
         public DbSet<ListingPropertyValue> ListingPropertyValues { get; set; }
         public DbSet<StateOfItem> StateOfItem { get; set; }
 		public DbSet<Image> Images { get; set; }
+		public DbSet<Conversation> Conversations { get; set; }
+		public DbSet<Message> Messages { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
 			modelBuilder.Entity<Listing>()
 				.HasOne<ApplicationUser>()  // Define the ApplicationUser relationship
 				.WithMany()
 				.HasForeignKey("SellerId");
-			base.OnModelCreating(modelBuilder);
+            // tohle same udelat pro message a conversation
+            modelBuilder.Entity<Message>()
+				.HasOne<ApplicationUser>()  // Define the ApplicationUser relationship
+				.WithMany()
+				.HasForeignKey("SenderId");
+			modelBuilder.Entity<Conversation>()
+				.HasMany<ApplicationUser>()
+				.WithMany()
+				.UsingEntity
+				.HasForeignKey("ParticipantIds");
+
+            base.OnModelCreating(modelBuilder);
 
 			var adminRoleId = "e8c9ac14-c7f6-4991-88aa-ad40bfe8f707";
 			var userRoleId = "2d39b4e7-843e-410b-b6e4-ae30e38039f4";

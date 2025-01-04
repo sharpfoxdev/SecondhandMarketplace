@@ -15,5 +15,8 @@ namespace Infrastructure.Identity {
         /// One to many relation with listings
         /// </summary>
 		public List<Listing> Listings { get; set; }
+        // todo sem dat odkaz na konverzace a zpravy?
+        public List<Conversation> Conversations { get; set; }
+        public List<Message> Messages { get; set; }
 	}
 }
