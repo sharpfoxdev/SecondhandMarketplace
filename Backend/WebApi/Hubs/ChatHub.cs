@@ -36,7 +36,7 @@ namespace WebApi.Hubs
             Guid senderId = Guid.Parse(senderIdString);
             bool isParticipant = await conversationRepository.IsUserInConversationAsync(senderId, conversationId);
             if (!isParticipant)
-            {
+        {
                 throw new HubException("User is not a member of this conversation.");
             }
             var domain = new Message { Id = Guid.NewGuid(), ConversationId = conversationId, Content = message, SenderId = senderId, CreatedAt = DateTime.Now };
