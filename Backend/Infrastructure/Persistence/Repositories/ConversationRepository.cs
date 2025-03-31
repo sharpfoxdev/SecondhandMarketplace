@@ -19,6 +19,7 @@ namespace Infrastructure.Persistence.Repositories
             this.dbContext = dbContext;
         }
 
+
         public async Task<Conversation> CreateAsync(Conversation conversation)
         {
             dbContext.Conversations.Add(conversation);
@@ -29,17 +30,19 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Conversation> GetByIdAsync(Guid id)
         {
             return await dbContext.Conversations
-                .Include(x => x.Messages).FirstOrDefaultAsync(x => x.Id == id);
+                .Include(x => x.ConversationParticipants).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<List<Conversation>> GetByUserIdAsync(Guid userId)
         {
-            //return await dbContext.ConversationParticipant.
-            //    .Where(c => c.ParticipantIds.Contains(userId))
-            //    .ToListAsync();
-            // todo rewrite!!!
-            throw new NotImplementedException();
-            return new List<Conversation>();
+            return await dbContext.ConversationParticipant
+                .Where(cp => cp.UserId == userId).Select(r => r.Conversation).ToListAsync();
+        }
+        public async Task<Conversation?> ConversationExists(Guid userId1, Guid userId2)
+        {
+            return await dbContext.Conversations.FirstOrDefaultAsync(c => 
+                c.ConversationParticipants.Any(cp => cp.UserId == userId1) && 
+                c.ConversationParticipants.Any(cp => cp.UserId == userId2));
         }
 
         public async Task<bool> IsUserInConversationAsync(Guid userId, Guid conversationId)

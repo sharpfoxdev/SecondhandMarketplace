@@ -14,5 +14,6 @@ namespace Application.Interfaces.Repositories
         Task<Conversation> CreateAsync(Conversation conversation);
         Task UpdateAsync(Conversation conversation);
         Task<bool> IsUserInConversationAsync(Guid userId, Guid conversationId);
+        Task<Conversation?> ConversationExists(Guid userId1, Guid userId2);
     }
 }

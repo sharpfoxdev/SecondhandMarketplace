@@ -2,5 +2,6 @@
 {
     public class CreateConversationRequest
     {
+        public Guid RecipientId { get; set; }
     }
 }
