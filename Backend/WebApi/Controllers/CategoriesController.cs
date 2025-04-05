@@ -43,7 +43,7 @@ namespace WebApi.Controllers
         {
             var domain = await repository.GetAllAsync();
             var mapped = mapper.Map<List<CategoryDto>>(domain);
-            return Ok(mapped);
+            return Ok(domain); 
         }
 
         /// <summary>

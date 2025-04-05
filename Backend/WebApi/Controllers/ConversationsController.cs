@@ -33,7 +33,7 @@ namespace WebApi.Controllers
             this.mapper = mapper;
         }
         /// <summary>
-        /// Creates a new Conversation.
+        /// Creates a new Conversation. If the conversation already exists, it returns the existing conversation, so that the 
         /// </summary>
         /// <param name="request">Request object containing category details.</param>
         /// <returns>The created category.</returns>
@@ -42,20 +42,21 @@ namespace WebApi.Controllers
         {
             string senderIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             Guid senderId = Guid.Parse(senderIdString);
-            // todo check, that the conversation already exists and if it does, return it's id
             var existingConversation = await conversationRepository.ConversationExists(senderId, request.RecipientId);
             if (existingConversation != null)
             {
-                return Ok(mapper.Map<ConversationDto>(existingConversation));
+                var mappedExisting = mapper.Map<ConversationDto>(existingConversation);
+                return Ok(mappedExisting);
             }
-            var conversationId = new Guid();
+            // todo overit, ze ten druhy clovek existuje
+            var conversationId = Guid.NewGuid();
             var participant1 = new ConversationParticipant { ConversationId = conversationId, UserId = senderId };
             var participant2 = new ConversationParticipant { ConversationId = conversationId, UserId = request.RecipientId };
             var conversation = new Conversation { Id = conversationId, ConversationParticipants = new() { participant1, participant2 }, CreatedAt = DateTime.Now};
            
-            // todo otestovat, ze to vytvori i conversation participants
             var domain = await conversationRepository.CreateAsync(conversation);
-            return Ok(mapper.Map<ConversationDto>(domain));
+            var mapped = mapper.Map<ConversationDto>(domain);
+            return Ok(mapped);
         }
         /// <summary>
         /// Retrieves messages of conversation by its ID.

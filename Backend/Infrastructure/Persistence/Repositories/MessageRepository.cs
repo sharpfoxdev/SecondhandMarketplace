@@ -29,6 +29,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Message> CreateAsync(Message message)
         {
             dbContext.Messages.Add(message);
+            // todo update last updated property on conversation
             await dbContext.SaveChangesAsync();
             return message;
         }
