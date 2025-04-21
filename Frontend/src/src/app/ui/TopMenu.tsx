@@ -17,7 +17,7 @@ export default function TopMenu() {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get<Category[]>('https://localhost:7192/api/Categories');
+                const response = await axios.get<Category[]>('https://localhost:7192/api/Categories/Hierarchy');
                 setCategories(response.data);
             } catch (error) {
                 console.error('Failed to fetch categories', error);

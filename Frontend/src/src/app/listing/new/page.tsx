@@ -6,6 +6,11 @@ import axios from 'axios';
 interface Category {
   id: string;
   name: string;
+}
+
+interface CategoryDetail {
+  id: string;
+  name: string;
   listingProperties: ListingProperty[];
 }
 
@@ -24,6 +29,8 @@ interface StateOfItem {
   id: string;
   name: string;
 }
+
+
 
 export default function CreateListing() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -64,14 +71,19 @@ export default function CreateListing() {
     fetchData();
   }, []);
 
-  const handleCategorySelect = (categoryId: string) => {
+  const handleCategorySelect = async (categoryId: string) => {
     setSelectedCategoryId(categoryId);
-
+    const token = localStorage.getItem('token');
+    // todo test this
     // Find the selected category and its listing properties
-    const selectedCategory = categories.find((category) => category.id === categoryId);
-    if (selectedCategory) {
-      setListingProperties(selectedCategory.listingProperties);
-    }
+    //const selectedCategory = categories.find((category) => category.id === categoryId);
+    const categoryResponse = await axios.get<CategoryDetail>(`https://localhost:7192/api/Categories/${categoryId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setListingProperties(categoryResponse.data.listingProperties);
+
   };
 
   const handlePropertyValueChange = (propertyId: string, valueId: string) => {

@@ -9,5 +9,7 @@ namespace WebApi.ApiDtos.Categories
         public decimal? PriceMax { get; set; }
         public List<Guid> StateOfItemIds { get; set; }
         public List<Guid> SelectedListingPropertyValueIds { get; set; }
+        // todo geographical place
+        // todo text search
     }
 }

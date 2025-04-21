@@ -45,6 +45,7 @@ namespace WebApi.Controllers
             var existingConversation = await conversationRepository.ConversationExists(senderId, request.RecipientId);
             if (existingConversation != null)
             {
+                // todo tohle vrati v pohode domain, ale nechce to namapovat
                 var mappedExisting = mapper.Map<ConversationDto>(existingConversation);
                 return Ok(mappedExisting);
             }

@@ -8,6 +8,5 @@ namespace WebApi.ApiDtos.Images {
 		public string FileName { get; set; }
 		public string FileExtension { get; set; }
 		public long FileSizeInBytes { get; set; }
-		public ListingDto Listing { get; set; }
 	}
 }

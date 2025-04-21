@@ -18,7 +18,7 @@ export default function CategorySection() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get<CategoryDto[]>('https://localhost:7192/api/Categories');
+        const response = await axios.get<CategoryDto[]>('https://localhost:7192/api/Categories/Hierarchy');
         setCategories(response.data);
       } catch (error) {
         console.error('Failed to fetch categories', error);
@@ -34,7 +34,7 @@ export default function CategorySection() {
         name,
         parentCategoryId: parentId,
       });
-      const response = await axios.get<CategoryDto[]>('https://localhost:7192/api/Categories');
+      const response = await axios.get<CategoryDto[]>('https://localhost:7192/api/Categories/Hierarchy');
       setCategories(response.data);
     } catch (error) {
       console.error('Failed to add category', error);
@@ -44,7 +44,7 @@ export default function CategorySection() {
   const handleDeleteCategory = async (categoryId: string) => {
     try {
       await axios.delete(`https://localhost:7192/api/Categories/${categoryId}`);
-      const response = await axios.get<CategoryDto[]>('https://localhost:7192/api/Categories');
+      const response = await axios.get<CategoryDto[]>('https://localhost:7192/api/Categories/Hierarchys');
       setCategories(response.data);
     } catch (error) {
       console.error('Failed to delete category', error);

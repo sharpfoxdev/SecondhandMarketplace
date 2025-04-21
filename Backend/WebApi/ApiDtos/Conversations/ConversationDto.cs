@@ -6,14 +6,18 @@ namespace WebApi.ApiDtos.Conversations
 {
     public class ConversationDto
     {
-        public class Conversation : IEntity
-        {
-            public Guid Id { get; set; }
-            public List<MessageDto> Messages { get; set; }
-            //public List<ConversationParticipant> ConversationParticipants { get; set; }
-            // todo dodelat mapping pro usery
+        public Guid Id { get; set; }
+        //public List<ConversationParticipant> ConversationParticipants { get; set; }
+        // todo dodelat mapping pro usery
+        public DateTime CreatedAt { get; set; }
+    }
+    public class ConversationDetailDto
+    {
+        public Guid Id { get; set; }
+        public List<MessageDto> Messages { get; set; }
+        //public List<ConversationParticipant> ConversationParticipants { get; set; }
+        // todo dodelat mapping pro usery
 
-            public DateTime CreatedAt { get; set; }
-        }
+        public DateTime CreatedAt { get; set; }
     }
 }

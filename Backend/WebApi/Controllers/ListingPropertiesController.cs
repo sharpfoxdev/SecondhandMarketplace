@@ -35,7 +35,7 @@ namespace WebApi.Controllers {
         [HttpGet]
 		public async Task<IActionResult> GetAll() {
 			var domain = await repository.GetAllAsync();
-			return Ok(mapper.Map<List<ListingPropertyDto>>(domain));
+			return Ok(mapper.Map<List<ListingPropertyDetailDto>>(domain));
 		}
 		/// <summary>
 		/// Gets a listing property by id and prints information about it. 
@@ -52,7 +52,7 @@ namespace WebApi.Controllers {
 			if(domain == null) {
 				return NotFound();
 			}
-			return Ok(mapper.Map<ListingPropertyDto>(domain));
+			return Ok(mapper.Map<ListingPropertyDetailDto>(domain));
 		}
 		/// <summary>
 		/// Creates a new listing property. It is also possible to create new propertyValues witin it
@@ -126,7 +126,7 @@ namespace WebApi.Controllers {
 				// couldnt find the property
 				return NotFound();
 			}
-			return Ok(mapper.Map<ListingPropertyDto>(propertyDomain));
+			return Ok(mapper.Map<ListingPropertyDetailDto>(propertyDomain));
 		}
 	}
 }

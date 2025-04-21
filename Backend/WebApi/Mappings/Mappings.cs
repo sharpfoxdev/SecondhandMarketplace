@@ -21,9 +21,14 @@ namespace WebApi.Mappings {
 
 			// Mapping between Domain and return Dtos
 			CreateMap<ListingPropertyValue, ListingPropertyValueDto>().ReverseMap();
+			CreateMap<ListingPropertyValue, ListingPropertyValueDetailDto>().ReverseMap();
 			CreateMap<Listing, ListingDto>().ReverseMap();
+			CreateMap<Listing, ListingDetailDto>().ReverseMap();
 			CreateMap<Category, CategoryDto>().ReverseMap();
+			CreateMap<Category, CategoryDetailDto>().ReverseMap();
+			CreateMap<Category, CategoryHierarchyDto>().ReverseMap();
 			CreateMap<ListingProperty, ListingPropertyDto>().ReverseMap();
+			CreateMap<ListingProperty, ListingPropertyDetailDto>().ReverseMap();
 			CreateMap<StateOfItem, StateOfItemDto>().ReverseMap();
 			CreateMap<Image, ImageDto>().ReverseMap();
 			CreateMap<ListingFilter, ListingFilterDto>().ReverseMap();

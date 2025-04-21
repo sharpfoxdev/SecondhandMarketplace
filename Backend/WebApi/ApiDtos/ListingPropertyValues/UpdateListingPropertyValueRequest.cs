@@ -5,7 +5,5 @@
 	/// </summary>
 	public class UpdateListingPropertyValueRequest {
 		public string Name { get; set; }
-		
-		//public Guid ListingPropertyId { get; set; }
 	}
 }

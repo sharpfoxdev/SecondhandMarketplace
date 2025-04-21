@@ -58,7 +58,7 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            return Ok(mapper.Map<ListingDto>(domain));
+            return Ok(mapper.Map<ListingDetailDto>(domain));
         }
         [Authorize]
         [HttpGet]
