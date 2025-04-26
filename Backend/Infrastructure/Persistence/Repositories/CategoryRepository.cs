@@ -149,6 +149,7 @@ namespace Infrastructure.Persistence.Repositories {
 				.Include(x => x.Listings)
 				.Include(x => x.ParentCategory)
 				.Include(x => x.ListingProperties)
+					.ThenInclude(lp => lp.ListingPropertyValues)
 				.Include(x => x.ChildrenCategories)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if (existing == null) {

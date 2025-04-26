@@ -44,7 +44,7 @@ export default function CategorySection() {
   const handleDeleteCategory = async (categoryId: string) => {
     try {
       await axios.delete(`https://localhost:7192/api/Categories/${categoryId}`);
-      const response = await axios.get<CategoryDto[]>('https://localhost:7192/api/Categories/Hierarchys');
+      const response = await axios.get<CategoryDto[]>('https://localhost:7192/api/Categories/Hierarchy');
       setCategories(response.data);
     } catch (error) {
       console.error('Failed to delete category', error);

@@ -18,6 +18,6 @@ namespace WebApi.ApiDtos.Categories {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public CategoryDto? ParentCategory { get; set; }
-        public List<CategoryDto> ChildrenCategories { get; set; }
+        public List<CategoryHierarchyDto> ChildrenCategories { get; set; }
     }
 }

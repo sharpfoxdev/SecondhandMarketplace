@@ -42,8 +42,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetAll()
         {
             var domain = await repository.GetAllAsync();
-            var mapped = mapper.Map<List<CategoryDto>>(domain);
-            return Ok(domain); 
+            return Ok(mapper.Map<List<CategoryDto>>(domain)); 
         }
         /// <summary>
         /// Retrieves hierarchical structure of categories. 
@@ -54,8 +53,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetHierarchy()
         {
             var domain = await repository.GetAllAsync();
-            var mapped = mapper.Map<List<CategoryHierarchyDto>>(domain);
-            return Ok(domain);
+            return Ok(mapper.Map<List<CategoryHierarchyDto>>(domain));
         }
 
         /// <summary>
@@ -82,16 +80,14 @@ namespace WebApi.Controllers
         {
             var domainFilter = mapper.Map<ListingFilter>(filter);
             var domain = await repository.GetListingsByCategoryNameAsync(categoryName, domainFilter);
-            var mapped = mapper.Map<List<ListingDto>>(domain);
-            return Ok(mapped);
+            return Ok(mapper.Map<List<ListingDto>>(domain));
         }
         [HttpGet]
         [Route("GetByName/{categoryName}")]
         public async Task<IActionResult> GetCategoryByCategoryName(string categoryName)
         {
             var domain = await repository.GetByNameAsync(categoryName);
-            var mapped = mapper.Map<CategoryDetailDto>(domain);
-            return Ok(mapped);
+            return Ok(mapper.Map<CategoryDetailDto>(domain));
         }
         /// <summary>
         /// Creates a new category.

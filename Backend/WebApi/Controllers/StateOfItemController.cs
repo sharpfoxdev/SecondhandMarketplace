@@ -32,8 +32,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetAll()
         {
             var domain = await repository.GetAllAsync();
-            var mapped = mapper.Map<List<StateOfItemDto>>(domain);
-            return Ok(mapped);
+            return Ok(mapper.Map<List<StateOfItemDto>>(domain));
         }
     }
 }
