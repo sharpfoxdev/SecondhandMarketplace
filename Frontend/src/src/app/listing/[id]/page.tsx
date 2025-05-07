@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 
 interface ListingPropertyValue {
   id: string;
@@ -20,6 +21,7 @@ interface Listing {
   id: string;
   title: string;
   description: string;
+  sellerId: string;
   reasonOfSale: string;
   price: number;
   isSold: boolean;
@@ -32,7 +34,11 @@ export default function ListingPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null); // For the modal
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+
+  const [hubConnection, setHubConnection] = useState<HubConnection | null>(null);
+  const [showMessageForm, setShowMessageForm] = useState(false);
+  const [messageText, setMessageText] = useState('');
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -46,28 +52,70 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       }
     };
 
-    if (id) {
-      fetchListing();
-    }
+    if (id) fetchListing();
   }, [id]);
+
+  useEffect(() => {
+    const initHub = async () => {
+      const token = localStorage.getItem('token');
+      console.log(token);
+      const connection = new HubConnectionBuilder()
+        .withUrl('https://localhost:7192/chathub', { accessTokenFactory: () => token || '' })
+        .withAutomaticReconnect()
+        .build();
+
+      connection.on('ReceiveMessage', (senderId: string, messageDto: any) => {
+        console.log('Message received:', senderId, messageDto);
+      });
+
+      try {
+        await connection.start();
+        setHubConnection(connection);
+      } catch (err) {
+        console.error('SignalR connection error:', err);
+      }
+    };
+
+    initHub();
+    return () => {
+      hubConnection?.stop();
+    };
+  }, []);
+
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !hubConnection || !listing) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post('https://localhost:7192/api/conversations', { recipientId: listing.sellerId }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const conversationId: string = res.data.id;
+      await hubConnection.invoke('JoinConversation', conversationId);
+      await hubConnection.invoke('SendMessage', conversationId, messageText);
+      setMessageText('');
+      setShowMessageForm(false);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
   const handleNextImage = () => {
     if (selectedImageIndex !== null && listing) {
-      setSelectedImageIndex((prevIndex) => (prevIndex + 1) % listing.images.length);
+      setSelectedImageIndex((prev) => (prev! + 1) % listing.images.length);
     }
   };
 
   const handlePreviousImage = () => {
     if (selectedImageIndex !== null && listing) {
-      setSelectedImageIndex((prevIndex) => (prevIndex - 1 + listing.images.length) % listing.images.length);
+      setSelectedImageIndex((prev) => (prev! - 1 + listing.images.length) % listing.images.length);
     }
   };
-  if (loading) {
-    return <div className="container mt-5">Loading...</div>;
-  }
 
-  if (!listing) {
-    return <div className="container mt-5">Listing not found</div>;
-  }
+  if (loading) return <div className="container mt-5">Loading...</div>;
+  if (!listing) return <div className="container mt-5">Listing not found</div>;
 
   return (
     <div className="container mt-5">
@@ -76,13 +124,13 @@ export default function ListingPage({ params }: { params: { id: string } }) {
       {/* Image Gallery */}
       {listing.images.length > 0 && (
         <div className="row">
-          {listing.images.map((image, index) => (
-            <div className="col-4 mb-3" key={image.id}>
+          {listing.images.map((img, idx) => (
+            <div className="col-4 mb-3" key={img.id}>
               <img
-                src={image.imageUrl}
+                src={img.imageUrl}
                 alt="Listing Image"
                 className="img-fluid thumbnail"
-                onClick={() => setSelectedImageIndex(index)}
+                onClick={() => setSelectedImageIndex(idx)}
                 style={{ cursor: 'pointer' }}
               />
             </div>
@@ -92,8 +140,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
       {/* Modal for full-size images */}
       <Modal show={selectedImageIndex !== null} onHide={() => setSelectedImageIndex(null)} centered>
-        <Modal.Header closeButton>
-        </Modal.Header>
+        <Modal.Header closeButton />
         <Modal.Body>
           {selectedImageIndex !== null && (
             <div className="d-flex flex-column align-items-center">
@@ -104,12 +151,8 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                 style={{ width: '100%' }}
               />
               <div className="mt-3 d-flex justify-content-between" style={{ width: '100%' }}>
-                <Button variant="primary" onClick={handlePreviousImage}>
-                  Previous
-                </Button>
-                <Button variant="primary" onClick={handleNextImage}>
-                  Next
-                </Button>
+                <Button onClick={handlePreviousImage}>Previous</Button>
+                <Button onClick={handleNextImage}>Next</Button>
               </div>
             </div>
           )}
@@ -125,7 +168,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         <p><strong>Description:</strong> {listing.description}</p>
         <p><strong>Reason of Sale:</strong> {listing.reasonOfSale}</p>
 
-        {/* Listing Property Values */}
         <h4>Property values</h4>
         <ul>
           {listing.selectedListingPropertyValues.map((value) => (
@@ -135,8 +177,32 @@ export default function ListingPage({ params }: { params: { id: string } }) {
           ))}
         </ul>
       </div>
-      {/* Custom styles */}
-      
+
+      {/* Message Seller Section */}
+      <div className="mt-4">
+        {!showMessageForm ? (
+          <Button onClick={() => setShowMessageForm(true)}>Message Seller</Button>
+        ) : (
+          <div className="mt-3">
+            <textarea
+              rows={3}
+              className="form-control"
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              placeholder="Write your message..."
+            />
+            <div className="mt-2">
+              <Button onClick={handleSendMessage} disabled={!messageText.trim()} className="me-2">
+                Send
+              </Button>
+              <Button variant="secondary" onClick={() => setShowMessageForm(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
       <style jsx>{`
         .thumbnail {
           object-fit: cover;

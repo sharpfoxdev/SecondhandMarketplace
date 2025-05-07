@@ -1,7 +1,9 @@
 ﻿using Application.Interfaces.Repositories;
 using AutoMapper;
 using Domain.Entities;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol.Core.Types;
 using System.Security.Claims;
@@ -19,6 +21,7 @@ namespace WebApi.Controllers
 
         private readonly IConversationRepository conversationRepository;
         private readonly IMessageRepository messageRepository;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly IMapper mapper;
 
         /// <summary>
@@ -26,10 +29,11 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="repository">Repository for interacting with category data.</param>
         /// <param name="mapper">AutoMapper for mapping between domain models and DTOs.</param>
-        public ConversationsController(IConversationRepository conversationRepository, IMessageRepository messageRepository, IMapper mapper)
+        public ConversationsController(IConversationRepository conversationRepository, IMessageRepository messageRepository, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             this.conversationRepository = conversationRepository;
             this.messageRepository = messageRepository;
+            this.userManager = userManager;
             this.mapper = mapper;
         }
         /// <summary>
@@ -73,7 +77,7 @@ namespace WebApi.Controllers
             var isParticipant = await conversationRepository.IsUserInConversationAsync(userId, conversationId);
             if (!isParticipant)
             {
-                return Forbid(); // todo check, that this is correct return code
+                return Forbid();
             }
             var domain = await messageRepository.GetByConversationIdAsync(conversationId);
             return Ok(mapper.Map<List<MessageDto>>(domain));
@@ -92,7 +96,7 @@ namespace WebApi.Controllers
             var isParticipant = await conversationRepository.IsUserInConversationAsync(userId, conversationId);
             if (!isParticipant)
             {
-                return Forbid(); // todo check, that this is correct return code
+                return Forbid();
             }
             var domain = await conversationRepository.GetByIdAsync(conversationId);
             return Ok(mapper.Map<ConversationDto>(domain));

@@ -34,6 +34,7 @@ namespace WebApi.Mappings {
 			CreateMap<ListingFilter, ListingFilterDto>().ReverseMap();
 			CreateMap<Message, MessageDto>().ReverseMap();
 			CreateMap<Conversation, ConversationDto>().ReverseMap();
+			CreateMap<ConversationParticipant, ConversationParticipantDto>().ReverseMap();
 
 			// Mapping between domain and Create Request Dtos
 			CreateMap<ListingPropertyValue, CreateListingPropertyValueRequest>().ReverseMap();

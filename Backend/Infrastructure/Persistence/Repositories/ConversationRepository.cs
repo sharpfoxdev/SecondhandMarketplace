@@ -40,7 +40,7 @@ namespace Infrastructure.Persistence.Repositories
         }
         public async Task<Conversation?> ConversationExists(Guid userId1, Guid userId2)
         {
-            return await dbContext.Conversations.FirstOrDefaultAsync(c => 
+            return await dbContext.Conversations.Include(c => c.ConversationParticipants).FirstOrDefaultAsync(c => 
                 c.ConversationParticipants.Any(cp => cp.UserId == userId1) && 
                 c.ConversationParticipants.Any(cp => cp.UserId == userId2));
         }

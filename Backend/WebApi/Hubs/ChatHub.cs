@@ -4,6 +4,7 @@ using Domain.Entities;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using WebApi.ApiDtos.ListingProperties;
+using WebApi.ApiDtos.Messages;
 
 namespace WebApi.Hubs
 {
@@ -41,7 +42,7 @@ namespace WebApi.Hubs
             }
             var domain = new Message { Id = Guid.NewGuid(), ConversationId = conversationId, Content = message, SenderId = senderId, CreatedAt = DateTime.Now };
             domain = await messageRepository.CreateAsync(domain);
-            await Clients.Group(conversationId.ToString()).SendAsync("ReceiveMessage", senderId, mapper.Map<ListingPropertyDto>(domain));
+            await Clients.Group(conversationId.ToString()).SendAsync("ReceiveMessage", senderId, mapper.Map<MessageDto>(domain));
         }
 
         public async Task JoinConversation(Guid conversationId)

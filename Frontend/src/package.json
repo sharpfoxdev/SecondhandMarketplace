@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.7",
     "axios": "^1.7.4",
     "bootstrap": "^5.3.3",
     "next": "14.2.5",
