@@ -29,7 +29,19 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<Message> CreateAsync(Message message)
         {
             dbContext.Messages.Add(message);
-            // todo update last updated property on conversation
+            var conversation = await dbContext.Conversations
+                .FirstOrDefaultAsync(c => c.Id == message.ConversationId);
+
+            if (conversation != null)
+            {
+                conversation.LastUpdatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Cannot find conversation {message.ConversationId} to update timestamp.");
+            }
+
             await dbContext.SaveChangesAsync();
             return message;
         }

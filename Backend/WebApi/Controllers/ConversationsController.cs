@@ -101,5 +101,17 @@ namespace WebApi.Controllers
             var domain = await conversationRepository.GetByIdAsync(conversationId);
             return Ok(mapper.Map<ConversationDto>(domain));
         }
+        /// <summary>
+        /// Gets all conversations for user, that is signed in. 
+        /// </summary>
+        /// <returns>List of all conversations for the user. </returns>
+        [HttpGet]
+        public async Task<IActionResult> GetAllByUser()
+        {
+            string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Guid userId = Guid.Parse(userIdString);
+            var domain = await conversationRepository.GetByUserIdAsync(userId);
+            return Ok(mapper.Map<List<ConversationDto>>(domain));
+        }
     }
 }

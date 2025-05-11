@@ -9,6 +9,8 @@ using WebApi.ApiDtos.StateOfItem;
 using Application.Filters;
 using WebApi.ApiDtos.Messages;
 using WebApi.ApiDtos.Conversations;
+using Infrastructure.Identity;
+using WebApi.ApiDtos.Users;
 
 namespace WebApi.Mappings {
 	/// <summary>
@@ -35,6 +37,7 @@ namespace WebApi.Mappings {
 			CreateMap<Message, MessageDto>().ReverseMap();
 			CreateMap<Conversation, ConversationDto>().ReverseMap();
 			CreateMap<ConversationParticipant, ConversationParticipantDto>().ReverseMap();
+			CreateMap<ApplicationUser, UserDto>().ReverseMap();
 
 			// Mapping between domain and Create Request Dtos
 			CreateMap<ListingPropertyValue, CreateListingPropertyValueRequest>().ReverseMap();

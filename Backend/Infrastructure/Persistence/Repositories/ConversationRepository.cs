@@ -36,7 +36,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<List<Conversation>> GetByUserIdAsync(Guid userId)
         {
             return await dbContext.ConversationParticipant
-                .Where(cp => cp.UserId == userId).Select(r => r.Conversation).ToListAsync();
+                .Where(cp => cp.UserId == userId).Include(x => x.Conversation).ThenInclude(u => u.ConversationParticipants).Select(r => r.Conversation).ToListAsync();
         }
         public async Task<Conversation?> ConversationExists(Guid userId1, Guid userId2)
         {
