@@ -5,19 +5,19 @@ import axios from 'axios';
 import ListingPropertyForm from './ListingPropertyForm';
 import ListingPropertyItem from './ListingPropertyItem';
 
-interface ListingPropertyDto {
+interface ListingProperty {
   id: string;
   name: string;
   listingPropertyValues: { id: string; name: string }[];
 }
 
 export default function ListingPropertySection() {
-  const [listingProperties, setListingProperties] = useState<ListingPropertyDto[]>([]);
+  const [listingProperties, setListingProperties] = useState<ListingProperty[]>([]);
 
   useEffect(() => {
     const fetchListingProperties = async () => {
       try {
-        const response = await axios.get<ListingPropertyDto[]>('https://localhost:7192/api/ListingProperties');
+        const response = await axios.get<ListingProperty[]>('https://localhost:7192/api/ListingProperties');
         setListingProperties(response.data);
       } catch (error) {
         console.error('Failed to fetch listing properties', error);
@@ -30,7 +30,7 @@ export default function ListingPropertySection() {
   const handleAddProperty = async (name: string) => {
     try {
       await axios.post('https://localhost:7192/api/ListingProperties', { name });
-      const response = await axios.get<ListingPropertyDto[]>('https://localhost:7192/api/ListingProperties');
+      const response = await axios.get<ListingProperty[]>('https://localhost:7192/api/ListingProperties');
       setListingProperties(response.data);
     } catch (error) {
       console.error('Failed to add listing property', error);
@@ -40,7 +40,7 @@ export default function ListingPropertySection() {
   const handleDeleteProperty = async (propertyId: string) => {
     try {
       await axios.delete(`https://localhost:7192/api/ListingProperties/${propertyId}`);
-      const response = await axios.get<ListingPropertyDto[]>('https://localhost:7192/api/ListingProperties');
+      const response = await axios.get<ListingProperty[]>('https://localhost:7192/api/ListingProperties');
       setListingProperties(response.data);
     } catch (error) {
       console.error('Failed to delete listing property', error);
@@ -50,7 +50,7 @@ export default function ListingPropertySection() {
   const handleEditProperty = async (propertyId: string, name: string) => {
     try {
       await axios.put(`https://localhost:7192/api/ListingProperties/${propertyId}`, { name });
-      const response = await axios.get<ListingPropertyDto[]>('https://localhost:7192/api/ListingProperties');
+      const response = await axios.get<ListingProperty[]>('https://localhost:7192/api/ListingProperties');
       setListingProperties(response.data);
     } catch (error) {
       console.error('Failed to update listing property', error);
@@ -60,7 +60,7 @@ export default function ListingPropertySection() {
   const handleAddValue = async (propertyId: string, valueName: string) => {
     try {
       await axios.post(`https://localhost:7192/api/ListingProperties/AddPropertyValues/${propertyId}`, [{ name: valueName }]);
-      const response = await axios.get<ListingPropertyDto[]>('https://localhost:7192/api/ListingProperties');
+      const response = await axios.get<ListingProperty[]>('https://localhost:7192/api/ListingProperties');
       setListingProperties(response.data);
     } catch (error) {
       console.error('Failed to add listing property value', error);
@@ -70,7 +70,7 @@ export default function ListingPropertySection() {
   const handleDeleteValue = async (valueId: string) => {
     try {
       await axios.delete(`https://localhost:7192/api/ListingPropertyValues/${valueId}`);
-      const response = await axios.get<ListingPropertyDto[]>('https://localhost:7192/api/ListingProperties');
+      const response = await axios.get<ListingProperty[]>('https://localhost:7192/api/ListingProperties');
       setListingProperties(response.data);
     } catch (error) {
       console.error('Failed to delete listing property value', error);
@@ -80,7 +80,7 @@ export default function ListingPropertySection() {
   const handleEditValue = async (valueId: string, name: string) => {
     try {
       await axios.put(`https://localhost:7192/api/ListingPropertyValues/${valueId}`, { name });
-      const response = await axios.get<ListingPropertyDto[]>('https://localhost:7192/api/ListingProperties');
+      const response = await axios.get<ListingProperty[]>('https://localhost:7192/api/ListingProperties');
       setListingProperties(response.data);
     } catch (error) {
       console.error('Failed to update listing property value', error);

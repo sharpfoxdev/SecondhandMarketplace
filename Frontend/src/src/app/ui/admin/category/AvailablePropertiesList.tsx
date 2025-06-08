@@ -1,12 +1,12 @@
 'use client';
 
-interface ListingPropertyDto {
+interface ListingProperty {
   id: string;
   name: string;
 }
 
 interface AvailablePropertiesListProps {
-  availableProperties: ListingPropertyDto[];
+  availableProperties: ListingProperty[];
   selectedProperties: string[];
   onCheckboxChange: (propertyId: string) => void;
   onAdd: () => void;

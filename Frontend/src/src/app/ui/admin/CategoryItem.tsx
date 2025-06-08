@@ -3,14 +3,14 @@
 import Link from 'next/link';
 import CategoryForm from './CategoryForm';
 import { useState } from 'react';
-interface CategoryDto {
+interface Category {
   id: string;
   name: string;
-  childrenCategories: CategoryDto[];
+  childrenCategories: Category[];
 }
 
 interface CategoryItemProps {
-  category: CategoryDto;
+  category: Category;
   onAddSubcategory: (name: string, parentId: string) => void;
   onDeleteCategory: (categoryId: string) => void;
 }

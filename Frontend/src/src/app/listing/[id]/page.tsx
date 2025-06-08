@@ -64,8 +64,8 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         .withAutomaticReconnect()
         .build();
 
-      connection.on('ReceiveMessage', (senderId: string, messageDto: any) => {
-        console.log('Message received:', senderId, messageDto);
+      connection.on('ReceiveMessage', (senderId: string, message: any) => {
+        console.log('Message received:', senderId, message);
       });
 
       try {

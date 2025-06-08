@@ -5,14 +5,14 @@ import Link from 'next/link';
 import axios from 'axios';
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 
-interface ConversationDto {
+interface Conversation {
   id: string;
   conversationParticipants: { conversationId: string; userId: string }[];
   createdAt: string;
   lastUpdatedAt: string;
 }
 
-interface UserDto {
+interface User {
   id: string;
   userName: string;
 }
@@ -33,8 +33,8 @@ function getCurrentUserId(): string | null {
 }
 
 export default function InboxPage() {
-  const [conversations, setConversations] = useState<ConversationDto[]>([]);
-  const [users, setUsers] = useState<Record<string, UserDto>>({});
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [users, setUsers] = useState<Record<string, User>>({});
   const [hubConnection, setHubConnection] = useState<HubConnection | null>(null);
   const [unread, setUnread] = useState<Record<string, boolean>>({});
   const currentUserId = getCurrentUserId();
@@ -42,7 +42,7 @@ export default function InboxPage() {
   useEffect(() => {
     const fetchConvs = async () => {
       const token = localStorage.getItem('token');
-      const res = await axios.get<ConversationDto[]>('https://localhost:7192/api/conversations', {
+      const res = await axios.get<Conversation[]>('https://localhost:7192/api/conversations', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const sorted = res.data.sort(
@@ -54,7 +54,7 @@ export default function InboxPage() {
         const other = conv.conversationParticipants.find((p) => p.userId !== currentUserId)?.userId;
         if (other && !users[other]) {
           axios
-            .get<UserDto>(`https://localhost:7192/api/users/${other}`, {
+            .get<User>(`https://localhost:7192/api/users/${other}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
             .then((r) => setUsers((u) => ({ ...u, [other]: r.data })))

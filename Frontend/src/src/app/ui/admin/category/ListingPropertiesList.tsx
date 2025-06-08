@@ -1,12 +1,12 @@
 'use client';
 
-interface ListingPropertyDto {
+interface ListingProperty {
   id: string;
   name: string;
 }
 
 interface ListingPropertiesListProps {
-  listingProperties: ListingPropertyDto[];
+  listingProperties: ListingProperty[];
   onRemove: (propertyId: string) => void;
 }
 

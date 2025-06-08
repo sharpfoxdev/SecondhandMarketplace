@@ -2,15 +2,15 @@
 
 import CategoryItem from './CategoryItem';
 
-interface CategoryDto {
+interface Category {
   id: string;
   name: string;
-  parentCategory?: CategoryDto;
-  childrenCategories: CategoryDto[];
+  parentCategory?: Category;
+  childrenCategories: Category[];
 }
 
 interface CategoryTreeProps {
-  categories: CategoryDto[];
+  categories: Category[];
   onAddSubcategory: (parentId: string, name: string) => void;
   onDeleteCategory: (categoryId: string) => void;
 }

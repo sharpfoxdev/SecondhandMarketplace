@@ -6,7 +6,7 @@ import axios from 'axios';
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 import Button from 'react-bootstrap/Button';
 
-interface MessageDto {
+interface Message {
   id: string;
   conversationId: string;
   senderId: string;
@@ -31,7 +31,7 @@ function getCurrentUserId(): string | null {
 
 export default function ConversationPage({ params }: { params: { conversationId: string } }) {
   const { conversationId } = params;
-  const [messages, setMessages] = useState<MessageDto[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState('');
   const [hubConnection, setHubConnection] = useState<HubConnection | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
@@ -40,7 +40,7 @@ export default function ConversationPage({ params }: { params: { conversationId:
   useEffect(() => {
     const fetchMsgs = async () => {
       const token = localStorage.getItem('token');
-      const res = await axios.get<MessageDto[]>(`https://localhost:7192/api/conversations/${conversationId}/messages`, {
+      const res = await axios.get<Message[]>(`https://localhost:7192/api/conversations/${conversationId}/messages`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessages(res.data);
@@ -56,7 +56,7 @@ export default function ConversationPage({ params }: { params: { conversationId:
         .withAutomaticReconnect()
         .build();
 
-      conn.on('ReceiveMessage', (senderId: string, msg: MessageDto) => {
+      conn.on('ReceiveMessage', (senderId: string, msg: Message) => {
         if (msg.conversationId === conversationId) {
           setMessages((prev) => [...prev, msg]);
         }
