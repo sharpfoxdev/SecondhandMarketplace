@@ -11,6 +11,8 @@ namespace Infrastructure.Identity {
     /// Setup, so that users use Guid as a key instead of a string
     /// </summary>
     public class ApplicationUser : IdentityUser<Guid> {
+        public string Nickname { get; set; }
+        public DateTime LastLoggedIn { get; set; }
         /// <summary>
         /// One to many relation with listings
         /// </summary>
