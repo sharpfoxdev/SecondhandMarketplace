@@ -1,9 +1,9 @@
-﻿namespace WebApi.ApiDtos.Users
+﻿namespace WebApi
 {
     public class UserDto
     {
         public Guid Id { get; set; }
-        // todo change to nickname, not username, which is an e-mail address
-        public string UserName { get; set; }
+        public string Nickname { get; set; }
+        public DateTime LastLoggedIn { get; set; }
     }
 }

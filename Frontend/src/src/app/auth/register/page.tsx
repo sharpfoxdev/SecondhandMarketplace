@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Register() {
     const [username, setUsername] = useState('');
+    const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -16,8 +17,8 @@ export default function Register() {
         try {
             const response = await axios.post('https://localhost:7192/api/Auth/Register', {
                 username,
-                password,
-                roles: ['User'],
+                nickname,
+                password
             });
             setSuccess('Registration successful! Please login.');
             router.push('/auth/login');
@@ -40,6 +41,17 @@ export default function Register() {
                         id="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="username">Nickname</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        id="nickname"
+                        value={nickname}
+                        onChange={(e) => setNickname(e.target.value)}
                         required
                     />
                 </div>

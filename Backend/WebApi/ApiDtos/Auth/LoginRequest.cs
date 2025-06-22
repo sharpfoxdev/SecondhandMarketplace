@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebApi.ApiDtos.Auth {
-	public class LoginRequest {
+    public class LoginRequest {
 		[Required]
 		[DataType(DataType.EmailAddress)]
 		public string Username { get; set; }

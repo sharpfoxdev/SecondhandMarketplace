@@ -49,6 +49,7 @@ namespace WebApi.Controllers
             var user = new ApplicationUser
             {
                 UserName = registerRequest.Username,
+                Nickname = registerRequest.Nickname,
                 Email = registerRequest.Username
             };
             var identityResult = await userManager.CreateAsync(user, registerRequest.Password);
@@ -56,12 +57,12 @@ namespace WebApi.Controllers
             {
                 return BadRequest("Something went wrong");
             }
-            if (registerRequest.Roles == null || !registerRequest.Roles.Any())
-            {
-                return BadRequest("Something went wrong, you didnt provide role");
-            }
+            //if (registerRequest.Roles == null || !registerRequest.Roles.Any())
+            //{
+            //    return BadRequest("Something went wrong, you didnt provide role");
+            //}
 
-            identityResult = await userManager.AddToRolesAsync(user, registerRequest.Roles);
+            identityResult = await userManager.AddToRolesAsync(user, new List<string>() { "User" });
             if (!identityResult.Succeeded)
             {
                 return BadRequest("Something went wrong, couldnt asign roles to the user manager");

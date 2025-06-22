@@ -10,14 +10,14 @@ using Application.Filters;
 using WebApi.ApiDtos.Messages;
 using WebApi.ApiDtos.Conversations;
 using Infrastructure.Identity;
-using WebApi.ApiDtos.Users;
 
-namespace WebApi.Mappings {
-	/// <summary>
-	/// AutoMapper mappings for Dtos, Domain Entities, Update and Create Request Dtos. 
-	/// Further documentation at <see cref="https://docs.automapper.org/en/latest/Getting-started.html"/>
-	/// </summary>
-	public class Mappings : Profile {
+namespace WebApi.Mappings
+{
+    /// <summary>
+    /// AutoMapper mappings for Dtos, Domain Entities, Update and Create Request Dtos. 
+    /// Further documentation at <see cref="https://docs.automapper.org/en/latest/Getting-started.html"/>
+    /// </summary>
+    public class Mappings : Profile {
 		public Mappings() {
 			// TODO PUT INTO METHODS
 

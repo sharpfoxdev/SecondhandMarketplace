@@ -3,7 +3,6 @@ using Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using WebApi.ApiDtos.Users;
 
 namespace WebApi.Controllers
 {

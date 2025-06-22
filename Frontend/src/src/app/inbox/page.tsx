@@ -14,7 +14,8 @@ interface Conversation {
 
 interface User {
   id: string;
-  userName: string;
+  nickname: string;
+  lastLoggedIn: string;
 }
 
 function getCurrentUserId(): string | null {
@@ -109,7 +110,7 @@ export default function InboxPage() {
       <ul className="list-group">
         {conversations.map((conv) => {
           const other = conv.conversationParticipants.find((p) => p.userId !== currentUserId)?.userId;
-          const name = other ? users[other]?.userName || other : '—';
+          const name = other ? users[other]?.nickname || other : '—';
           const isUnread = unread[conv.id];
           return (
             <li
