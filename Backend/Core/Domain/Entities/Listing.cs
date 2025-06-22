@@ -29,7 +29,8 @@ namespace Domain.Entities {
 		public string Description { get; set; }
 		public string ReasonOfSale { get; set; }
 		public bool IsSold { get; set; }
-
+		public Guid CityId { get; set; }
+		public City City { get; set; }
 		public Guid CategoryId { get; set; }
 		public Category Category { get; set; }
 		public List<ListingPropertyValue> SelectedListingPropertyValues { get; set; }

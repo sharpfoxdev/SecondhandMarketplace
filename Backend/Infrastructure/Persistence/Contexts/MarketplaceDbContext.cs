@@ -24,6 +24,7 @@ namespace Infrastructure.Persistence.Contexts
 		public DbSet<Conversation> Conversations { get; set; }
 		public DbSet<Message> Messages { get; set; }
 		public DbSet<ConversationParticipant> ConversationParticipant { get; set; }
+		public DbSet<City> Cities { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
 
@@ -48,9 +49,15 @@ namespace Infrastructure.Persistence.Contexts
                 .HasOne<ApplicationUser>()
                 .WithMany(u => u.Messages)
                 .HasForeignKey(m => m.SenderId);
+            modelBuilder.Entity<City>(builder =>
+            {
+                builder.Property(city => city.Location)
+				.HasColumnType("POINT SRID 4326")
+                .IsRequired();
+            });
 
 
-			var adminRoleId = "e8c9ac14-c7f6-4991-88aa-ad40bfe8f707";
+            var adminRoleId = "e8c9ac14-c7f6-4991-88aa-ad40bfe8f707";
 			var userRoleId = "2d39b4e7-843e-410b-b6e4-ae30e38039f4";
 			var devRoleId = "996f9a95-c46c-40fa-9bb6-144a05138cdc";
 			var roles = new List<ApplicationRole> {
