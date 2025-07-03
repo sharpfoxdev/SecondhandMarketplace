@@ -22,13 +22,13 @@ namespace Domain.Entities {
 		public Guid Id { get; set; }
 		public decimal Price { get; set; }
 		public Guid SellerId { get; set; }
-
 		public StateOfItem StateOfItem { get; set; }
 		public Guid StateOfItemId { get; set; }
 		public string Title { get; set; }
 		public string Description { get; set; }
 		public string ReasonOfSale { get; set; }
 		public bool IsSold { get; set; }
+		public DateTime CreatedAt { get; set; }
 		public Guid CityId { get; set; }
 		public City City { get; set; }
 		public Guid CategoryId { get; set; }
