@@ -33,7 +33,8 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Registers a new user with provided credentials and roles.
+        /// Registers a new user with provided credentials. If it is the first user in the database, he gets admin role. 
+        /// Subsequent registered people get user role. 
         /// </summary>
         /// <param name="registerRequest">Request object containing username, password, and roles.</param>
         /// <returns>Success message or error message if registration fails.</returns>
@@ -41,7 +42,6 @@ namespace WebApi.Controllers
         /// This endpoint creates a new user in the system and assigns roles. If registration or role assignment fails, 
         /// it returns appropriate error messages.
         /// </remarks>
-        // POST /api/Auth/Register
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
@@ -57,10 +57,11 @@ namespace WebApi.Controllers
             {
                 return BadRequest("Something went wrong");
             }
-            //if (registerRequest.Roles == null || !registerRequest.Roles.Any())
-            //{
-            //    return BadRequest("Something went wrong, you didnt provide role");
-            //}
+            if(userManager.Users.Count() == 1)
+            {
+                // the first user that we just created is admin
+                identityResult = await userManager.AddToRolesAsync(user, new List<string>() { "Admin" });
+            }
 
             identityResult = await userManager.AddToRolesAsync(user, new List<string>() { "User" });
             if (!identityResult.Succeeded)
@@ -79,7 +80,6 @@ namespace WebApi.Controllers
         /// Validates the user's credentials and generates a JWT token for authorized access. 
         /// If the credentials are invalid, an error message is returned.
         /// </remarks>
-        // POST /api/Auth/Login
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
