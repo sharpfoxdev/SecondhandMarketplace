@@ -1,7 +1,9 @@
 ﻿using Application.Filters;
 using Application.Interfaces.Repositories;
+using Application.Pagination;
 using Domain.Entities;
 using Infrastructure.Persistence.Contexts;
+using Infrastructure.Persistence.Filters;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -58,7 +60,7 @@ namespace Infrastructure.Persistence.Repositories {
 				return null;
 			}
 			if(category.ParentCategoryId == null) {
-				// this is a root category
+				// this is a rootCategory category
 				await dbContext.Categories.AddAsync(category);
 				await dbContext.SaveChangesAsync();
 				return category;
@@ -66,14 +68,14 @@ namespace Infrastructure.Persistence.Repositories {
 			// we dont have to add this category as a child to the parent, because
 			// it is enough, when this category knows it's parent
 
-			// add the listing properties from the parent category
+			// add the listing propertiesOfRootCategory from the parent category
 			Category parentCategory = await dbContext.Categories.Include(x => x.ListingProperties).FirstOrDefaultAsync(x => x.Id == category.ParentCategoryId);
 			var parentListingProperties = parentCategory.ListingProperties;
 			if(parentListingProperties != null) {
-				// can be null for root category
+				// can be null for rootCategory category
 				if(category.ListingProperties == null)
 				{
-					// not properties yet in the current category
+					// not propertiesOfRootCategory yet in the current category
 					category.ListingProperties = parentListingProperties;
 				}
 				else
@@ -180,7 +182,7 @@ namespace Infrastructure.Persistence.Repositories {
         /// Null if a Category with the given name was not found.
         /// Otherwise returns listings in the given category. 
         /// </returns>
-        public async Task<List<Listing>> GetListingsByCategoryNameAsync(string name, ListingFilter filter) {
+        public async Task<List<Listing>> GetListingsByCategoryNameAsyncOld(string name, ListingFilter filter) {
 			var existing = await dbContext.Categories
 				.Include(x => x.Listings)
 					.ThenInclude(x => x.Images)
@@ -193,15 +195,61 @@ namespace Infrastructure.Persistence.Repositories {
 			if (existing == null) {
 				return new List<Listing>();
 			}
-			List<Listing> listings = filter.Filter(existing.Listings, existing.ListingProperties);
+			// todo rewite this to use queries, so that I dont enumerate all the filters are applied
+			var listings = filter.Filter(existing.Listings, existing.ListingProperties).ToList();
 			foreach(var child in existing.ChildrenCategories)
 			{
-				var childListings = await GetListingsByCategoryNameAsync(child.Name, filter);
+				var childListings = await GetListingsByCategoryNameAsyncOld(child.Name, filter);
 				listings.AddRange(childListings);
 			}
 			return listings;
 		}
+        public async Task<Page<Listing>> GetListingsByCategoryNameAsync(string name, ListingFilter filter, int pageNumber = 1, int pageSize = 20)
+        {
+            var categoryIds = await GetCategoryAndDescendantIdsAsync(name);
+            if (!categoryIds.Any())
+			{
+                return new Page<Listing>(new List<Listing>(), 0, pageNumber, pageSize);
+            }
+            
+			var rootCategory = await GetByNameAsync(name);
+            var propertiesOfRootCategory = await dbContext.ListingProperties
+				.Where(p => p.Categories.Select(c => c.Id).Contains(rootCategory.Id))
+				.Include(p => p.ListingPropertyValues)
+				.ToListAsync();
 
+            var city = await dbContext.Cities.Where(x => x.Id == filter.City).FirstOrDefaultAsync();
+            var q = dbContext.Listings
+				.Include(l => l.Images)
+				.Include(l => l.SelectedListingPropertyValues)
+				.Where(l => categoryIds.Contains(l.CategoryId))
+				.ApplyFilters(filter, propertiesOfRootCategory, city)
+				.FilterBySearch(filter);
+
+            var totalCount = await q.CountAsync();
+            var items = await q.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            return new Page<Listing>(items, totalCount, pageNumber, pageSize);
+
+        }
+        private async Task<List<Guid>> GetCategoryAndDescendantIdsAsync(string rootCategoryName)
+        {
+            var root = await dbContext.Categories
+                .Include(c => c.ChildrenCategories)
+                .FirstOrDefaultAsync(c => c.Name == rootCategoryName);
+
+            if (root == null)
+                return new List<Guid>();
+
+            var ids = new List<Guid>();
+            void Recurse(Category c)
+            {
+                ids.Add(c.Id);
+                foreach (var child in c.ChildrenCategories)
+                    Recurse(child);
+            }
+            Recurse(root);
+            return ids;
+        }
         /// <summary>
         /// Updates the already existing Category. Does not touch ListingProperties related
         /// to the Category, for that there are methods AddListingPropertiesAsync() and
@@ -359,5 +407,6 @@ namespace Infrastructure.Persistence.Repositories {
                 await RemoveListingPropertyFromChildren(child.Id, propertyId);
             }
         }
+
     }
 }

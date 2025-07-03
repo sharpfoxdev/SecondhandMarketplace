@@ -32,6 +32,7 @@ namespace WebApi.Controllers
                 return NotFound();
             return Ok(mapper.Map<UserDto>(user));
         }
+        // todo deleting of users, adding admin role, getting all users
     }
 }
 

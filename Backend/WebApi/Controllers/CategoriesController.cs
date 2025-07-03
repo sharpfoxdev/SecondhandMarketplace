@@ -80,7 +80,8 @@ namespace WebApi.Controllers
         {
             var domainFilter = mapper.Map<ListingFilter>(filter);
             var domain = await repository.GetListingsByCategoryNameAsync(categoryName, domainFilter);
-            return Ok(mapper.Map<List<ListingDto>>(domain));
+            var temp = mapper.Map<List<ListingDto>>(domain.Items); // todo fix to return the page
+            return Ok(temp);
         }
         [HttpGet]
         [Route("GetByName/{categoryName}")]

@@ -1,4 +1,5 @@
 ﻿using Application.Filters;
+using Application.Pagination;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Application.Interfaces.Repositories {
 	public interface ICategoryRepository {
 		public Task<List<Category>> GetAllAsync();
 		public Task<Category?> GetByIdAsync(Guid id);
-		public Task<List<Listing>> GetListingsByCategoryNameAsync(string name, ListingFilter filter);
+		public Task<Page<Listing>> GetListingsByCategoryNameAsync(string name, ListingFilter filter, int pageNumber = 1, int pageSize = 20);
 		public Task<Category?> GetByNameAsync(string name);
 		public Task<Category> CreateAsync(Category category);
 		public Task<Category?> UpdateAsync(Guid id, Category category);

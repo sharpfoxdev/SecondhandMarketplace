@@ -8,21 +8,32 @@ using System.Transactions;
 
 namespace Application.Filters
 {
+    public enum Ordering { Price, CreatedAt }
+    public enum OrderingDirection { Ascending, Descending }
     public class ListingFilter
     {
         public decimal? PriceMin { get; set; }
         public decimal? PriceMax { get; set; }
+        public Guid? Seller { get; set; }
+        public Guid? City { get; set; }
+        public int? Radius { get; set; }
+        public string Search {  get; set; }
+        public Ordering Ordering { get; set; } = Ordering.CreatedAt;
+        public OrderingDirection OrderingDirection { get; set; } = OrderingDirection.Descending;
         public List<Guid> StateOfItemIds { get; set; }
         public List<Guid> SelectedListingPropertyValueIds { get; set; }
-        public List<Listing> Filter(List<Listing> listings, List<ListingProperty> categoryProperties)
+
+        // todo smazat
+        public IEnumerable<Listing> Filter(IEnumerable<Listing> listings, List<ListingProperty> categoryProperties)
         {
-            List<Listing> filtered = new List<Listing>();
-            foreach (var listing in listings) {
-                if(IsInPriceRange(listing) && IsInStateOfItem(listing) && HasSelectedListingPropertyValues(listing, categoryProperties))
-                {
-                    filtered.Add(listing);
-                }
-            }
+            var filtered = listings.Where(listing => IsInPriceRange(listing) && IsInStateOfItem(listing) && HasSelectedListingPropertyValues(listing, categoryProperties));
+            //List<Listing> filtered = new List<Listing>();
+            //foreach (var listing in listings) {
+            //    if(IsInPriceRange(listing) && IsInStateOfItem(listing) && HasSelectedListingPropertyValues(listing, categoryProperties))
+            //    {
+            //        filtered.Add(listing);
+            //    }
+            //}
             return filtered;
         }
         private bool IsInPriceRange(Listing listing)
