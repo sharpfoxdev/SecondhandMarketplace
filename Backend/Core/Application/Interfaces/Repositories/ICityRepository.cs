@@ -9,6 +9,6 @@ namespace Application.Interfaces.Repositories
 {
     public interface ICityRepository
     {
-        public Task<List<City>> GetAllAsync();
+        public Task<List<City>> GetAllAsync(string? filter);
     }
 }
