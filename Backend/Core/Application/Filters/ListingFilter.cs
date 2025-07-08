@@ -14,8 +14,8 @@ namespace Application.Filters
     {
         public decimal? PriceMin { get; set; }
         public decimal? PriceMax { get; set; }
-        public Guid? Seller { get; set; }
-        public Guid? City { get; set; }
+        public Guid? SellerId { get; set; }
+        public Guid? CityId { get; set; }
         public int? Radius { get; set; }
         public string Search {  get; set; }
         public Ordering Ordering { get; set; } = Ordering.CreatedAt;

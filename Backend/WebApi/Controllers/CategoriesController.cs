@@ -9,6 +9,7 @@ using WebApi.ApiDtos.Categories;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WebApi.ApiDtos.Listings;
 using Application.Filters;
+using WebApi.ApiDtos;
 
 namespace WebApi.Controllers
 {
@@ -74,14 +75,21 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="categoryName">The name of the category.</param>
         /// <returns>The listings in the requested category.</returns>
-        [HttpPost]
-        [Route("{categoryName}")]
-        public async Task<IActionResult> GetListingsByCategoryName(string categoryName, ListingFilterDto filter)
+        [HttpPost("{categoryName}")]
+        public async Task<IActionResult> GetListingsByCategoryName(string categoryName, [FromBody] ListingFilterDto filter, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 12)
         {
             var domainFilter = mapper.Map<ListingFilter>(filter);
-            var domain = await repository.GetListingsByCategoryNameAsync(categoryName, domainFilter);
-            var temp = mapper.Map<List<ListingDto>>(domain.Items); // todo fix to return the page
-            return Ok(temp);
+            var pagedDomain = await repository.GetListingsByCategoryNameAsync(categoryName, domainFilter, pageNumber, pageSize);
+            var dtoItems = mapper.Map<List<ListingDto>>(pagedDomain.Items);
+            var result = new PageDto<ListingDto>
+            {
+                Items = dtoItems,
+                TotalPages = pagedDomain.TotalPages,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+            return Ok(result);
+
         }
         [HttpGet]
         [Route("GetByName/{categoryName}")]

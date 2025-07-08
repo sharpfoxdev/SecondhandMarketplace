@@ -75,9 +75,9 @@ namespace Application.Filters
         /// </summary>
         public static IQueryable<Listing> FilterBySeller(this IQueryable<Listing> query, ListingFilter filter)
         {
-            if (filter.Seller.HasValue)
+            if (filter.SellerId.HasValue)
             {
-                query = query.Where(l => l.SellerId == filter.Seller.Value);
+                query = query.Where(l => l.SellerId == filter.SellerId.Value);
             }
             return query;
         }
@@ -89,7 +89,7 @@ namespace Application.Filters
         /// </summary>
         public static IQueryable<Listing> FilterByRadius(this IQueryable<Listing> query, ListingFilter filter, City? chosenCity)
         {
-            if (filter.City.HasValue && filter.Radius.HasValue && chosenCity != null)
+            if (filter.CityId.HasValue && filter.Radius.HasValue && chosenCity != null)
             {
                 query = query.Where(listing =>
                     listing.CityId == chosenCity.Id ||

@@ -218,7 +218,7 @@ namespace Infrastructure.Persistence.Repositories {
 				.Include(p => p.ListingPropertyValues)
 				.ToListAsync();
 
-            var city = await dbContext.Cities.Where(x => x.Id == filter.City).FirstOrDefaultAsync();
+            var city = await dbContext.Cities.Where(x => x.Id == filter.CityId).FirstOrDefaultAsync();
             var q = dbContext.Listings
 				.Include(l => l.Images)
 				.Include(l => l.SelectedListingPropertyValues)
@@ -241,13 +241,17 @@ namespace Infrastructure.Persistence.Repositories {
                 return new List<Guid>();
 
             var ids = new List<Guid>();
-            void Recurse(Category c)
+            async Task Recurse(Guid rootRecurseId)
             {
-                ids.Add(c.Id);
-                foreach (var child in c.ChildrenCategories)
-                    Recurse(child);
+				var rootRecurse = await dbContext.Categories
+					.Include(c => c.ChildrenCategories)
+					.FirstOrDefaultAsync(c => c.Id == rootRecurseId);
+				if (rootRecurse == null) { return; }
+                ids.Add(rootRecurseId);
+                foreach (var child in rootRecurse.ChildrenCategories)
+                    await Recurse(child.Id);
             }
-            Recurse(root);
+            await Recurse(root.Id);
             return ids;
         }
         /// <summary>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import ListingGrid from './ui/ListingGrid';
+import { ListingGrid } from '../sharedComponents/ListingGrid';
 
 interface Listing {
   id: string;
@@ -33,7 +33,8 @@ export default function Home() {
       {listings.length === 0 ? (
         <p>No listings available.</p>
       ) : (
-        <ListingGrid listings={listings} />
+        // <ListingGrid listings={listings} />
+        <p>TODO FIX LISTING ON MAIN PAGE</p>
       )}
     </div>
   );
