@@ -85,7 +85,6 @@ namespace WebApi.Controllers
             Guid userId = Guid.Parse(userIdString);
             domain.SellerId = userId;
             domain.CreatedAt = DateTime.Now;
-            domain.CityId = Guid.Parse("0008c116-2243-4bed-9da7-67a7942da9e3");
             List<IListingPropertyValueSelection> interfaceListSelections = request.PropertyValueSelection.Cast<IListingPropertyValueSelection>().ToList();
             domain = await repository.CreateAsync(domain, interfaceListSelections);
             return Ok(mapper.Map<ListingDto>(domain));

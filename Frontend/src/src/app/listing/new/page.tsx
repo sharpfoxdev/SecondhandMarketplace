@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { CityDto } from '@/types/api';
+import CitySelector from '@/app/ui/CitySelector';
 
 interface Category {
   id: string;
@@ -43,6 +45,7 @@ export default function CreateListing() {
   const [price, setPrice] = useState<number | undefined>();
   const [description, setDescription] = useState('');
   const [reasonOfSale, setReasonOfSale] = useState('');
+  const [city, setCity] = useState<CityDto | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
 
   useEffect(() => {
@@ -119,6 +122,7 @@ export default function CreateListing() {
         reasonOfSale,
         stateOfItemId: selectedStateOfItemId,
         categoryId: selectedCategoryId,
+        cityId: city?.id,
         propertyValueSelection: Object.keys(selectedPropertyValues).map((propertyId) => ({
           listringPropertyId: propertyId,
           selectedListingPropertyValueId: selectedPropertyValues[propertyId],
@@ -209,6 +213,13 @@ export default function CreateListing() {
             id="reasonOfSale"
             value={reasonOfSale}
             onChange={(e) => setReasonOfSale(e.target.value)}
+          />
+        </div>
+        <div className='mb-3'>
+          <label className='form-label'>City</label>
+          <CitySelector
+            selectedCityId={city?.id}
+            onCitySelect={c => setCity(c)}
           />
         </div>
 
