@@ -27,7 +27,7 @@ namespace Infrastructure.Persistence.Repositories
 			listing.SelectedListingPropertyValues = new List<ListingPropertyValue>();
 			// we have to have matching selection for each property in the category
 			foreach (var property in category.ListingProperties) {
-				var selection = valueSelection.Find(selection => selection.ListringPropertyId == property.Id);
+				var selection = valueSelection.Find(selection => selection.ListingPropertyId == property.Id);
 				if (selection == null) {
 					// matching selection wasnt provided
 					return null;

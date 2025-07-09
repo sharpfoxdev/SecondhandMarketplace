@@ -1,11 +1,13 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
 
-namespace WebApi.ApiDtos.Listings {
+namespace WebApi.ApiDtos.Listings
+{
 	/// <summary>
 	/// For adding pictures, use different request. This is only for the listing itself
 	/// </summary>
-	public class CreateListingRequest {
+	public class CreateListingRequest
+	{
 		public decimal Price { get; set; }
 		public Guid StateOfItemId { get; set; }
 		public string Title { get; set; }

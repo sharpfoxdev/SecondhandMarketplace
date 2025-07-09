@@ -6,7 +6,7 @@ namespace WebApi.ApiDtos.Listings {
 	/// TODO: what is going on here?
 	/// </summary>
 	public class ListingPropertyValueSelectionDto : IListingPropertyValueSelection {
-		public Guid ListringPropertyId { get; set; }
+		public Guid ListingPropertyId { get; set; }
 		public Guid SelectedListingPropertyValueId { get; set; }
 
 	}

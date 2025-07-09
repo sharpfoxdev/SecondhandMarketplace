@@ -11,6 +11,7 @@ using WebApi.ApiDtos.Messages;
 using WebApi.ApiDtos.Conversations;
 using Infrastructure.Identity;
 using WebApi.ApiDtos.Cities;
+using WebApi.ApiDtos;
 
 namespace WebApi.Mappings
 {
