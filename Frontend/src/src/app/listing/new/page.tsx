@@ -1,72 +1,42 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { CityDto } from '@/types/api';
-import CitySelector from '@/app/ui/CitySelector';
-
-interface Category {
-  id: string;
-  name: string;
-}
-
-interface CategoryDetail {
-  id: string;
-  name: string;
-  listingProperties: ListingProperty[];
-}
-
-interface ListingProperty {
-  id: string;
-  name: string;
-  listingPropertyValues: ListingPropertyValue[];
-}
-
-interface ListingPropertyValue {
-  id: string;
-  name: string;
-}
-
-interface StateOfItem {
-  id: string;
-  name: string;
-}
-
-
+import { City } from '@/types/api/cities';
+import CitySelector from '@/sharedComponents/CitySelector';
+import { fetchCategories } from '@/services/categoryService';
+import { fetchStatesOfItem } from '@/services/stateOfItemService';
+import { Category } from '@/types/api/categories';
+import { StateOfItem } from '@/types/api/stateOfItem';
+import { CategoryDetail } from '@/types/api/categories';
+import { ListingPropertyDetail } from '@/types/api/listingProperties';
+import { fetchCategoryById } from '@/services/categoryService';
+import { CreateListingRequest } from '@/types/api/listings';
+import { uploadImage } from '@/services/imageService';
+import { createListing } from '@/services/listingService';
+import { useRouter } from 'next/navigation';
 
 export default function CreateListing() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [statesOfItem, setStatesOfItem] = useState<StateOfItem[]>([]);
   const [selectedStateOfItemId, setSelectedStateOfItemId] = useState<string | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-  const [listingProperties, setListingProperties] = useState<ListingProperty[]>([]);
+  const [listingProperties, setListingProperties] = useState<ListingPropertyDetail[]>([]);
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<{ [propertyId: string]: string }>({});
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState<number | undefined>();
   const [description, setDescription] = useState('');
   const [reasonOfSale, setReasonOfSale] = useState('');
-  const [city, setCity] = useState<CityDto | null>(null);
+  const [city, setCity] = useState<City | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-
-        const categoryResponse = await axios.get<Category[]>('https://localhost:7192/api/Categories', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const stateResponse = await axios.get<StateOfItem[]>('https://localhost:7192/api/StateOfItem', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setCategories(categoryResponse.data);
-        setStatesOfItem(stateResponse.data);
+        const states = await fetchStatesOfItem();
+        const categories = await fetchCategories();
+        setCategories(categories);
+        setStatesOfItem(states);
       } catch (error) {
         console.error('Failed to fetch data', error);
       }
@@ -80,13 +50,12 @@ export default function CreateListing() {
     // todo test this
     // Find the selected category and its listing properties
     //const selectedCategory = categories.find((category) => category.id === categoryId);
-    const categoryResponse = await axios.get<CategoryDetail>(`https://localhost:7192/api/Categories/${categoryId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setListingProperties(categoryResponse.data.listingProperties);
-
+    try {
+      const category: CategoryDetail = await fetchCategoryById(categoryId);
+      setListingProperties(category.listingProperties);
+    } catch (err) {
+      console.error('Failed to load category details', err);
+    }
   };
 
   const handlePropertyValueChange = (propertyId: string, valueId: string) => {
@@ -107,56 +76,43 @@ export default function CreateListing() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedCategoryId || !title || !price || !selectedStateOfItemId || photos.length === 0) {
+    if (!selectedCategoryId || !description || !reasonOfSale ||
+      !city || !title || !price || !selectedStateOfItemId || photos.length === 0) {
       alert('Please fill in all the required fields.');
       return;
     }
-
     try {
-      const token = localStorage.getItem('token');
-
-      const listingData = {
+      const listingData: CreateListingRequest = {
         title,
         price,
         description,
         reasonOfSale,
         stateOfItemId: selectedStateOfItemId,
         categoryId: selectedCategoryId,
-        cityId: city?.id,
-        propertyValueSelection: Object.keys(selectedPropertyValues).map((propertyId) => ({
-          listringPropertyId: propertyId,
-          selectedListingPropertyValueId: selectedPropertyValues[propertyId],
-        })),
+        cityId: city.id,
+        propertyValueSelection: Object.entries(selectedPropertyValues).map(
+          ([propertyId, selectedValueId]) => ({
+            listingPropertyId: propertyId,
+            selectedListingPropertyValueId: selectedValueId,
+          })
+        ),
       };
 
-      const response = await axios.post('https://localhost:7192/api/Listings', listingData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const created = await createListing(listingData);
+      const listingId = created.id;
 
-      const listingId = response.data.id;
-
-      // Upload photos
-      const photoPromises = photos.map((photo) => {
-        const formData = new FormData();
-        formData.append('File', photo);
-        formData.append('ListingId', listingId);
-
-        return axios.post('https://localhost:7192/api/Images/Upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      });
-
-      await Promise.all(photoPromises);
-
-      alert('Listing created successfully!');
-    } catch (error) {
-      console.error('Failed to create listing', error);
-      alert('Failed to create listing.');
+      await Promise.all(
+        photos.map((file) =>
+          uploadImage({
+            file,
+            listingId,
+          })
+        )
+      );
+      router.push('/');
+    } catch (err) {
+      console.error('Failed to create listing', err);
+      alert('Failed to create listing, check that you filled all the fields.');
     }
   };
 

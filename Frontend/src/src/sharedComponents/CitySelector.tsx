@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { CityDto } from '@/types/api';
+import { City } from '@/types/api/cities';
+import { fetchCities } from '@/services/cityService';
 
 interface CitySelectorProps {
     selectedCityId?: string;
-    onCitySelect: (city: CityDto) => void;
+    onCitySelect: (city: City) => void;
     placeholder?: string;
 }
-
 
 export default function CitySelector({
     selectedCityId,
@@ -17,7 +17,7 @@ export default function CitySelector({
     placeholder = ''
 }: CitySelectorProps) {
     const [inputValue, setInputValue] = useState('');
-    const [suggestions, setSuggestions] = useState<CityDto[]>([]);
+    const [suggestions, setSuggestions] = useState<City[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -43,12 +43,8 @@ export default function CitySelector({
 
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const resp = await axios.get<CityDto[]>(
-                `https://localhost:7192/api/Cities?filter=${encodeURIComponent(term)}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            setSuggestions(resp.data);
+            const cities: City[] = await fetchCities(term);
+            setSuggestions(cities);
             setIsOpen(true);
         } catch (err) {
             console.error('Error fetching cities:', err);
@@ -66,27 +62,12 @@ export default function CitySelector({
         }, 300);
     };
 
-    const handleSelect = (city: CityDto) => {
+    const handleSelect = (city: City) => {
         setInputValue(city.name);
         setIsOpen(false);
         onCitySelect(city);
     };
 
-    // If parent passed an ID, load its name on mount
-    useEffect(() => {
-        if (!selectedCityId) return;
-        (async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const resp = await axios.get<CityDto>(`/api/Cities/${selectedCityId}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setInputValue(resp.data.name);
-            } catch (err) {
-                console.error('Error loading selected city:', err);
-            }
-        })();
-    }, [selectedCityId]);
 
     return (
         <div className="position-relative" ref={wrapperRef}>

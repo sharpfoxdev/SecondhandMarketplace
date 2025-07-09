@@ -1,4 +1,4 @@
-export interface CityDto {
+export interface City {
     id: string;
     name: string;
     zipCode: string;
