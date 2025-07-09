@@ -89,11 +89,12 @@ namespace Application.Filters
         /// </summary>
         public static IQueryable<Listing> FilterByRadius(this IQueryable<Listing> query, ListingFilter filter, City? chosenCity)
         {
-            if (filter.CityId.HasValue && filter.Radius.HasValue && chosenCity != null)
+            if (filter.CityId.HasValue && chosenCity != null)
             {
+                var radiusKm = filter.Radius == null ? 10000 : filter.Radius.Value * 1000;
                 query = query.Where(listing =>
                     listing.CityId == chosenCity.Id ||
-                    listing.City.Location.IsWithinDistance(chosenCity.Location, filter.Radius.Value));
+                    listing.City.Location.IsWithinDistance(chosenCity.Location, radiusKm));
             }
             return query;
         }

@@ -224,7 +224,8 @@ namespace Infrastructure.Persistence.Repositories {
 				.Include(l => l.SelectedListingPropertyValues)
 				.Where(l => categoryIds.Contains(l.CategoryId))
 				.ApplyFilters(filter, propertiesOfRootCategory, city)
-				.FilterBySearch(filter);
+				.FilterBySearch(filter)
+				.ApplyOrdering(filter);
 
             var totalCount = await q.CountAsync();
             var items = await q.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();

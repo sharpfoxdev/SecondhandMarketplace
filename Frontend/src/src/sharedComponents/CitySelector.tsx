@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { City } from '@/types/api/cities';
 import { fetchCities } from '@/services/cityService';
 

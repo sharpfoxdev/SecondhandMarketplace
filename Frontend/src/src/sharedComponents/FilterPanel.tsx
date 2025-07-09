@@ -4,166 +4,215 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import CitySelector from './CitySelector';
 import { City } from '@/types/api/cities';
-import { ListingGrid } from './ListingGrid';
-import { ListingFilter } from '@/types/api/categories';
-import { Ordering, OrderingDirection } from '@/types/api/categories';
 import { StateOfItem } from '@/types/api/stateOfItem';
+import { CategoryDetail, ListingFilter, Ordering, OrderingDirection } from '@/types/api/categories';
 
-export interface FilterPanelProps {
-  priceEnabled?: boolean;
-  userEnabled?: boolean;
-  cityEnabled?: boolean;
-  radiusEnabled?: boolean;
-  searchEnabled?: boolean;
-  orderingEnabled?: boolean;
-  stateOfItemEnabled?: boolean;
-  listingPropertiesEnabled?: boolean;
-  onFilterSubmited: (filter: ListingFilter) => void;
+interface FilterPanelProps {
+    categoryName: string | null;
+    priceEnabled?: boolean;
+    stateOfItemEnabled?: boolean;
+    listingPropertiesEnabled?: boolean;
+    cityEnabled?: boolean;
+    radiusEnabled?: boolean;
+    searchEnabled?: boolean;
+    orderingEnabled?: boolean;
+    onFilterSubmit: (filter: ListingFilter) => void;
 }
 
 export function FilterPanel({
-  priceEnabled = true,
-  userEnabled = false,
-  cityEnabled = false,
-  radiusEnabled = false,
-  searchEnabled = false,
-  orderingEnabled = true,
-  stateOfItemEnabled = true,
-  listingPropertiesEnabled = true,
-  onFilterSubmited
+    categoryName,
+    priceEnabled = true,
+    stateOfItemEnabled = false,
+    listingPropertiesEnabled = false,
+    cityEnabled = false,
+    radiusEnabled = false,
+    searchEnabled = false,
+    orderingEnabled = true,
+    onFilterSubmit
 }: FilterPanelProps) {
-  const [priceMin, setPriceMin] = useState<number | null>(null);
-  const [priceMax, setPriceMax] = useState<number | null>(null);
-  const [sellerId, setSellerId] = useState<string | null>(null);
-  const [city, setCity] = useState<City | null>(null);
-  const [radius, setRadius] = useState<number | null>(null);
-  const [search, setSearch] = useState('');
-  const [ordering, setOrdering] = useState<Ordering>(Ordering.CreatedAt);
-  const [direction, setDirection] = useState<OrderingDirection>(OrderingDirection.Descending);
-  const [selectedStateOfItems, setSelectedStateOfItems] = useState<string[]>([]);
-  const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
-  const [statesOfItem, setStatesOfItem] = useState<StateOfItem[]>([]);
 
-  const handleStateOfItemChange = (stateId: string) => {
-    setSelectedStateOfItems((prev) =>
-      prev.includes(stateId) ? prev.filter((id) => id !== stateId) : [...prev, stateId]
-    );
-  };
+    // current filter state
+    const [priceMin, setPriceMin] = useState<number | null>(null);
+    const [priceMax, setPriceMax] = useState<number | null>(null);
+    const [selectedStates, setSelectedStates] = useState<string[]>([]);
+    const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
+    const [city, setCity] = useState<City | null>(null);
+    const [radius, setRadius] = useState<number | null>(null);
+    const [search, setSearch] = useState<string | null>(null);
+    const [ordering, setOrdering] = useState<Ordering>(Ordering.CreatedAt);
+    const [orderingDirection, setOrderingDirection] = useState<OrderingDirection>(OrderingDirection.Descending);
 
-  const handlePropertyValueChange = (valueId: string) => {
-    setSelectedPropertyValues((prev) =>
-      prev.includes(valueId) ? prev.filter((id) => id !== valueId) : [...prev, valueId]
-    );
-  };
+    // filter options for state of item and properties of category
+    const [statesOfItem, setStatesOfItem] = useState<StateOfItem[]>([]);
+    const [categoryDetail, setCategoryDetail] = useState<CategoryDetail | null>(null);
 
-  const applyFilter = () => {
-    onFilterSubmited({ priceMin, priceMax, sellerId, cityId: city?.id || null, radius, search, ordering, orderingDirection: direction, selectedListingPropertyValueIds: selectedPropertyValues, stateOfItemIds: selectedStateOfItems });
-  }
-  // useEffect(() => {
-  //   onFilterSumbited({ priceMin, priceMax, sellerId, cityId: city?.id || null, radius, search, ordering, orderingDirection: direction, selectedListingPropertyValueIds: selectedPropertyValues, stateOfItemIds: selectedStateOfItems });
-  // }, [priceMin, priceMax, sellerId, city, radius, search, ordering, direction, selectedStateOfItems, selectedPropertyValues]);
+    useEffect(() => {
+        if (categoryName && listingPropertiesEnabled) {
+            axios.get<CategoryDetail>(`https://localhost:7192/api/Categories/GetByName/${encodeURIComponent(categoryName)}`)
+                .then(r => setCategoryDetail(r.data))
+                .catch(console.error);
+        }
+        if (stateOfItemEnabled) {
+            axios.get<StateOfItem[]>('https://localhost:7192/api/StateOfItem')
+                .then(r => setStatesOfItem(r.data))
+                .catch(console.error);
+        }
+    }, [categoryName]);
 
-  return (
-    <div className="filter-panel">
-      {priceEnabled && (
-        <div className="mb-3">
-          <h5>Price</h5>
-          <input type="number" placeholder="Min" className="form-control mb-1" value={priceMin ?? ''} onChange={e => setPriceMin(e.target.value === '' ? null : Number(e.target.value))} />
-          <input type="number" placeholder="Max" className="form-control" value={priceMax ?? ''} onChange={e => setPriceMax(e.target.value === '' ? null : Number(e.target.value))} />
-        </div>
-      )}
+    const apply = () => {
+        onFilterSubmit({
+            priceMin,
+            priceMax,
+            sellerId: null,
+            cityId: city?.id ?? null,
+            radius,
+            search,
+            ordering,
+            orderingDirection: orderingDirection,
+            stateOfItemIds: selectedStates,
+            selectedListingPropertyValueIds: selectedPropertyValues
+        });
+    };
 
-      {userEnabled && (
-        <div className="mb-3">
-          <h5>Seller</h5>
-          <input type="text" placeholder="Seller" className="form-control" value={sellerId ?? ''} onChange={e => setSellerId(e.target.value || null)} />
-        </div>
-      )}
-
-      {cityEnabled && (
-        <div className="mb-3">
-          <h5>City</h5>
-          <CitySelector onCitySelect={setCity} placeholder="Select city" />
-        </div>
-      )}
-
-      {radiusEnabled && (
-        <div className="mb-3">
-          <h5>Radius (m)</h5>
-          <input type="number" className="form-control" value={radius ?? ''} onChange={e => setRadius(e.target.value === '' ? null : Number(e.target.value))} />
-        </div>
-      )}
-
-      {searchEnabled && (
-        <div className="mb-3">
-          <h5>Search</h5>
-          <input type="text" className="form-control" value={search} onChange={e => setSearch(e.target.value)} />
-        </div>
-      )}
-
-      {orderingEnabled && (
-        <div className="mb-3">
-          <h5>Order By</h5>
-          <div className="d-flex gap-2">
-            <button type="button" className={ordering === Ordering.CreatedAt ? 'btn btn-primary' : 'btn btn-outline-secondary'} onClick={() => setOrdering(Ordering.CreatedAt)}>Date</button>
-            <button type="button" className={ordering === Ordering.Price ? 'btn btn-primary' : 'btn btn-outline-secondary'} onClick={() => setOrdering(Ordering.Price)}>Price</button>
-          </div>
-          <div className="mt-2 d-flex gap-2">
-            <button type="button" className={direction === OrderingDirection.Ascending ? 'btn btn-secondary' : 'btn btn-outline-secondary'} onClick={() => setDirection(OrderingDirection.Ascending)}>↑</button>
-            <button type="button" className={direction === OrderingDirection.Descending ? 'btn btn-secondary' : 'btn btn-outline-secondary'} onClick={() => setDirection(OrderingDirection.Descending)}>↓</button>
-          </div>
-        </div>
-      )}
-
-      {stateOfItemEnabled && (
-        <div className="mb-4">
-          <h5>State of Item</h5>
-          {statesOfItem.map((state) => (
-            <div key={state.id} className="form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id={state.id}
-                value={state.id}
-                onChange={() => handleStateOfItemChange(state.id)}
-                checked={selectedStateOfItems.includes(state.id)}
-              />
-              <label htmlFor={state.id} className="form-check-label">
-                {state.name}
-              </label>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* {listingPropertiesEnabled && (
-        <div className="mb-4">
-          <h5>Listing Properties</h5>
-          {category?.listingProperties.map((property) => (
-            <div key={property.id} className="mb-3">
-              <h6>{property.name}</h6>
-              {property.listingPropertyValues.map((value) => (
-                <div key={value.id} className="form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id={value.id}
-                    value={value.id}
-                    onChange={() => handlePropertyValueChange(value.id)}
-                    checked={selectedPropertyValues.includes(value.id)}
-                  />
-                  <label htmlFor={value.id} className="form-check-label">
-                    {value.name}
-                  </label>
+    return (
+        <div className="filter-panel">
+            {orderingEnabled && (
+                <div className="mb-3">
+                    <h5>Order By</h5>
+                    <div className="d-flex gap-2 mb-1">
+                        <button
+                            className={ordering === Ordering.CreatedAt ? 'btn btn-primary' : 'btn btn-outline-secondary'}
+                            onClick={() => setOrdering(Ordering.CreatedAt)}
+                        >
+                            Date
+                        </button>
+                        <button
+                            className={ordering === Ordering.Price ? 'btn btn-primary' : 'btn btn-outline-secondary'}
+                            onClick={() => setOrdering(Ordering.Price)}
+                        >
+                            Price
+                        </button>
+                    </div>
+                    <div className="d-flex gap-2">
+                        <button
+                            className={orderingDirection === OrderingDirection.Ascending ? 'btn btn-secondary' : 'btn btn-outline-secondary'}
+                            onClick={() => setOrderingDirection(OrderingDirection.Ascending)}
+                        >
+                            ↑
+                        </button>
+                        <button
+                            className={orderingDirection === OrderingDirection.Descending ? 'btn btn-secondary' : 'btn btn-outline-secondary'}
+                            onClick={() => setOrderingDirection(OrderingDirection.Descending)}
+                        >
+                            ↓
+                        </button>
+                    </div>
                 </div>
-              ))}
-            </div>
-          ))}
+            )}
+
+            {priceEnabled && (
+                <div className="mb-3">
+                    <h5>Price</h5>
+                    <input
+                        type="number"
+                        placeholder="Min"
+                        className="form-control mb-1"
+                        value={priceMin ?? ''}
+                        onChange={e => setPriceMin(e.target.value ? +e.target.value : null)}
+                    />
+                    <input
+                        type="number"
+                        placeholder="Max"
+                        className="form-control"
+                        value={priceMax ?? ''}
+                        onChange={e => setPriceMax(e.target.value ? +e.target.value : null)}
+                    />
+                </div>
+            )}
+
+            {searchEnabled && (
+                <div className="mb-3">
+                    <h5>Search</h5>
+                    <input
+                        type="text"
+                        className="form-control"
+                        value={search ?? ''}
+                        onChange={e => setSearch(e.target.value || null)}
+                    />
+                </div>
+            )}
+
+            {cityEnabled && (
+                <div className="mb-3">
+                    <h5>City</h5>
+                    <CitySelector onCitySelect={setCity} placeholder="Select city" />
+                </div>
+            )}
+
+            {radiusEnabled && (
+                <div className="mb-3">
+                    <h5>Radius (km)</h5>
+                    <input
+                        type="number"
+                        className="form-control"
+                        value={radius ?? ''}
+                        onChange={e => setRadius(e.target.value ? +e.target.value : null)}
+                    />
+                </div>
+            )}
+
+            {stateOfItemEnabled && (
+                <div className="mb-3">
+                    <h5>State of Item</h5>
+                    {statesOfItem.map(s => (
+                        <div key={s.id} className="form-check">
+                            <input
+                                type="checkbox"
+                                id={s.id}
+                                className="form-check-input"
+                                checked={selectedStates.includes(s.id)}
+                                onChange={() =>
+                                    setSelectedStates(prev =>
+                                        prev.includes(s.id) ? prev.filter(x => x !== s.id) : [...prev, s.id]
+                                    )
+                                }
+                            />
+                            <label className="form-check-label" htmlFor={s.id}>{s.name}</label>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {listingPropertiesEnabled && categoryDetail && (
+                <div className="mb-3">
+                    <h5>Properties</h5>
+                    {categoryDetail.listingProperties.map(prop => (
+                        <div key={prop.id}>
+                            <strong>{prop.name}</strong>
+                            {prop.listingPropertyValues.map(v => (
+                                <div key={v.id} className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id={v.id}
+                                        className="form-check-input"
+                                        checked={selectedPropertyValues.includes(v.id)}
+                                        onChange={() =>
+                                            setSelectedPropertyValues(prev =>
+                                                prev.includes(v.id) ? prev.filter(x => x !== v.id) : [...prev, v.id]
+                                            )
+                                        }
+                                    />
+                                    <label className="form-check-label" htmlFor={v.id}>{v.name}</label>
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            <button className="btn btn-primary mt-3" onClick={apply}>
+                Apply Filter
+            </button>
         </div>
-      )} */}
-      <button className="btn btn-primary" onClick={() => applyFilter()}>
-        Apply Filter
-      </button>
-    </div>
-  );
+    );
 }

@@ -2,91 +2,78 @@
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ListingGrid } from '@/sharedComponents/ListingGrid';
 import { FilterPanel } from '@/sharedComponents/FilterPanel';
+import { ListingGrid } from '@/sharedComponents/ListingGrid';
 import { Listing } from '@/types/api/listings';
-import { ListingFilter, Ordering, OrderingDirection } from '@/types/api/categories';
-
-interface ListingPropertyValue {
-  id: string;
-  name: string;
-}
-
-interface ListingProperty {
-  id: string;
-  name: string;
-  listingPropertyValues: ListingPropertyValue[];
-}
-
-interface StateOfItem {
-  id: string;
-  name: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  listingProperties: ListingProperty[];
-}
-
+import { ListingFilter } from '@/types/api/categories';
+import { Ordering, OrderingDirection } from '@/types/api/categories';
+import { Page } from '@/types/api/page';
 
 export default function CategoryPage({ params }: { params: { categoryName: string } }) {
-  const { categoryName } = params;
-  const [filter, setFilter] = useState<ListingFilter>();
-  const [page, setPage] = useState(1);
-  const [pageData, setPageData] = useState<{ items: any[]; totalPages: number }>({ items: [], totalPages: 1 });
+    const { categoryName } = params;
+    const [filter, setFilter] = useState<ListingFilter>({
+        priceMin: null,
+        priceMax: null,
+        stateOfItemIds: [],
+        selectedListingPropertyValueIds: [],
+        sellerId: null,
+        cityId: null,
+        radius: null,
+        search: null,
+        ordering: Ordering.CreatedAt,
+        orderingDirection: OrderingDirection.Descending
+    });
+    const [pageNumber, setPageNumber] = useState(1);
+    const [pageData, setPageData] = useState<Page<Listing>>({
+        items: [],
+        totalPages: 1,
+        pageNumber: 1,
+        pageSize: 12
+    });
 
-  useEffect(() => { // todo here a method for on filterSubmitted
+    useEffect(() => {
+        // reload on category, filter or page change
+        const fetchListings = async () => {
+            try {
+                const resp = await axios.post<Page<Listing>>(
+                    `https://localhost:7192/api/Categories/${encodeURIComponent(categoryName)}?pageNumber=${pageNumber}&pageSize=${pageData.pageSize}`,
+                    filter
+                );
+                setPageData(resp.data);
+            } catch (err) {
+                console.error('Failed to load listings', err);
+            }
+        };
+        fetchListings();
+    }, [categoryName, filter, pageNumber]);
 
-
-    const filter: ListingFilter = {
-      priceMin: null,
-      priceMax: null,
-      stateOfItemIds: [],
-      selectedListingPropertyValueIds: [],
-      sellerId: null,
-      cityId: null,
-      radius: null,
-      search: null,
-      ordering: Ordering.CreatedAt,
-      orderingDirection: OrderingDirection.Descending
-    };
-    const fetchListings = async () => {
-      const resp = await axios.post(
-        `https://localhost:7192/api/Categories/${categoryName}?pageNumber=${page}&pageSize=12`,
-        filter
-      );
-      setPageData(resp.data);
-    };
-    fetchListings();
-  }, [categoryName, filter, page]);
-
-  return (
-    <div className="container mt-5">
-      <div className="row">
-        <div className="col-md-3">
-          <FilterPanel
-            priceEnabled
-            userEnabled
-            cityEnabled
-            radiusEnabled
-            searchEnabled
-            orderingEnabled
-            stateOfItemEnabled
-            listingPropertiesEnabled
-            onFilterSubmited={setFilter}
-          />
+    return (
+        <div className="container mt-5">
+            <div className="row">
+                <div className="col-md-3">
+                    <FilterPanel
+                        categoryName={categoryName}
+                        priceEnabled
+                        stateOfItemEnabled
+                        listingPropertiesEnabled
+                        cityEnabled
+                        radiusEnabled
+                        searchEnabled
+                        orderingEnabled
+                        onFilterSubmit={(f) => {
+                            setPageNumber(1); //reset to the first page
+                            setFilter(f);
+                        }}
+                    />
+                </div>
+                <div className="col-md-9">
+                    <h1>Listings for {categoryName}</h1>
+                    <ListingGrid
+                        page={pageData}
+                        onPageChange={setPageNumber}
+                    />
+                </div>
+            </div>
         </div>
-        <div className="col-md-9">
-          <h1>Listings for {categoryName}</h1>
-          <ListingGrid
-            listings={pageData.items}
-            page={page}
-            totalPages={pageData.totalPages}
-            onPageChange={setPage}
-          />
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
