@@ -6,6 +6,7 @@ import CitySelector from './CitySelector';
 import { City } from '@/types/api/cities';
 import { StateOfItem } from '@/types/api/stateOfItem';
 import { CategoryDetail, ListingFilter, Ordering, OrderingDirection } from '@/types/api/categories';
+import PropertySection from './PropertySection';
 
 interface FilterPanelProps {
     categoryName: string | null;
@@ -46,6 +47,10 @@ export function FilterPanel({
     const [statesOfItem, setStatesOfItem] = useState<StateOfItem[]>([]);
     const [categoryDetail, setCategoryDetail] = useState<CategoryDetail | null>(null);
 
+    // styling of collapsible filters
+    const [showStateOfItems, setShowStateOfItems] = useState(false);
+    const [showProperties, setShowProperties] = useState(false);
+
     useEffect(() => {
         if (categoryName && listingPropertiesEnabled) {
             axios.get<CategoryDetail>(`https://localhost:7192/api/Categories/GetByName/${encodeURIComponent(categoryName)}`)
@@ -73,7 +78,14 @@ export function FilterPanel({
             selectedListingPropertyValueIds: selectedPropertyValues
         });
     };
-
+    const toggleState = (id: string) =>
+        setSelectedStates(s =>
+            s.includes(id) ? s.filter(x => x !== id) : [...s, id]
+        );
+    const toggleProp = (id: string) =>
+        setSelectedPropertyValues(p =>
+            p.includes(id) ? p.filter(x => x !== id) : [...p, id]
+        );
     return (
         <div className="filter-panel">
             {orderingEnabled && (
@@ -161,29 +173,70 @@ export function FilterPanel({
                 </div>
             )}
 
+            {/* {stateOfItemEnabled && (
+                <div className="mb-3">
+                    <h5
+                        className="mb-1"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setShowStateOfItems(prev => !prev)}
+                    >
+                        State of Item
+                        <span className="ms-2">
+                            {showStateOfItems ? '▾' : '▸'}
+                        </span>
+                    </h5>
+                    {showStateOfItems && (
+                        <div className="ps-3">
+                            {statesOfItem.map(s => (
+                                <div key={s.id} className="form-check">
+                                    <input
+                                        type="checkbox"
+                                        id={s.id}
+                                        className="form-check-input"
+                                        checked={selectedStates.includes(s.id)}
+                                        onChange={() =>
+                                            setSelectedStates(prev =>
+                                                prev.includes(s.id) ? prev.filter(x => x !== s.id) : [...prev, s.id]
+                                            )
+                                        }
+                                    />
+                                    <label className="form-check-label" htmlFor={s.id}>{s.name}</label>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )} */}
+
             {stateOfItemEnabled && (
                 <div className="mb-3">
-                    <h5>State of Item</h5>
-                    {statesOfItem.map(s => (
-                        <div key={s.id} className="form-check">
-                            <input
-                                type="checkbox"
-                                id={s.id}
-                                className="form-check-input"
-                                checked={selectedStates.includes(s.id)}
-                                onChange={() =>
-                                    setSelectedStates(prev =>
-                                        prev.includes(s.id) ? prev.filter(x => x !== s.id) : [...prev, s.id]
-                                    )
-                                }
-                            />
-                            <label className="form-check-label" htmlFor={s.id}>{s.name}</label>
+                    <h5
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setShowStateOfItems(s => !s)}
+                    >
+                        State of Item <span className="ms-2">{showStateOfItems ? '▾' : '▸'}</span>
+                    </h5>
+                    {showStateOfItems && (
+                        <div className="ps-2">
+                            {statesOfItem.map(s => (
+                                <div key={s.id} className="form-check">
+                                    <input
+                                        id={s.id}
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        checked={selectedStates.includes(s.id)}
+                                        onChange={() => toggleState(s.id)}
+                                    />
+                                    <label htmlFor={s.id} className="form-check-label">
+                                        {s.name}
+                                    </label>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    )}
                 </div>
             )}
-
-            {listingPropertiesEnabled && categoryDetail && (
+            {/* {listingPropertiesEnabled && categoryDetail && (
                 <div className="mb-3">
                     <h5>Properties</h5>
                     {categoryDetail.listingProperties.map(prop => (
@@ -208,8 +261,30 @@ export function FilterPanel({
                         </div>
                     ))}
                 </div>
+            )} */}
+            {listingPropertiesEnabled && categoryDetail && (
+                <div className="mb-3">
+                    <h5
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setShowProperties(p => !p)}
+                    >
+                        Properties <span className="ms-2">{showProperties ? '▾' : '▸'}</span>
+                    </h5>
+                    {showProperties && (
+                        <div className="ps-2">
+                            {categoryDetail.listingProperties.map(prop => (
+                                <PropertySection
+                                    key={prop.id}
+                                    name={prop.name}
+                                    values={prop.listingPropertyValues.map(v => ({ id: v.id, name: v.name }))}
+                                    selected={selectedPropertyValues}
+                                    onToggle={toggleProp}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
             )}
-
             <button className="btn btn-primary mt-3" onClick={apply}>
                 Apply Filter
             </button>
