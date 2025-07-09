@@ -18,7 +18,7 @@ export interface FilterPanelProps {
   orderingEnabled?: boolean;
   stateOfItemEnabled?: boolean;
   listingPropertiesEnabled?: boolean;
-  onFilterSumbited: (filter: ListingFilter) => void;
+  onFilterSubmited: (filter: ListingFilter) => void;
 }
 
 export function FilterPanel({
@@ -30,7 +30,7 @@ export function FilterPanel({
   orderingEnabled = true,
   stateOfItemEnabled = true,
   listingPropertiesEnabled = true,
-  onFilterSumbited
+  onFilterSubmited
 }: FilterPanelProps) {
   const [priceMin, setPriceMin] = useState<number | null>(null);
   const [priceMax, setPriceMax] = useState<number | null>(null);
@@ -44,9 +44,24 @@ export function FilterPanel({
   const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
   const [statesOfItem, setStatesOfItem] = useState<StateOfItem[]>([]);
 
-  useEffect(() => {
-    onFilterSumbited({ priceMin, priceMax, sellerId, cityId: city?.id || null, radius, search, ordering, orderingDirection: direction });
-  }, [priceMin, priceMax, sellerId, city, radius, search, ordering, direction]);
+  const handleStateOfItemChange = (stateId: string) => {
+    setSelectedStateOfItems((prev) =>
+      prev.includes(stateId) ? prev.filter((id) => id !== stateId) : [...prev, stateId]
+    );
+  };
+
+  const handlePropertyValueChange = (valueId: string) => {
+    setSelectedPropertyValues((prev) =>
+      prev.includes(valueId) ? prev.filter((id) => id !== valueId) : [...prev, valueId]
+    );
+  };
+
+  const applyFilter = () => {
+    onFilterSubmited({ priceMin, priceMax, sellerId, cityId: city?.id || null, radius, search, ordering, orderingDirection: direction, selectedListingPropertyValueIds: selectedPropertyValues, stateOfItemIds: selectedStateOfItems });
+  }
+  // useEffect(() => {
+  //   onFilterSumbited({ priceMin, priceMax, sellerId, cityId: city?.id || null, radius, search, ordering, orderingDirection: direction, selectedListingPropertyValueIds: selectedPropertyValues, stateOfItemIds: selectedStateOfItems });
+  // }, [priceMin, priceMax, sellerId, city, radius, search, ordering, direction, selectedStateOfItems, selectedPropertyValues]);
 
   return (
     <div className="filter-panel">
@@ -121,7 +136,7 @@ export function FilterPanel({
         </div>
       )}
 
-      {listingPropertiesEnabled && (
+      {/* {listingPropertiesEnabled && (
         <div className="mb-4">
           <h5>Listing Properties</h5>
           {category?.listingProperties.map((property) => (
@@ -145,8 +160,8 @@ export function FilterPanel({
             </div>
           ))}
         </div>
-      )}
-      <button className="btn btn-primary" onClick={() => applyFilter(false)}>
+      )} */}
+      <button className="btn btn-primary" onClick={() => applyFilter()}>
         Apply Filter
       </button>
     </div>
