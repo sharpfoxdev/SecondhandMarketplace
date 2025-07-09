@@ -4,14 +4,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ListingGrid } from '@/sharedComponents/ListingGrid';
 import { FilterPanel } from '@/sharedComponents/FilterPanel';
-
-interface Listing {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  images: { imageUrl: string }[];
-}
+import { Listing } from '@/types/api/listings';
+import { ListingFilter } from '@/types/api/categories';
 
 interface ListingPropertyValue {
   id: string;
@@ -35,29 +29,23 @@ interface Category {
   listingProperties: ListingProperty[];
 }
 
-interface ListingFilter {
-  priceMin?: number | null;
-  priceMax?: number | null;
-  stateOfItemIds: string[];
-  selectedListingPropertyValueIds: string[];
-}
 
 export default function CategoryPage({ params }: { params: { categoryName: string } }) {
   const { categoryName } = params;
-  const [filterDto, setFilterDto] = useState<any>({});
+  const [filter, setFilter] = useState<ListingFilter>();
   const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState<{ items: any[]; totalPages: number }>({ items: [], totalPages: 1 });
 
-  useEffect(() => {
+  useEffect(() => { // todo here a method for on filterSubmitted
     const fetchListings = async () => {
       const resp = await axios.post(
         `https://localhost:7192/api/Categories/${categoryName}?pageNumber=${page}&pageSize=12`,
-        filterDto
+        filter
       );
       setPageData(resp.data);
     };
     fetchListings();
-  }, [categoryName, filterDto, page]);
+  }, [categoryName, filter, page]);
 
   return (
     <div className="container mt-5">
@@ -70,7 +58,9 @@ export default function CategoryPage({ params }: { params: { categoryName: strin
             radiusEnabled
             searchEnabled
             orderingEnabled
-            onFilterChange={setFilterDto}
+            stateOfItemEnabled
+            listingPropertiesEnabled
+            onFilterSubmited={setFilter}
           />
         </div>
         <div className="col-md-9">
