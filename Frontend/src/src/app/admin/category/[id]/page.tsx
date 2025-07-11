@@ -81,7 +81,7 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
         }
     };
 
-    // Filter out properties already tied to the category
+    // filter out properties already tied to the category
     const availableProperties = allProperties.filter(
         (prop) => !category?.listingProperties.some((tiedProp) => tiedProp.id === prop.id)
     );

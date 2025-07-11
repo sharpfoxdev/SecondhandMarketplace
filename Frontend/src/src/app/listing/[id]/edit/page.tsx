@@ -1,29 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-interface StateOfItem {
-    id: string;
-    name: string;
-}
-
-interface Listing {
-    id: string;
-    title: string;
-    description: string;
-    reasonOfSale: string;
-    price: number;
-    isSold: boolean;
-    stateOfItem: StateOfItem;
-    stateOfItemId: string;
-}
+import { StateOfItem } from '@/types/api/stateOfItem';
+import { ListingDetail, UpdateListingRequest } from '@/types/api/listings';
+import { fetchListingById, updateListing } from '@/services/listingService';
+import { fetchStatesOfItem } from '@/services/stateOfItemService';
+import CustomDropdown from '@/sharedComponents/CustomDropdown';
 
 export default function EditListingPage({ params }: { params: { id: string } }) {
     const { id } = params;
-    const [listing, setListing] = useState<Listing | null>(null);
+    const [listing, setListing] = useState<ListingDetail | null>(null);
     const [statesOfItems, setStatesOfItems] = useState<StateOfItem[]>([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
@@ -31,11 +19,8 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
     useEffect(() => {
         const fetchListing = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get<Listing>(`https://localhost:7192/api/Listings/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setListing({ ...response.data, stateOfItemId: response.data.stateOfItem.id }); // Set the stateOfItemId from the current listing
+                const res = await fetchListingById(id);
+                setListing(res);
             } catch (error) {
                 console.error('Failed to fetch listing', error);
             }
@@ -43,11 +28,8 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
 
         const fetchStatesOfItems = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get<StateOfItem[]>('https://localhost:7192/api/StateOfItem', {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setStatesOfItems(response.data);
+                const res = await fetchStatesOfItem();
+                setStatesOfItems(res);
             } catch (error) {
                 console.error('Failed to fetch states of items', error);
             }
@@ -63,38 +45,21 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
         if (!listing) return;
 
         try {
-            const token = localStorage.getItem('token');
-            const updatedListing = {
+            const updatedListing: UpdateListingRequest = {
                 title: listing.title,
                 description: listing.description,
                 reasonOfSale: listing.reasonOfSale,
                 price: listing.price,
-                stateOfItemId: listing.stateOfItemId,
+                stateOfItemId: listing.stateOfItem.id,
                 isSold: listing.isSold,
             };
-
-            await axios.put(`https://localhost:7192/api/Listings/${listing.id}`, updatedListing, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            await updateListing(listing.id, updatedListing);
 
             alert('Listing updated successfully!');
             router.push('/user');
         } catch (error) {
             console.error('Failed to update listing', error);
             alert('Failed to update listing.');
-        }
-    };
-
-    const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedStateId = e.target.value;
-        const selectedState = statesOfItems.find((state) => state.id === selectedStateId);
-
-        if (selectedState && listing) {
-            setListing({
-                ...listing,
-                stateOfItemId: selectedState.id,
-                stateOfItem: selectedState,
-            });
         }
     };
 
@@ -153,33 +118,17 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
 
                 <div className="mb-3">
                     <label htmlFor="stateOfItem" className="form-label">State of Item</label>
-                    <select
-                        className="form-select"
-                        id="stateOfItem"
-                        value={listing.stateOfItemId}
-                        onChange={handleStateChange}
-                    >
-                        {statesOfItems.map((state) => (
-                            <option key={state.id} value={state.id}>
-                                {state.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="form-check mb-3">
-                    <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="isSold"
-                        checked={listing.isSold}
-                        onChange={(e) => setListing({ ...listing, isSold: e.target.checked })}
+                    <CustomDropdown
+                        options={statesOfItems}
+                        selectedId={listing.stateOfItem.id}
+                        onSelect={(id) => {
+                            const selectedState = statesOfItems.find(s => s.id === id);
+                            if (selectedState) {
+                                setListing({ ...listing, stateOfItem: selectedState });
+                            }
+                        }}
                     />
-                    <label className="form-check-label" htmlFor="isSold">
-                        Is Sold
-                    </label>
                 </div>
-
                 <button type="submit" className="btn btn-primary">Save Changes</button>
             </form>
         </div>

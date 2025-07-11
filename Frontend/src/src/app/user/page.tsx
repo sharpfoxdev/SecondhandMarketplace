@@ -45,26 +45,48 @@ export default function UserListingsPage() {
         router.push(`/listing/${id}/edit`);
     };
 
+    const handleRedirectToListing = (id: string) => {
+        router.push(`/listing/${id}`);
+    };
+
     if (loading) {
         return <div className="container mt-5">Loading...</div>;
     }
 
     return (
         <div className="container mt-5">
-            <h1>Your Listings</h1>
+            <h1 className="mb-4">Your Listings</h1>
 
             {listings.length === 0 ? (
                 <p>No listings found.</p>
             ) : (
                 <ul className="list-group">
                     {listings.map((listing) => (
-                        <li key={listing.id} className="list-group-item d-flex justify-content-between align-items-center">
-                            <span>{listing.title}</span>
-                            <div>
-                                <button className="btn btn-primary mr-2" onClick={() => handleEdit(listing.id)}>
+                        <li
+                            key={listing.id}
+                            className="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            <span className="text-truncate flex-grow-1 me-3">
+                                <a
+                                    href={`/listing/${listing.id}`}
+                                    className="fw-bold text-decoration-none"
+                                    style={{ display: 'inline-block', maxWidth: '100%' }}
+                                >
+                                    {listing.title}
+                                </a>
+
+                            </span>
+                            <div className="d-flex flex-row flex-shrink-0">
+                                <button
+                                    className="btn btn-primary me-2"
+                                    onClick={() => handleEdit(listing.id)}
+                                >
                                     Edit
                                 </button>
-                                <button className="btn btn-danger" onClick={() => handleDelete(listing.id)}>
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={() => handleDelete(listing.id)}
+                                >
                                     Delete
                                 </button>
                             </div>
