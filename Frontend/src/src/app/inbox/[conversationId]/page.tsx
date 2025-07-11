@@ -2,17 +2,12 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
+import { Message } from '@/types/api/messages';
+import { fetchMessagesByConversationId } from '@/services/conversationService';
 import Button from 'react-bootstrap/Button';
-
-interface Message {
-    id: string;
-    conversationId: string;
-    senderId: string;
-    content: string;
-    createdAt: string;
-}
+import { User } from '@/types/api/users';
+import { fetchUserById } from '@/services/userService';
 
 function getCurrentUserId(): string | null {
     const token = localStorage.getItem('token');
@@ -31,59 +26,79 @@ function getCurrentUserId(): string | null {
 
 export default function ConversationPage({ params }: { params: { conversationId: string } }) {
     const { conversationId } = params;
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [messageText, setMessageText] = useState('');
-    const [hubConnection, setHubConnection] = useState<HubConnection | null>(null);
-    const endRef = useRef<HTMLDivElement | null>(null);
+    const router = useRouter();
     const currentUserId = getCurrentUserId();
 
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [messageText, setMessageText] = useState('');
+    const [otherUser, setOtherUser] = useState<User | null>(null);
+
+    const hubRef = useRef<HubConnection | null>(null);
+    const endRef = useRef<HTMLDivElement | null>(null);
+
     useEffect(() => {
-        const fetchMsgs = async () => {
-            const token = localStorage.getItem('token');
-            const res = await axios.get<Message[]>(`https://localhost:7192/api/conversations/${conversationId}/messages`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            setMessages(res.data);
-        };
-        fetchMsgs();
+        (async () => {
+            const res = await fetchMessagesByConversationId(conversationId);
+            setMessages(res);
+        })();
     }, [conversationId]);
 
     useEffect(() => {
-        const initHub = async () => {
-            const token = localStorage.getItem('token');
-            const conn = new HubConnectionBuilder()
-                .withUrl('https://localhost:7192/chathub', { accessTokenFactory: () => token || '' })
-                .withAutomaticReconnect()
-                .build();
+        if (!currentUserId) return;
+        const otherId = messages.find(m => m.senderId !== currentUserId)?.senderId;
+        if (otherId) {
+            fetchUserById(otherId)
+                .then((user) => setOtherUser(user))
+                .catch(console.error);
+            // const token = localStorage.getItem('token');
+            // axios
+            //     .get<User>(`https://localhost:7192/api/users/${otherId}`, {
+            //         headers: { Authorization: `Bearer ${token}` },
+            //     })
+            //     .then(res => setOtherUser(res.data))
+            //     .catch(console.error);
+        }
+    }, [messages, currentUserId]);
 
-            conn.on('ReceiveMessage', (senderId: string, msg: Message) => {
-                if (msg.conversationId === conversationId) {
-                    setMessages((prev) => [...prev, msg]);
-                }
-            });
+    useEffect(() => {
+        const conn = new HubConnectionBuilder()
+            .withUrl(`${process.env.NEXT_PUBLIC_API_BASE_URL}/chathub`, {
+                accessTokenFactory: () => localStorage.getItem('token') || '',
+            })
+            .withAutomaticReconnect()
+            .build();
 
-            try {
-                await conn.start();
-                setHubConnection(conn);
-                await conn.invoke('JoinConversation', conversationId);
-            } catch (e) {
-                console.error(e);
+        const handleReceive = (senderId: string, msg: Message) => {
+            if (msg.conversationId === conversationId) {
+                setMessages(prev => [...prev, msg]);
             }
         };
-        initHub();
+
+        conn.on('ReceiveMessage', handleReceive);
+        conn.start()
+            .then(() => conn.invoke('JoinConversation', conversationId))
+            .catch(console.error);
+
+        hubRef.current = conn;
+
         return () => {
-            hubConnection?.stop();
+            conn.off('ReceiveMessage', handleReceive);
+            conn.stop().catch(console.error);
+            hubRef.current = null;
         };
     }, [conversationId]);
 
+    // scrol to bottom on new messages
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
     const handleSend = async () => {
-        if (!messageText.trim() || !hubConnection) return;
+        const conn = hubRef.current;
+        const text = messageText.trim();
+        if (!text || !conn) return;
         try {
-            await hubConnection.invoke('SendMessage', conversationId, messageText);
+            await conn.invoke('SendMessage', conversationId, text);
             setMessageText('');
         } catch (e) {
             console.error(e);
@@ -91,39 +106,82 @@ export default function ConversationPage({ params }: { params: { conversationId:
     };
 
     return (
-        <div className="container mt-5 d-flex flex-column" style={{ height: '100vh' }}>
-            <div className="flex-grow-1 overflow-auto mb-3">
-                {messages.map((m) => (
-                    <div
-                        key={m.id}
-                        className={`d-flex mb-2 ${m.senderId === currentUserId ? 'justify-content-end' : 'justify-content-start'
-                            }`}
-                    >
+        <div className="d-flex justify-content-center mt-5">
+            <div
+                className="d-flex flex-column border rounded shadow-sm"
+                style={{ width: '100%', maxWidth: '600px', height: '80vh' }}
+            >
+                {/*header*/}
+                <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
+                    {otherUser ? (
+                        <>
+                            <a
+                                href={`/user/${otherUser.id}`}
+                                className="fw-bold text-decoration-none"
+                            >
+                                {otherUser.nickname}
+                            </a>
+                            <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => router.push(`/user/${otherUser.id}/review`)}
+                            >
+                                Give Review To User
+                            </Button>
+                        </>
+                    ) : (
+                        <span>Loading…</span>
+                    )}
+                </div>
+
+                {/*messages*/}
+                <div className="flex-grow-1 overflow-auto p-3">
+                    {messages.map((m) => (
                         <div
-                            className={`p-2 rounded ${m.senderId === currentUserId ? 'bg-primary text-white' : 'bg-light'
+                            key={m.id}
+                            className={`d-flex mb-2 ${m.senderId === currentUserId
+                                ? 'justify-content-end'
+                                : 'justify-content-start'
                                 }`}
                         >
-                            {m.content}
-                            <div className="text-muted small">
-                                {new Date(m.createdAt).toLocaleTimeString()}
+                            <div
+                                className={`p-2 rounded ${m.senderId === currentUserId
+                                    ? 'bg-primary text-white'
+                                    : 'bg-light'
+                                    }`}
+                                style={{ maxWidth: '75%' }}
+                            >
+                                {m.content}
+                                <div className="text-muted small text-end">
+                                    {new Date(m.createdAt).toLocaleTimeString("en-GB", { timeZone: "CET" })}
+                                </div>
                             </div>
                         </div>
+                    ))}
+                    <div ref={endRef} />
+                </div>
+
+                {/*input bar at the bottom*/}
+                <div className="p-3 border-top">
+                    <div className="d-flex gap-2">
+                        <textarea
+                            className="form-control"
+                            rows={2}
+                            value={messageText}
+                            onChange={(e) => setMessageText(e.target.value)}
+                            placeholder="Type a message…"
+                        />
+                        <Button
+                            onClick={handleSend}
+                            disabled={!messageText.trim()}
+                            variant="primary"
+                        >
+                            Send
+                        </Button>
                     </div>
-                ))}
-                <div ref={endRef} />
-            </div>
-            <div>
-                <textarea
-                    className="form-control"
-                    rows={3}
-                    value={messageText}
-                    onChange={(e) => setMessageText(e.target.value)}
-                    placeholder="Type a message..."
-                />
-                <Button onClick={handleSend} className="mt-2" disabled={!messageText.trim()}>
-                    Send
-                </Button>
+                </div>
             </div>
         </div>
     );
 }
+

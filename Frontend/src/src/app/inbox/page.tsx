@@ -2,21 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import axios from 'axios';
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
+import { fetchUserById } from '@/services/userService';
+import { fetchAllConversations } from '@/services/conversationService';
+import { User } from '@/types/api/users';
+import { Conversation } from '@/types/api/conversations';
 
-interface Conversation {
-    id: string;
-    conversationParticipants: { conversationId: string; userId: string }[];
-    createdAt: string;
-    lastUpdatedAt: string;
-}
-
-interface User {
-    id: string;
-    nickname: string;
-    lastLoggedIn: string;
-}
 
 function getCurrentUserId(): string | null {
     const token = localStorage.getItem('token');
@@ -42,26 +33,27 @@ export default function InboxPage() {
 
     useEffect(() => {
         const fetchConvs = async () => {
-            const token = localStorage.getItem('token');
-            const res = await axios.get<Conversation[]>('https://localhost:7192/api/conversations', {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const sorted = res.data.sort(
-                (a, b) => new Date(b.lastUpdatedAt).getTime() - new Date(a.lastUpdatedAt).getTime()
-            );
-            setConversations(sorted);
+            try {
+                const res = await fetchAllConversations();
+                const sorted = res.sort(
+                    (a, b) => new Date(b.lastUpdatedAt).getTime() - new Date(a.lastUpdatedAt).getTime()
+                );
 
-            sorted.forEach((conv) => {
-                const other = conv.conversationParticipants.find((p) => p.userId !== currentUserId)?.userId;
-                if (other && !users[other]) {
-                    axios
-                        .get<User>(`https://localhost:7192/api/users/${other}`, {
-                            headers: { Authorization: `Bearer ${token}` },
-                        })
-                        .then((r) => setUsers((u) => ({ ...u, [other]: r.data })))
-                        .catch(console.error);
-                }
-            });
+                sorted.forEach((conv) => {
+                    const other = conv.conversationParticipants.find((p) => p.userId !== currentUserId)?.userId;
+                    if (other && !users[other]) {
+                        fetchUserById(other)
+                            .then((user) =>
+                                setUsers((prev) => ({ ...prev, [other]: user }))
+                            )
+                            .catch(console.error);
+                    }
+                    conv.lastUpdatedAt = new Date(conv.lastUpdatedAt).toLocaleString();
+                });
+                setConversations(sorted);
+            } catch (err) {
+                console.error('Failed to load conversations', err);
+            }
         };
 
         fetchConvs();
@@ -71,7 +63,7 @@ export default function InboxPage() {
         const initHub = async () => {
             const token = localStorage.getItem('token');
             const conn = new HubConnectionBuilder()
-                .withUrl('https://localhost:7192/chathub', { accessTokenFactory: () => token || '' })
+                .withUrl(`${process.env.NEXT_PUBLIC_API_BASE_URL}/chathub`, { accessTokenFactory: () => token || '' })
                 .withAutomaticReconnect()
                 .build();
 
@@ -82,8 +74,8 @@ export default function InboxPage() {
                     const idx = prev.findIndex((c) => c.id === convId);
                     if (idx === -1) return prev;
                     const updated = [...prev];
-                    updated[idx].lastUpdatedAt = new Date().toISOString();
-                    // move to top
+                    updated[idx].lastUpdatedAt = new Date().toLocaleString();
+                    // move to the top
                     const [conv] = updated.splice(idx, 1);
                     return [conv, ...updated];
                 });
@@ -106,24 +98,34 @@ export default function InboxPage() {
 
     return (
         <div className="container mt-5">
-            <h2>Inbox</h2>
-            <ul className="list-group">
+            <h2 className="mb-4">Inbox</h2>
+
+            <div className="list-group">
                 {conversations.map((conv) => {
-                    const other = conv.conversationParticipants.find((p) => p.userId !== currentUserId)?.userId;
-                    const name = other ? users[other]?.nickname || other : '—';
-                    const isUnread = unread[conv.id];
+                    const otherId = conv.conversationParticipants.find(p => p.userId !== currentUserId)?.userId
+                    const name = otherId ? users[otherId]?.nickname || otherId : '—'
+                    const isUnread = !!unread[conv.id]
+
                     return (
-                        <li
+                        <Link
                             key={conv.id}
-                            className={`list-group-item d-flex justify-content-between ${isUnread ? 'fw-bold' : ''
-                                }`}
+                            href={`/inbox/${conv.id}`}
+                            className={`
+            list-group-item 
+            list-group-item-action 
+            d-flex justify-content-between align-items-center
+            ${isUnread ? 'fw-bold bg-light' : 'text-body'}
+            text-decoration-none
+          `}
                         >
-                            <Link href={`/inbox/${conv.id}`}>{name}</Link>
-                            <small>{new Date(conv.lastUpdatedAt).toLocaleString()}</small>
-                        </li>
-                    );
+                            <span>{name}</span>
+                            <small className="text-muted">
+                                {new Date(conv.lastUpdatedAt).toLocaleString()}
+                            </small>
+                        </Link>
+                    )
                 })}
-            </ul>
+            </div>
         </div>
     );
 }

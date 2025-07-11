@@ -65,7 +65,7 @@ export default function TopMenu() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
-                        {/* Categories Dropdown */}
+                        {/* categories dropdown */}
                         <li className="nav-item dropdown">
                             <a
                                 className="nav-link dropdown-toggle"
@@ -82,7 +82,7 @@ export default function TopMenu() {
                             </ul>
                         </li>
                     </ul>
-                    {/* Right-aligned buttons */}
+                    {/* menu buttons */}
                     <ul className="navbar-nav ms-auto">
                         <li className="nav-item">
                             <Link href="/listing/new" className="nav-link">
@@ -102,6 +102,11 @@ export default function TopMenu() {
                         <li className="nav-item">
                             <Link href="/admin" className="nav-link">
                                 Admin
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link href="/inbox" className="nav-link">
+                                Inbox
                             </Link>
                         </li>
                         <li className="nav-item">
