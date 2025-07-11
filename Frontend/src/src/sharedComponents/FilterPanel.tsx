@@ -173,41 +173,6 @@ export function FilterPanel({
                 </div>
             )}
 
-            {/* {stateOfItemEnabled && (
-                <div className="mb-3">
-                    <h5
-                        className="mb-1"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setShowStateOfItems(prev => !prev)}
-                    >
-                        State of Item
-                        <span className="ms-2">
-                            {showStateOfItems ? '▾' : '▸'}
-                        </span>
-                    </h5>
-                    {showStateOfItems && (
-                        <div className="ps-3">
-                            {statesOfItem.map(s => (
-                                <div key={s.id} className="form-check">
-                                    <input
-                                        type="checkbox"
-                                        id={s.id}
-                                        className="form-check-input"
-                                        checked={selectedStates.includes(s.id)}
-                                        onChange={() =>
-                                            setSelectedStates(prev =>
-                                                prev.includes(s.id) ? prev.filter(x => x !== s.id) : [...prev, s.id]
-                                            )
-                                        }
-                                    />
-                                    <label className="form-check-label" htmlFor={s.id}>{s.name}</label>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )} */}
-
             {stateOfItemEnabled && (
                 <div className="mb-3">
                     <h5
@@ -236,32 +201,6 @@ export function FilterPanel({
                     )}
                 </div>
             )}
-            {/* {listingPropertiesEnabled && categoryDetail && (
-                <div className="mb-3">
-                    <h5>Properties</h5>
-                    {categoryDetail.listingProperties.map(prop => (
-                        <div key={prop.id}>
-                            <strong>{prop.name}</strong>
-                            {prop.listingPropertyValues.map(v => (
-                                <div key={v.id} className="form-check">
-                                    <input
-                                        type="checkbox"
-                                        id={v.id}
-                                        className="form-check-input"
-                                        checked={selectedPropertyValues.includes(v.id)}
-                                        onChange={() =>
-                                            setSelectedPropertyValues(prev =>
-                                                prev.includes(v.id) ? prev.filter(x => x !== v.id) : [...prev, v.id]
-                                            )
-                                        }
-                                    />
-                                    <label className="form-check-label" htmlFor={v.id}>{v.name}</label>
-                                </div>
-                            ))}
-                        </div>
-                    ))}
-                </div>
-            )} */}
             {listingPropertiesEnabled && categoryDetail && (
                 <div className="mb-3">
                     <h5

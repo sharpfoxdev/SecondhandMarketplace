@@ -18,7 +18,7 @@ export default function CategoryTree({
     return (
         <ul className="list-unstyled mt-4">
             {categories
-                .filter((category) => !category.parentCategory) // Only top level categories
+                .filter((category) => !category.parentCategory) // only top level categories
                 .map((category) => (
                     <CategoryItem
                         key={category.id}

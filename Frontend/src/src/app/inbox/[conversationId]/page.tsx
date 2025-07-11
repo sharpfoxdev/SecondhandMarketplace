@@ -50,13 +50,6 @@ export default function ConversationPage({ params }: { params: { conversationId:
             fetchUserById(otherId)
                 .then((user) => setOtherUser(user))
                 .catch(console.error);
-            // const token = localStorage.getItem('token');
-            // axios
-            //     .get<User>(`https://localhost:7192/api/users/${otherId}`, {
-            //         headers: { Authorization: `Bearer ${token}` },
-            //     })
-            //     .then(res => setOtherUser(res.data))
-            //     .catch(console.error);
         }
     }, [messages, currentUserId]);
 

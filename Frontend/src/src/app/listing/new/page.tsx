@@ -46,10 +46,6 @@ export default function CreateListing() {
 
     const handleCategorySelect = async (categoryId: string) => {
         setSelectedCategoryId(categoryId);
-        const token = localStorage.getItem('token');
-        // todo test this
-        // Find the selected category and its listing properties
-        //const selectedCategory = categories.find((category) => category.id === categoryId);
         try {
             const category: CategoryDetail = await fetchCategoryById(categoryId);
             setListingProperties(category.listingProperties);

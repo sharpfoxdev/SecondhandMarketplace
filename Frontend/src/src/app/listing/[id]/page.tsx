@@ -1,38 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
-
-interface ListingPropertyValue {
-    id: string;
-    name: string;
-    listingProperty: { name: string };
-}
-
-interface Image {
-    id: string;
-    imageUrl: string;
-}
-
-interface Listing {
-    id: string;
-    title: string;
-    description: string;
-    sellerId: string;
-    reasonOfSale: string;
-    price: number;
-    isSold: boolean;
-    category: { name: string };
-    selectedListingPropertyValues: ListingPropertyValue[];
-    images: Image[];
-}
+import { ListingDetail } from '@/types/api/listings';
+import { fetchListingById } from '@/services/listingService';
+import { createConversation } from '@/services/conversationService';
+import { useRouter } from 'next/navigation';
+import styles from './ListingPage.module.css';
+import { fetchUserById } from '@/services/userService';
+import { User } from '@/types/api/users';
 
 export default function ListingPage({ params }: { params: { id: string } }) {
     const { id } = params;
-    const [listing, setListing] = useState<Listing | null>(null);
+    const router = useRouter();
+    const [listing, setListing] = useState<ListingDetail | null>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
@@ -43,8 +27,10 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     useEffect(() => {
         const fetchListing = async () => {
             try {
-                const response = await axios.get<Listing>(`https://localhost:7192/api/Listings/${id}`);
-                setListing(response.data);
+                const res = await fetchListingById(id);
+                setListing(res);
+                const user = await fetchUserById(res.sellerId);
+                setUser(user);
             } catch (error) {
                 console.error('Failed to fetch listing', error);
             } finally {
@@ -57,10 +43,10 @@ export default function ListingPage({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         const initHub = async () => {
-            const token = localStorage.getItem('token');
-            console.log(token);
             const connection = new HubConnectionBuilder()
-                .withUrl('https://localhost:7192/chathub', { accessTokenFactory: () => token || '' })
+                .withUrl(`${process.env.NEXT_PUBLIC_API_BASE_URL}/chathub`, {
+                    accessTokenFactory: () => localStorage.getItem('token') || ''
+                })
                 .withAutomaticReconnect()
                 .build();
 
@@ -85,19 +71,15 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     const handleSendMessage = async () => {
         if (!messageText.trim() || !hubConnection || !listing) return;
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post('https://localhost:7192/api/conversations', { recipientId: listing.sellerId }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            const conversationId: string = res.data.id;
+            const res = await createConversation({ recipientId: listing.sellerId })
+            const conversationId: string = res.id;
             await hubConnection.invoke('JoinConversation', conversationId);
             await hubConnection.invoke('SendMessage', conversationId, messageText);
             setMessageText('');
             setShowMessageForm(false);
+            router.push(`/inbox/${conversationId}`);
         } catch (error) {
+            alert("Couldn't send message");
             console.error('Error sending message:', error);
         }
     };
@@ -118,27 +100,28 @@ export default function ListingPage({ params }: { params: { id: string } }) {
     if (!listing) return <div className="container mt-5">Listing not found</div>;
 
     return (
-        <div className="container mt-5">
-            <h1>{listing.title}</h1>
 
-            {/* Image Gallery */}
+        <div className="container mt-5">
+            <h1 className="mb-4">{listing.title}</h1>
+            {/* gallery */}
             {listing.images.length > 0 && (
-                <div className="row">
+                <div className="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
                     {listing.images.map((img, idx) => (
-                        <div className="col-4 mb-3" key={img.id}>
-                            <img
-                                src={img.imageUrl}
-                                alt="Listing Image"
-                                className="img-fluid thumbnail"
-                                onClick={() => setSelectedImageIndex(idx)}
-                                style={{ cursor: 'pointer' }}
-                            />
+                        <div className="col" key={img.id}>
+                            <div className={`ratio ratio-4x3 ${styles.thumbnailWrapper}`}>
+                                <img
+                                    src={img.imageUrl}
+                                    alt="Listing"
+                                    className={styles.thumbnail}
+                                    onClick={() => setSelectedImageIndex(idx)}
+                                />
+                            </div>
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Modal for full-size images */}
+            {/* modal for images */}
             <Modal show={selectedImageIndex !== null} onHide={() => setSelectedImageIndex(null)} centered>
                 <Modal.Header closeButton />
                 <Modal.Body>
@@ -146,11 +129,10 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                         <div className="d-flex flex-column align-items-center">
                             <img
                                 src={listing.images[selectedImageIndex].imageUrl}
-                                alt="Full size listing image"
+                                alt="Full size"
                                 className="img-fluid"
-                                style={{ width: '100%' }}
                             />
-                            <div className="mt-3 d-flex justify-content-between" style={{ width: '100%' }}>
+                            <div className="mt-3 d-flex justify-content-between w-100">
                                 <Button onClick={handlePreviousImage}>Previous</Button>
                                 <Button onClick={handleNextImage}>Next</Button>
                             </div>
@@ -159,27 +141,43 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                 </Modal.Body>
             </Modal>
 
-            {/* Listing Information */}
-            <div className="mt-4">
+            {/* listing info */}
+            <div className="mt-5">
                 <h3>Details</h3>
                 <p><strong>Price:</strong> {listing.price}</p>
-                <p><strong>Is Sold:</strong> {listing.isSold ? 'Yes' : 'No'}</p>
-                <p><strong>Category:</strong> {listing.category.name}</p>
+                <p>
+                    <strong>Seller:</strong>{' '}
+                    <a href={`/user/${listing.sellerId}`} className="text-decoration-none">
+                        {user?.nickname ?? listing.sellerId}
+                    </a>
+                </p>
+                <p><strong>City:</strong> {listing.city.name}</p>
+                <p><strong>State of Item:</strong> {listing.stateOfItem.name}</p>
+                <p>
+                    <strong>Category:</strong>{' '}
+                    <a href={`/category/${listing.category.name}`} className="text-decoration-none">
+                        {listing.category.name}
+                    </a>
+                </p>
                 <p><strong>Description:</strong> {listing.description}</p>
                 <p><strong>Reason of Sale:</strong> {listing.reasonOfSale}</p>
 
-                <h4>Property values</h4>
-                <ul>
-                    {listing.selectedListingPropertyValues.map((value) => (
-                        <li key={value.id}>
-                            <strong>{value.listingProperty.name}:</strong> {value.name}
-                        </li>
-                    ))}
-                </ul>
+                {listing.selectedListingPropertyValues.length > 0 && (
+                    <>
+                        <h4 className="mt-4">Property Values</h4>
+                        <ul className="list-unstyled">
+                            {listing.selectedListingPropertyValues.map((value) => (
+                                <li key={value.id}>
+                                    <strong>{value.listingProperty.name}:</strong> {value.name}
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                )}
             </div>
 
-            {/* Message Seller Section */}
-            <div className="mt-4">
+            {/* message seller */}
+            <div className="mt-5 mb-5">
                 {!showMessageForm ? (
                     <Button onClick={() => setShowMessageForm(true)}>Message Seller</Button>
                 ) : (
@@ -202,14 +200,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                     </div>
                 )}
             </div>
-
-            <style jsx>{`
-        .thumbnail {
-          object-fit: cover;
-          height: 200px;
-          width: 100%;
-        }
-      `}</style>
         </div>
     );
 }

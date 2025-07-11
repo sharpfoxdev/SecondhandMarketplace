@@ -108,6 +108,7 @@ namespace Infrastructure.Persistence.Repositories
 					.ThenInclude(x => x.ListingProperty)
 				.Include(x => x.Images)
 				.Include(x => x.StateOfItem)
+				.Include(x => x.City)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if(existing == null) {
 				return null; // couldnt find this listing

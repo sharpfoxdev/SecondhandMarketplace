@@ -103,7 +103,7 @@ export default function InboxPage() {
             <div className="list-group">
                 {conversations.map((conv) => {
                     const otherId = conv.conversationParticipants.find(p => p.userId !== currentUserId)?.userId
-                    const name = otherId ? users[otherId]?.nickname || otherId : '—'
+                    const name = otherId ? users[otherId]?.nickname || otherId : '-'
                     const isUnread = !!unread[conv.id]
 
                     return (
