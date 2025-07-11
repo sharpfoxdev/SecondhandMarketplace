@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -219,13 +220,12 @@ namespace Infrastructure.Persistence.Repositories {
 				.ToListAsync();
 
             var city = await dbContext.Cities.Where(x => x.Id == filter.CityId).FirstOrDefaultAsync();
-            var q = dbContext.Listings
+			var q = dbContext.Listings
 				.Include(l => l.Images)
 				.Include(l => l.SelectedListingPropertyValues)
 				.Where(l => categoryIds.Contains(l.CategoryId))
-				.ApplyFilters(filter, propertiesOfRootCategory, city)
-				.FilterBySearch(filter)
-				.ApplyOrdering(filter);
+				.ApplyCategoryFilters(filter, propertiesOfRootCategory, city)
+				.FilterBySearch(filter);
 
             var totalCount = await q.CountAsync();
             var items = await q.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();

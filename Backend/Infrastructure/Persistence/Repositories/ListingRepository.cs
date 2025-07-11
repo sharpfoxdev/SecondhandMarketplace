@@ -1,9 +1,12 @@
-﻿using Application.Interfaces;
+﻿using Application.Filters;
+using Application.Interfaces;
 using Application.Interfaces.Repositories;
+using Application.Pagination;
 using Domain.Common;
 using Domain.Entities;
 using Infrastructure.FileStorage.Interfaces;
 using Infrastructure.Persistence.Contexts;
+using Infrastructure.Persistence.Filters;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -76,20 +79,26 @@ namespace Infrastructure.Persistence.Repositories
 			// delete images from the filesystem
 			// (we dont have to delete them from the database, because of the cascade delete)
 			foreach(Image image in existingListing.Images) {
-				imageRepository.DeleteAsync(image.Id);
+				imageRepository.DeleteImageFromFileSystem(image);
 			}
 			dbContext.Listings.Remove(existingListing);
 			await dbContext.SaveChangesAsync();
 			return existingListing;
 		}
 
-		public async Task<List<Listing>> GetAllAsync() {
-			return await dbContext.Listings
-				.Include(x => x.Category)
-				.Include(x => x.SelectedListingPropertyValues)
-				.Include(x => x.Images)
-				.ToListAsync();
-		}
+		public async Task<Page<Listing>> GetAllAsync(ListingFilter filter, int pageNumber = 1, int pageSize = 20) {
+            var city = await dbContext.Cities.Where(x => x.Id == filter.CityId).FirstOrDefaultAsync();
+			var q = dbContext.Listings
+				.Include(l => l.Images)
+				.Include(l => l.SelectedListingPropertyValues)
+				.Include(l => l.Category)
+				.ApplyAllListingsFilters(filter, city)
+				.FilterBySearch(filter);
+
+            var totalCount = await q.CountAsync();
+            var items = await q.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            return new Page<Listing>(items, totalCount, pageNumber, pageSize);
+        }
 		
 
 		public async Task<Listing?> GetByIdAsync(Guid id) {
