@@ -18,5 +18,6 @@ namespace Infrastructure.FileStorage.Interfaces
         public Task<Image?> GetByIdAsync(Guid id);
         Task<Image?> UploadAsync(Guid listingId, IFormFile file);
         Task<Image?> DeleteAsync(Guid id);
+        void DeleteImageFromFileSystem(Image image);
     }
 }
