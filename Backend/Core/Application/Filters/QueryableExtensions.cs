@@ -119,13 +119,24 @@ namespace Application.Filters
         /// <summary>
         /// Applies all configured filters (price, state, properties)
         /// </summary>
-        public static IQueryable<Listing> ApplyFilters(this IQueryable<Listing> query,ListingFilter filter, IEnumerable<ListingProperty> categoryProperties, City? chosenCity = null)
+        public static IQueryable<Listing> ApplyCategoryFilters(this IQueryable<Listing> query,ListingFilter filter, IEnumerable<ListingProperty> categoryProperties, City? chosenCity = null)
         {
             return query
                 .FilterByPrice(filter)
                 .FilterByStateOfItem(filter)
                 .FilterByProperties(filter, categoryProperties)
-                .FilterByRadius(filter, chosenCity);
+                .FilterByRadius(filter, chosenCity)
+            	.ApplyOrdering(filter);
+
+        }
+        public static IQueryable<Listing> ApplyAllListingsFilters(this IQueryable<Listing> query, ListingFilter filter, City? chosenCity = null)
+        {
+            return query
+                .FilterByPrice(filter)
+                .FilterByStateOfItem(filter)
+                .FilterByRadius(filter, chosenCity)
+                .FilterBySeller(filter)
+            	.ApplyOrdering(filter);
         }
     }
 }

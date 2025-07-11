@@ -1,12 +1,16 @@
-﻿using Application.Interfaces;
+﻿using Application.Filters;
+using Application.Interfaces;
 using Application.Interfaces.Repositories;
 using AutoMapper;
 using Azure.Core;
 using Domain.Entities;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using WebApi.ApiDtos;
 using WebApi.ApiDtos.ListingPropertyValues;
 using WebApi.ApiDtos.Listings;
 
@@ -20,6 +24,7 @@ namespace WebApi.Controllers
     public class ListingsController : ControllerBase
     {
         private readonly IListingRepository repository;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly IMapper mapper;
 
         /// <summary>
@@ -27,9 +32,10 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="repository">The repository for interacting with listing data.</param>
         /// <param name="mapper">Mapper instance to handle mapping between domain models and DTOs.</param>
-        public ListingsController(IListingRepository repository, IMapper mapper)
+        public ListingsController(IListingRepository repository, UserManager<ApplicationUser> userManager, IMapper mapper)
         {
             this.repository = repository;
+            this.userManager = userManager;
             this.mapper = mapper;
         }
 
@@ -38,10 +44,19 @@ namespace WebApi.Controllers
         /// </summary>
         /// <returns>A list of all listings.</returns>
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromBody] ListingFilterDto filter, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 12)
         {
-            var domain = await repository.GetAllAsync();
-            return Ok(mapper.Map<List<ListingDto>>(domain));
+            var filterDomain = mapper.Map<ListingFilter>(filter);
+            var pagedDomain = await repository.GetAllAsync(filterDomain, pageNumber, pageSize);
+            var dtoItems = mapper.Map<List<ListingDto>>(pagedDomain.Items);
+            var result = new PageDto<ListingDto>
+            {
+                Items = dtoItems,
+                TotalPages = pagedDomain.TotalPages,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+            return Ok(result);
         }
 
         /// <summary>
@@ -60,16 +75,20 @@ namespace WebApi.Controllers
             }
             return Ok(mapper.Map<ListingDetailDto>(domain));
         }
+        /// <summary>
+        /// User to get the listings owned by the user, that is signed in. 
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         [Route("GetByUser")]
         public async Task<IActionResult> GetAllByUser()
         {
-            var domain = await repository.GetAllAsync();
             string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             Guid userId = Guid.Parse(userIdString);
-            var filtered = domain.Where(x => x.SellerId == userId).ToList();
-            return Ok(mapper.Map<List<ListingDto>>(filtered));
+            var filter = new ListingFilter() { SellerId = userId};
+            var domain = await repository.GetAllAsync(filter, 1, int.MaxValue);
+            return Ok(mapper.Map<List<ListingDto>>(domain.Items));
         }
         /// <summary>
         /// Creates a new listing.
@@ -123,7 +142,9 @@ namespace WebApi.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (!await UserOwnsTheListing(id)){
+            var userOwnsListing = await UserOwnsTheListing(id);
+            var userIsAdmin = await UserIsAdmin(id);
+            if (!userOwnsListing && !userIsAdmin){
                 return Forbid();
             }
             var domain = await repository.DeleteAsync(id);
@@ -146,6 +167,17 @@ namespace WebApi.Controllers
                 return false;
             }
             return true;
+        }
+        private async Task<bool> UserIsAdmin(Guid id)
+        {
+            string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await userManager.FindByIdAsync(userIdString);
+            var roles = await userManager.GetRolesAsync(user);
+            if (roles.Contains("Admin"))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
