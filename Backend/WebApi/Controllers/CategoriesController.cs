@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WebApi.ApiDtos.Listings;
 using Application.Filters;
 using WebApi.ApiDtos;
+using System.Net;
 
 namespace WebApi.Controllers
 {
@@ -78,6 +79,7 @@ namespace WebApi.Controllers
         [HttpPost("{categoryName}")]
         public async Task<IActionResult> GetListingsByCategoryName(string categoryName, [FromBody] ListingFilterDto filter, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 12)
         {
+            categoryName = WebUtility.UrlDecode(categoryName);
             var domainFilter = mapper.Map<ListingFilter>(filter);
             var pagedDomain = await repository.GetListingsByCategoryNameAsync(categoryName, domainFilter, pageNumber, pageSize);
             var dtoItems = mapper.Map<List<ListingDto>>(pagedDomain.Items);
@@ -95,6 +97,7 @@ namespace WebApi.Controllers
         [Route("GetByName/{categoryName}")]
         public async Task<IActionResult> GetCategoryByCategoryName(string categoryName)
         {
+            categoryName = WebUtility.UrlDecode(categoryName);
             var domain = await repository.GetByNameAsync(categoryName);
             return Ok(mapper.Map<CategoryDetailDto>(domain));
         }
