@@ -34,7 +34,7 @@ namespace Infrastructure.Persistence.Repositories
 
             if (conversation != null)
             {
-                conversation.LastUpdatedAt = DateTime.UtcNow;
+                conversation.LastUpdatedAt = DateTime.Now;
             }
             else
             {
