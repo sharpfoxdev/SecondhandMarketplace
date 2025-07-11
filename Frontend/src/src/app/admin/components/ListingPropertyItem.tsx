@@ -35,61 +35,78 @@ export default function ListingPropertyItem({
     };
 
     return (
-        <li className="mb-4">
-            <div className="d-flex align-items-center">
-                {isEditing ? (
-                    <>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                        />
-                        <button className="btn btn-primary ml-2" onClick={handleEdit}>
-                            Confirm
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <span>{property.name}</span>
-                        <button
-                            className="btn btn-sm btn-secondary ml-2"
-                            onClick={() => setIsEditing(true)}
-                        >
-                            Edit
-                        </button>
-                        <button className="btn btn-sm btn-danger ml-2" onClick={() => onDelete(property.id)}>
-                            Delete
-                        </button>
-                    </>
-                )}
+        <li className="mb-4 list-unstyled">
+            <div className="card shadow-sm">
+                <div className="card-body">
+                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                        {isEditing ? (
+                            <div className="d-flex flex-grow-1 gap-2 flex-wrap">
+                                <input
+                                    type="text"
+                                    className="form-control flex-grow-1"
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                />
+                                <button className="btn btn-primary" onClick={handleEdit}>
+                                    Confirm
+                                </button>
+                            </div>
+                        ) : (
+                            <span className="h6 mb-0">{property.name}</span>
+                        )}
+
+                        <div className="d-flex flex-wrap gap-2">
+                            {!isEditing && (
+                                <>
+                                    <button
+                                        className="btn btn-sm btn-primary"
+                                        onClick={() => setIsEditing(true)}
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        className="btn btn-sm btn-danger"
+                                        onClick={() => onDelete(property.id)}
+                                    >
+                                        Delete
+                                    </button>
+                                </>
+                            )}
+
+                            <button
+                                className="btn btn-sm btn-secondary"
+                                onClick={() => setShowAddValueForm((v) => !v)}
+                            >
+                                {showAddValueForm ? 'Cancel' : 'Add Value'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {showAddValueForm && (
+                        <div className="mt-3">
+                            <ListingPropertyValueForm
+                                onSubmit={(valueName) => {
+                                    onAddValue(property.id, valueName)
+                                    setShowAddValueForm(false)
+                                }}
+                            />
+                        </div>
+                    )}
+
+                    {property.listingPropertyValues.length > 0 && (
+                        <ul className="mt-3 ps-0">
+                            {property.listingPropertyValues.map((value) => (
+                                <ListingPropertyValueItem
+                                    key={value.id}
+                                    value={value}
+                                    onDelete={onDeleteValue}
+                                    onEdit={onEditValue}
+                                />
+                            ))}
+                        </ul>
+                    )}
+                </div>
             </div>
-            <button
-                className="btn btn-sm btn-link"
-                onClick={() => setShowAddValueForm(!showAddValueForm)}
-            >
-                {showAddValueForm ? 'Cancel' : 'Add Value'}
-            </button>
-            {showAddValueForm && (
-                <ListingPropertyValueForm
-                    onSubmit={(valueName) => {
-                        onAddValue(property.id, valueName);
-                        setShowAddValueForm(false);
-                    }}
-                />
-            )}
-            {property.listingPropertyValues.length > 0 && (
-                <ul className="mt-2">
-                    {property.listingPropertyValues.map((value) => (
-                        <ListingPropertyValueItem
-                            key={value.id}
-                            value={value}
-                            onDelete={onDeleteValue}
-                            onEdit={onEditValue}
-                        />
-                    ))}
-                </ul>
-            )}
         </li>
     );
 }

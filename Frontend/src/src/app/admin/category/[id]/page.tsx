@@ -1,26 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import CategoryNameEdit from './components/CategoryNameEdit';
 import ListingPropertiesList from './components/ListingPropertiesList';
 import AvailablePropertiesList from './components/AvailablePropertiesList';
+import { fetchCategoryById, updateCategory, removeListingPropertyFromCategory, addListingPropertiesToCategory } from '@/services/categoryService';
+import { CategoryDetail } from '@/types/api/categories';
+import { ListingProperty } from '@/types/api/listingProperties';
+import { fetchListingProperties } from '@/services/listingPropertyService';
 
-interface ListingProperty {
-    id: string;
-    name: string;
-}
-
-interface Category {
-    id: string;
-    name: string;
-    listingProperties: ListingProperty[];
-}
 
 export default function CategoryPage({ params }: { params: { id: string } }) {
-    const { id } = params; // Get the category id from the route
-    const [category, setCategory] = useState<Category | null>(null);
-    const [categoryName, setCategoryName] = useState('');
+    const { id } = params; // get the category id from the route
+    const [category, setCategory] = useState<CategoryDetail | null>(null);
     const [allProperties, setAllProperties] = useState<ListingProperty[]>([]);
     const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
 
@@ -28,17 +20,16 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
         if (id) {
             const fetchCategory = async () => {
                 try {
-                    const response = await axios.get<Category>(`https://localhost:7192/api/Categories/${id}`);
-                    setCategory(response.data);
-                    setCategoryName(response.data.name);
+                    const res = await fetchCategoryById(id)
+                    setCategory(res);
                 } catch (error) {
                     console.error('Failed to fetch category data', error);
                 }
             };
             const fetchAllProperties = async () => {
                 try {
-                    const response = await axios.get<ListingProperty[]>(`https://localhost:7192/api/ListingProperties`);
-                    setAllProperties(response.data);
+                    const res = await fetchListingProperties()
+                    setAllProperties(res);
                 } catch (error) {
                     console.error('Failed to fetch listing properties', error);
                 }
@@ -46,12 +37,14 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
             fetchCategory();
             fetchAllProperties();
         }
-    }, [id]);
+    }, [id, category?.name]);
 
     const handleSaveCategoryName = async (newName: string) => {
         if (!category) return;
         try {
-            await axios.put(`https://localhost:7192/api/Categories/${category.id}`, { name: newName });
+            await updateCategory(category.id, { name: newName })
+            const res = await fetchCategoryById(id)
+            setCategory(res);
         } catch (error) {
             console.error('Failed to update category name', error);
         }
@@ -60,10 +53,9 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
     const handleRemoveProperty = async (propertyId: string) => {
         if (!category) return;
         try {
-            await axios.put(`https://localhost:7192/api/Categories/RemoveListingProperty/${category.id}`, { id: propertyId });
-            const updatedCategory = { ...category };
-            updatedCategory.listingProperties = updatedCategory.listingProperties.filter((prop) => prop.id !== propertyId);
-            setCategory(updatedCategory);
+            await removeListingPropertyFromCategory(category.id, { id: propertyId });
+            const res = await fetchCategoryById(id)
+            setCategory(res);
         } catch (error) {
             console.error('Failed to remove property from category', error);
         }
@@ -72,10 +64,10 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
     const handleAddProperties = async () => {
         if (!category) return;
         try {
-            await axios.put(`https://localhost:7192/api/Categories/AddListingProperties/${category.id}`, { listingPropertyIds: selectedProperties });
-            const response = await axios.get<Category>(`https://localhost:7192/api/Categories/${category.id}`);
-            setCategory(response.data); // Refresh the category after adding properties
-            setSelectedProperties([]); // Clear selected properties
+            await addListingPropertiesToCategory(category.id, { listingPropertyIds: selectedProperties })
+            const res = await fetchCategoryById(id)
+            setCategory(res);
+            setSelectedProperties([]);
         } catch (error) {
             console.error('Failed to add properties to category', error);
         }
@@ -97,22 +89,48 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
     if (!category) return <p>Loading...</p>;
 
     return (
-        <div className="container mt-5">
-            <h1>Manage Category: {category.name}</h1>
 
-            <CategoryNameEdit
-                categoryName={categoryName}
-                onSave={handleSaveCategoryName}
-            />
-            <ListingPropertiesList
-                listingProperties={category.listingProperties}
-                onRemove={handleRemoveProperty} />
-            <AvailablePropertiesList
-                availableProperties={availableProperties}
-                selectedProperties={selectedProperties}
-                onCheckboxChange={handleCheckboxChange}
-                onAdd={handleAddProperties}
-            />
+        <div className="container mt-5">
+            <h1 className="text-center text-md-left">
+                Manage Category: {category.name}
+            </h1>
+            <div className="my-4">
+                <div className="card">
+                    <div className="card-body">
+                        <CategoryNameEdit
+                            categoryName={category.name}
+                            onSave={handleSaveCategoryName}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div className="row gx-4 gy-4">
+                <div className="col-12 col-md-6">
+                    <div className="card h-100">
+                        <div className="card-header">Current Listing Properties</div>
+                        <div className="card-body">
+                            <ListingPropertiesList
+                                listingProperties={category.listingProperties}
+                                onRemove={handleRemoveProperty}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col-12 col-md-6">
+                    <div className="card h-100">
+                        <div className="card-header">Add More Properties</div>
+                        <div className="card-body">
+                            <AvailablePropertiesList
+                                availableProperties={availableProperties}
+                                selectedProperties={selectedProperties}
+                                onCheckboxChange={handleCheckboxChange}
+                                onAdd={handleAddProperties}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

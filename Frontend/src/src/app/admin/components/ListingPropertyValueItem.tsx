@@ -22,31 +22,36 @@ export default function ListingPropertyValueItem({
     };
 
     return (
-        <li className="d-flex align-items-center">
+        <li className="d-flex justify-content-between align-items-center mb-2 w-100">
             {isEditing ? (
-                <>
+                <div className="d-flex flex-grow-1 gap-2 flex-wrap">
                     <input
                         type="text"
-                        className="form-control"
+                        className="form-control flex-grow-1"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                     />
-                    <button className="btn btn-primary ml-2" onClick={handleEdit}>
+                    <button className="btn btn-primary" onClick={handleEdit}>
                         Confirm
                     </button>
-                </>
+                </div>
             ) : (
                 <>
-                    <span>{value.name}</span>
-                    <button
-                        className="btn btn-sm btn-secondary ml-2"
-                        onClick={() => setIsEditing(true)}
-                    >
-                        Edit
-                    </button>
-                    <button className="btn btn-sm btn-danger ml-2" onClick={() => onDelete(value.id)}>
-                        Delete
-                    </button>
+                    <span className="me-auto">{value.name}</span>
+                    <div className="d-flex gap-2">
+                        <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            Edit
+                        </button>
+                        <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => onDelete(value.id)}
+                        >
+                            Delete
+                        </button>
+                    </div>
                 </>
             )}
         </li>

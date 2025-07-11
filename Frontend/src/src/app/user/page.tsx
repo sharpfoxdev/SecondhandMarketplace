@@ -1,14 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-interface Listing {
-    id: string;
-    title: string;
-}
+import { Listing } from '@/types/api/listings';
+import { fetchListingsByUser, deleteListing } from '@/services/listingService';
 
 export default function UserListingsPage() {
     const [listings, setListings] = useState<Listing[]>([]);
@@ -18,13 +14,8 @@ export default function UserListingsPage() {
     useEffect(() => {
         const fetchUserListings = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get<Listing[]>('https://localhost:7192/api/Listings/GetByUser', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setListings(response.data);
+                const res = await fetchListingsByUser()
+                setListings(res);
             } catch (error) {
                 console.error('Failed to fetch listings', error);
             } finally {
@@ -40,13 +31,7 @@ export default function UserListingsPage() {
         if (!confirmDelete) return;
 
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`https://localhost:7192/api/Listings/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
+            await deleteListing(id);
             // remove the listing from the state after deletion
             setListings(listings.filter((listing) => listing.id !== id));
             alert('Listing deleted successfully.');

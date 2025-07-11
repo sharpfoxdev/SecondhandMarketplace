@@ -19,15 +19,19 @@ export default function ListingPropertyValueForm({
     };
 
     return (
-        <div className="d-flex mt-2">
+        <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 mt-2">
             <input
                 type="text"
-                className="form-control"
+                className="form-control flex-grow-1"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Listing Property Value Name"
             />
-            <button className="btn btn-success ml-2" onClick={handleSubmit}>
+            <button
+                type="button"
+                className="btn btn-success w-100 w-md-auto"
+                onClick={handleSubmit}
+            >
                 Add Value
             </button>
         </div>

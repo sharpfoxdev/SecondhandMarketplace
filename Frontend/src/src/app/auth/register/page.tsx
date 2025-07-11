@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { registerUser } from '@/services/authService';
 
 export default function Register() {
     const [username, setUsername] = useState('');
@@ -15,11 +16,7 @@ export default function Register() {
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try {
-            const response = await axios.post('https://localhost:7192/api/Auth/Register', {
-                username,
-                nickname,
-                password
-            });
+            await registerUser({ username, nickname, password })
             setSuccess('Registration successful! Please login.');
             router.push('/auth/login');
         } catch (error) {

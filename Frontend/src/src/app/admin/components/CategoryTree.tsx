@@ -1,16 +1,11 @@
 'use client';
 
 import CategoryItem from './CategoryItem';
+import { CategoryHierarchy } from '@/types/api/categories';
 
-interface Category {
-    id: string;
-    name: string;
-    parentCategory?: Category;
-    childrenCategories: Category[];
-}
 
 interface CategoryTreeProps {
-    categories: Category[];
+    categories: CategoryHierarchy[];
     onAddSubcategory: (parentId: string, name: string) => void;
     onDeleteCategory: (categoryId: string) => void;
 }
@@ -23,7 +18,7 @@ export default function CategoryTree({
     return (
         <ul className="list-unstyled mt-4">
             {categories
-                .filter((category) => !category.parentCategory) // Only top-level categories
+                .filter((category) => !category.parentCategory) // Only top level categories
                 .map((category) => (
                     <CategoryItem
                         key={category.id}

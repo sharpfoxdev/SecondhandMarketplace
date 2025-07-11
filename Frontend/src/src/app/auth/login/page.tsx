@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { loginUser } from '@/services/authService';
 
 export default function Login() {
     const [username, setUsername] = useState('');
@@ -13,11 +13,8 @@ export default function Login() {
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try {
-            const response = await axios.post('https://localhost:7192/api/Auth/Login', {
-                username,
-                password,
-            });
-            localStorage.setItem('token', response.data.jwtToken);
+            const res = await loginUser({ username, password });
+            localStorage.setItem('token', res.jwtToken);
             router.push('/');
         } catch (error) {
             setError('Invalid username or password');

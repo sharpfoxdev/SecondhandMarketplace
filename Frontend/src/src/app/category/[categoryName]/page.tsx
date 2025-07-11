@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { FilterPanel } from '@/sharedComponents/FilterPanel';
 import { ListingGrid } from '@/sharedComponents/ListingGrid';
 import { Listing } from '@/types/api/listings';
 import { ListingFilter } from '@/types/api/categories';
 import { Ordering, OrderingDirection } from '@/types/api/categories';
 import { Page } from '@/types/api/page';
+import { fetchListingsByCategoryName } from '@/services/categoryService';
 
 export default function CategoryPage({ params }: { params: { categoryName: string } }) {
     const { categoryName } = params;
@@ -35,11 +35,8 @@ export default function CategoryPage({ params }: { params: { categoryName: strin
         // reload on category, filter or page change
         const fetchListings = async () => {
             try {
-                const resp = await axios.post<Page<Listing>>(
-                    `https://localhost:7192/api/Categories/${encodeURIComponent(categoryName)}?pageNumber=${pageNumber}&pageSize=${pageData.pageSize}`,
-                    filter
-                );
-                setPageData(resp.data);
+                const res = await fetchListingsByCategoryName(categoryName, filter, pageNumber, pageData.pageSize)
+                setPageData(res);
             } catch (err) {
                 console.error('Failed to load listings', err);
             }
@@ -67,7 +64,7 @@ export default function CategoryPage({ params }: { params: { categoryName: strin
                     />
                 </div>
                 <div className="col-md-9">
-                    <h1>Listings for {categoryName}</h1>
+                    <h1>Listings for {decodeURIComponent(categoryName)}</h1>
                     <ListingGrid
                         page={pageData}
                         onPageChange={setPageNumber}
