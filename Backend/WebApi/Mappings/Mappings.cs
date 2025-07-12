@@ -40,6 +40,7 @@ namespace WebApi.Mappings
 			CreateMap<Conversation, ConversationDto>().ReverseMap();
 			CreateMap<ConversationParticipant, ConversationParticipantDto>().ReverseMap();
 			CreateMap<ApplicationUser, UserDto>().ReverseMap();
+			CreateMap<ApplicationUser, UserDetailDto>().ReverseMap();
 			CreateMap<City, CityDto>().ReverseMap();
 
 			// Mapping between domain and Create Request Dtos

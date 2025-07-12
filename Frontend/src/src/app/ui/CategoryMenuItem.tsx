@@ -31,7 +31,10 @@ export default function CategoryMenuItem({
         closeNav();
         router.push(`/category/${encodeURIComponent(category.name)}`);
     };
-
+    const closeNavigation = () => {
+        setOpen((o) => !o);
+        closeNav();
+    };
     return (
         <li className={`dropdown-submenu`}>
             <div className="d-flex align-items-center justify-content-between px-2 py-1">
@@ -72,7 +75,7 @@ export default function CategoryMenuItem({
                         <CategoryMenuItem
                             key={child.id}
                             category={child}
-                            closeNavbar={closeNav}
+                            closeNavbar={closeNavigation}
                         />
                     ))}
                 </ul>

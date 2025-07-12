@@ -32,7 +32,65 @@ namespace WebApi.Controllers
                 return NotFound();
             return Ok(mapper.Map<UserDto>(user));
         }
-        // todo deleting of users, adding admin role, getting all users
+
+        [HttpGet("{id:guid}/detail")]
+        public async Task<IActionResult> GetDetail(Guid id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+                return NotFound();
+
+            var roles = await userManager.GetRolesAsync(user);
+            var dto = mapper.Map<UserDetailDto>(user);
+            dto.Roles = roles.ToList();
+            return Ok(dto);
+        }
+
+        [HttpPost("{id:guid}/roles/admin")]
+        public async Task<IActionResult> AddAdminRole(Guid id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+                return NotFound();
+
+            var result = await userManager.AddToRoleAsync(user, "Admin");
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            var roles = await userManager.GetRolesAsync(user);
+            var dto = mapper.Map<UserDetailDto>(user);
+            dto.Roles = roles.ToList();
+            return Ok(dto);
+        }
+
+        [HttpDelete("{id:guid}/roles/admin")]
+        public async Task<IActionResult> RemoveAdminRole(Guid id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+                return NotFound();
+
+            var result = await userManager.RemoveFromRoleAsync(user, "Admin");
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            var roles = await userManager.GetRolesAsync(user);
+            var dto = mapper.Map<UserDetailDto>(user);
+            dto.Roles = roles.ToList();
+            return Ok(dto);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+                return NotFound();
+
+            await userManager.DeleteAsync(user);
+            return Ok(mapper.Map<UserDto>(user));
+        }
+
     }
 }
 

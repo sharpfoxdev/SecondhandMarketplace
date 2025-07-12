@@ -3,3 +3,7 @@ export interface User {
     nickname: string;
     lastLoggedIn: string;
 }
+
+export interface UserDetail extends User {
+    roles: string[];
+}

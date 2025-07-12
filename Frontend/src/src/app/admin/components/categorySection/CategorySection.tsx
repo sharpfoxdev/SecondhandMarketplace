@@ -57,7 +57,7 @@ export default function CategorySection() {
     };
 
     return (
-        <div className="container mt-5">
+        <div className="container mt-5 mb-5">
             <h1 className="text-center text-md-left">
                 Admin Page – Manage Categories
             </h1>
