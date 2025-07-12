@@ -16,15 +16,15 @@
   margin-top: -1px;
 }
 .card.listing-card {
-  width: 100%; /* Ensure cards take up the full column width */
-  height: 350px; /* Set a fixed height for all cards */
+  width: 100%;
+  height: 350px;
   overflow: hidden;
-  cursor: pointer; /* Change cursor to indicate the card is clickable */
+  cursor: pointer;
 }
 
 .card.listing-card img {
-  height: 150px; /* Fix the image height */
-  object-fit: cover; /* Ensure the image covers the available space without distortion */
+  height: 150px;
+  object-fit: cover;
 }
 
 .card.listing-card .card-body {

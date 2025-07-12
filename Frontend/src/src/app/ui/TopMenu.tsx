@@ -2,23 +2,18 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-
-interface Category {
-    id: string;
-    name: string;
-    parentCategory?: Category | null;
-    childrenCategories: Category[];
-}
+import { fetchCategoryHierarchy } from '@/services/categoryService';
+import { CategoryHierarchy } from '@/types/api/categories';
 
 export default function TopMenu() {
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<CategoryHierarchy[]>([]);
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get<Category[]>('https://localhost:7192/api/Categories/Hierarchy');
-                setCategories(response.data);
+                const res = await fetchCategoryHierarchy()
+                //const response = await axios.get<Category[]>('https://localhost:7192/api/Categories/Hierarchy');
+                setCategories(res);
             } catch (error) {
                 console.error('Failed to fetch categories', error);
             }
@@ -37,7 +32,7 @@ export default function TopMenu() {
 
     // Filter top-level categories (those without a parent)
     const topLevelCategories = categories.filter(category => !category.parentCategory);
-    const renderCategoryMenu = (category: Category) => {
+    const renderCategoryMenu = (category: CategoryHierarchy) => {
         const hasSubcategories = category.childrenCategories.length > 0;
 
         return (
@@ -65,7 +60,6 @@ export default function TopMenu() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav">
-                        {/* categories dropdown */}
                         <li className="nav-item dropdown">
                             <a
                                 className="nav-link dropdown-toggle"
@@ -82,7 +76,6 @@ export default function TopMenu() {
                             </ul>
                         </li>
                     </ul>
-                    {/* menu buttons */}
                     <ul className="navbar-nav ms-auto">
                         <li className="nav-item">
                             <Link href="/listing/new" className="nav-link">
