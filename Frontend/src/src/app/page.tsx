@@ -29,7 +29,7 @@ export default function Home() {
         items: [],
         totalPages: 1,
         pageNumber: 1,
-        pageSize: 4
+        pageSize: 30
     });
 
     useEffect(() => {

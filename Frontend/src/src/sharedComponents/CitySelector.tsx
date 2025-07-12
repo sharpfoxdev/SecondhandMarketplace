@@ -22,7 +22,7 @@ export default function CitySelector({
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    // Close dropdown when clicking outside
+    // close dropdown when clicking outside
     useEffect(() => {
         const onClickOutside = (e: MouseEvent) => {
             if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
@@ -33,7 +33,7 @@ export default function CitySelector({
         return () => document.removeEventListener('click', onClickOutside);
     }, []);
 
-    // Debounced fetch
+    // debounced fetch
     const fetchSuggestions = async (term: string) => {
         if (!term.trim()) {
             setSuggestions([]);

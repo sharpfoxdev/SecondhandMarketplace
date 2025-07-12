@@ -28,7 +28,7 @@ export default function CategoryPage({ params }: { params: { categoryName: strin
         items: [],
         totalPages: 1,
         pageNumber: 1,
-        pageSize: 12
+        pageSize: 30
     });
 
     useEffect(() => {

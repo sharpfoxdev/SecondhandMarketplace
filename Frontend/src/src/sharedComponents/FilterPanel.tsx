@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import CitySelector from './CitySelector';
 import { City } from '@/types/api/cities';
 import { StateOfItem } from '@/types/api/stateOfItem';
 import { CategoryDetail, ListingFilter, Ordering, OrderingDirection } from '@/types/api/categories';
 import PropertySection from './PropertySection';
+import { fetchCategoryByName } from '@/services/categoryService';
+import { fetchStatesOfItem } from '@/services/stateOfItemService';
 
 interface FilterPanelProps {
     categoryName: string | null;
@@ -53,13 +54,14 @@ export function FilterPanel({
 
     useEffect(() => {
         if (categoryName && listingPropertiesEnabled) {
-            axios.get<CategoryDetail>(`https://localhost:7192/api/Categories/GetByName/${encodeURIComponent(categoryName)}`)
-                .then(r => setCategoryDetail(r.data))
+            fetchCategoryByName(categoryName)
+                .then((data) => setCategoryDetail(data))
                 .catch(console.error);
+
         }
         if (stateOfItemEnabled) {
-            axios.get<StateOfItem[]>('https://localhost:7192/api/StateOfItem')
-                .then(r => setStatesOfItem(r.data))
+            fetchStatesOfItem()
+                .then((data) => setStatesOfItem(data))
                 .catch(console.error);
         }
     }, [categoryName]);
