@@ -1,5 +1,5 @@
 'use client';
-import { ListingProperty } from "@/types/api/listingProperties";
+import { ListingProperty } from '@/types/api/listingProperties';
 
 interface AvailablePropertiesListProps {
     availableProperties: ListingProperty[];
@@ -31,11 +31,16 @@ export default function AvailablePropertiesList({
                             <input
                                 className="form-check-input me-2"
                                 type="checkbox"
-                                checked={selectedProperties.includes(property.id)}
+                                checked={selectedProperties.includes(
+                                    property.id
+                                )}
                                 onChange={() => onCheckboxChange(property.id)}
                                 id={`prop-${property.id}`}
                             />
-                            <label className="form-check-label" htmlFor={`prop-${property.id}`}>
+                            <label
+                                className="form-check-label"
+                                htmlFor={`prop-${property.id}`}
+                            >
                                 {property.name}
                             </label>
                         </div>

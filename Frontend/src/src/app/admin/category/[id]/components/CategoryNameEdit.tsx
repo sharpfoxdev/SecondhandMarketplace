@@ -7,7 +7,10 @@ interface CategoryNameEditProps {
     onSave: (newName: string) => void;
 }
 
-export default function CategoryNameEdit({ categoryName, onSave }: CategoryNameEditProps) {
+export default function CategoryNameEdit({
+    categoryName,
+    onSave,
+}: CategoryNameEditProps) {
     const [name, setName] = useState(categoryName);
 
     const handleSave = () => {
@@ -26,7 +29,10 @@ export default function CategoryNameEdit({ categoryName, onSave }: CategoryNameE
                 value={name}
                 onChange={(e) => setName(e.target.value)}
             />
-            <button className="btn btn-primary mt-2" onClick={handleSave}>
+            <button
+                className="btn btn-primary mt-2"
+                onClick={handleSave}
+            >
                 Save
             </button>
         </div>

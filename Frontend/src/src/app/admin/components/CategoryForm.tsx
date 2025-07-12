@@ -31,7 +31,10 @@ export default function CategoryForm({
                 onChange={(e) => setCategoryName(e.target.value)}
                 placeholder={placeholder}
             />
-            <button className="btn btn-success ml-2" onClick={handleSubmit}>
+            <button
+                className="btn btn-success ml-2"
+                onClick={handleSubmit}
+            >
                 Add Category
             </button>
         </div>

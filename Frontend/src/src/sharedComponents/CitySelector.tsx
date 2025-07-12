@@ -13,7 +13,7 @@ interface CitySelectorProps {
 export default function CitySelector({
     selectedCityId,
     onCitySelect,
-    placeholder = ''
+    placeholder = '',
 }: CitySelectorProps) {
     const [inputValue, setInputValue] = useState('');
     const [suggestions, setSuggestions] = useState<City[]>([]);
@@ -25,7 +25,10 @@ export default function CitySelector({
     // close dropdown when clicking outside
     useEffect(() => {
         const onClickOutside = (e: MouseEvent) => {
-            if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+            if (
+                wrapperRef.current &&
+                !wrapperRef.current.contains(e.target as Node)
+            ) {
                 setIsOpen(false);
             }
         };
@@ -67,9 +70,11 @@ export default function CitySelector({
         onCitySelect(city);
     };
 
-
     return (
-        <div className="position-relative" ref={wrapperRef}>
+        <div
+            className="position-relative"
+            ref={wrapperRef}
+        >
             <input
                 type="text"
                 className="form-control"
@@ -80,22 +85,28 @@ export default function CitySelector({
             />
 
             {isOpen && suggestions.length > 0 && (
-                <ul className="list-group position-absolute w-100" style={{ zIndex: 1000 }}>
-                    {suggestions.map(city => (
+                <ul
+                    className="list-group position-absolute w-100"
+                    style={{ zIndex: 1000 }}
+                >
+                    {suggestions.map((city) => (
                         <li
                             key={city.id}
                             className="list-group-item list-group-item-action"
                             onClick={() => handleSelect(city)}
                             style={{ cursor: 'pointer' }}
                         >
-                            {city.name} ({city.zipCode}), {city.district}, {city.region}
+                            {city.name} ({city.zipCode}), {city.district},{' '}
+                            {city.region}
                         </li>
                     ))}
                 </ul>
             )}
 
             {loading && (
-                <div className="position-absolute mt-1 text-muted">Loading...</div>
+                <div className="position-absolute mt-1 text-muted">
+                    Loading...
+                </div>
             )}
         </div>
     );

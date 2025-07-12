@@ -11,7 +11,7 @@ export default function TopMenu() {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await fetchCategoryHierarchy()
+                const res = await fetchCategoryHierarchy();
                 //const response = await axios.get<Category[]>('https://localhost:7192/api/Categories/Hierarchy');
                 setCategories(res);
             } catch (error) {
@@ -22,7 +22,7 @@ export default function TopMenu() {
         fetchCategories();
     }, []);
 
-    // Bootstrap JS is needed for rendering dropdown menu, but it wont let me import it in layout.tsx, 
+    // Bootstrap JS is needed for rendering dropdown menu, but it wont let me import it in layout.tsx,
     // so I import it here
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -31,18 +31,28 @@ export default function TopMenu() {
     }, []);
 
     // Filter top-level categories (those without a parent)
-    const topLevelCategories = categories.filter(category => !category.parentCategory);
+    const topLevelCategories = categories.filter(
+        (category) => !category.parentCategory
+    );
     const renderCategoryMenu = (category: CategoryHierarchy) => {
         const hasSubcategories = category.childrenCategories.length > 0;
 
         return (
-            <li key={category.id} className={`dropdown-submenu ${hasSubcategories ? 'dropend' : ''}`}>
-                <Link href={`/category/${category.name}`} className={`dropdown-item ${hasSubcategories ? 'dropdown-toggle' : ''}`}>
+            <li
+                key={category.id}
+                className={`dropdown-submenu ${hasSubcategories ? 'dropend' : ''}`}
+            >
+                <Link
+                    href={`/category/${category.name}`}
+                    className={`dropdown-item ${hasSubcategories ? 'dropdown-toggle' : ''}`}
+                >
                     {category.name}
                 </Link>
                 {hasSubcategories && (
                     <ul className="dropdown-menu">
-                        {category.childrenCategories.map((subCategory) => renderCategoryMenu(subCategory))}
+                        {category.childrenCategories.map((subCategory) =>
+                            renderCategoryMenu(subCategory)
+                        )}
                     </ul>
                 )}
             </li>
@@ -52,13 +62,25 @@ export default function TopMenu() {
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
-                <Link href="/" className="navbar-brand" style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                <Link
+                    href="/"
+                    className="navbar-brand"
+                    style={{ fontSize: '24px', fontWeight: 'bold' }}
+                >
                     Marketplace
                 </Link>
-                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                >
                     <span className="navbar-toggler-icon"></span>
                 </button>
-                <div className="collapse navbar-collapse" id="navbarNav">
+                <div
+                    className="collapse navbar-collapse"
+                    id="navbarNav"
+                >
                     <ul className="navbar-nav">
                         <li className="nav-item dropdown">
                             <a
@@ -71,39 +93,62 @@ export default function TopMenu() {
                             >
                                 Categories
                             </a>
-                            <ul className="dropdown-menu" aria-labelledby="categoriesDropdown">
-                                {topLevelCategories.map((category) => renderCategoryMenu(category))}
+                            <ul
+                                className="dropdown-menu"
+                                aria-labelledby="categoriesDropdown"
+                            >
+                                {topLevelCategories.map((category) =>
+                                    renderCategoryMenu(category)
+                                )}
                             </ul>
                         </li>
                     </ul>
                     <ul className="navbar-nav ms-auto">
                         <li className="nav-item">
-                            <Link href="/listing/new" className="nav-link">
+                            <Link
+                                href="/listing/new"
+                                className="nav-link"
+                            >
                                 New listing
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/auth/login" className="nav-link">
+                            <Link
+                                href="/auth/login"
+                                className="nav-link"
+                            >
                                 Login
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/auth/register" className="nav-link">
+                            <Link
+                                href="/auth/register"
+                                className="nav-link"
+                            >
                                 Register
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/admin" className="nav-link">
+                            <Link
+                                href="/admin"
+                                className="nav-link"
+                            >
                                 Admin
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/inbox" className="nav-link">
+                            <Link
+                                href="/inbox"
+                                className="nav-link"
+                            >
                                 Inbox
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link href="/user" className="nav-link">
+                            <Link
+                                href="/user"
+                                className="nav-link"
+                            >
                                 My Profile
                             </Link>
                         </li>

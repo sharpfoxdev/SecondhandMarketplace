@@ -8,22 +8,31 @@ import {
 
 import { CreatePropertyValueInsidePropertyRequest } from '@/types/api/listingPropertyValues';
 
-export const fetchListingProperties = async (): Promise<ListingPropertyDetail[]> => {
-    const { data } = await api.get<ListingPropertyDetail[]>('/api/ListingProperties');
+export const fetchListingProperties = async (): Promise<
+    ListingPropertyDetail[]
+> => {
+    const { data } = await api.get<ListingPropertyDetail[]>(
+        '/api/ListingProperties'
+    );
     return data;
 };
 
 export const fetchListingPropertyById = async (
     id: string
 ): Promise<ListingPropertyDetail> => {
-    const { data } = await api.get<ListingPropertyDetail>(`/api/ListingProperties/${id}`);
+    const { data } = await api.get<ListingPropertyDetail>(
+        `/api/ListingProperties/${id}`
+    );
     return data;
 };
 
 export const createListingProperty = async (
     payload: CreateListingPropertyRequest
 ): Promise<ListingProperty> => {
-    const { data } = await api.post<ListingProperty>('/api/ListingProperties', payload);
+    const { data } = await api.post<ListingProperty>(
+        '/api/ListingProperties',
+        payload
+    );
     return data;
 };
 
@@ -38,8 +47,12 @@ export const updateListingProperty = async (
     return data;
 };
 
-export const deleteListingProperty = async (id: string): Promise<ListingProperty> => {
-    const { data } = await api.delete<ListingProperty>(`/api/ListingProperties/${id}`);
+export const deleteListingProperty = async (
+    id: string
+): Promise<ListingProperty> => {
+    const { data } = await api.delete<ListingProperty>(
+        `/api/ListingProperties/${id}`
+    );
     return data;
 };
 

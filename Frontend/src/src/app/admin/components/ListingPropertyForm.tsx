@@ -6,7 +6,9 @@ interface ListingPropertyFormProps {
     onSubmit: (name: string) => void;
 }
 
-export default function ListingPropertyForm({ onSubmit }: ListingPropertyFormProps) {
+export default function ListingPropertyForm({
+    onSubmit,
+}: ListingPropertyFormProps) {
     const [name, setName] = useState('');
 
     const handleSubmit = () => {
@@ -25,7 +27,10 @@ export default function ListingPropertyForm({ onSubmit }: ListingPropertyFormPro
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Listing Property Name"
             />
-            <button className="btn btn-primary ml-2" onClick={handleSubmit}>
+            <button
+                className="btn btn-primary ml-2"
+                onClick={handleSubmit}
+            >
                 Add Listing Property
             </button>
         </div>

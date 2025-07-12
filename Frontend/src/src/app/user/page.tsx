@@ -14,7 +14,7 @@ export default function UserListingsPage() {
     useEffect(() => {
         const fetchUserListings = async () => {
             try {
-                const res = await fetchListingsByUser()
+                const res = await fetchListingsByUser();
                 setListings(res);
             } catch (error) {
                 console.error('Failed to fetch listings', error);
@@ -27,7 +27,9 @@ export default function UserListingsPage() {
     }, []);
 
     const handleDelete = async (id: string) => {
-        const confirmDelete = window.confirm('Are you sure you want to delete this listing?');
+        const confirmDelete = window.confirm(
+            'Are you sure you want to delete this listing?'
+        );
         if (!confirmDelete) return;
 
         try {
@@ -70,11 +72,13 @@ export default function UserListingsPage() {
                                 <a
                                     href={`/listing/${listing.id}`}
                                     className="fw-bold text-decoration-none"
-                                    style={{ display: 'inline-block', maxWidth: '100%' }}
+                                    style={{
+                                        display: 'inline-block',
+                                        maxWidth: '100%',
+                                    }}
                                 >
                                     {listing.title}
                                 </a>
-
                             </span>
                             <div className="d-flex flex-row flex-shrink-0">
                                 <button

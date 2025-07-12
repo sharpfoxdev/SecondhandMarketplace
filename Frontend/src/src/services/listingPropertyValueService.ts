@@ -5,8 +5,12 @@ import {
     UpdateListingPropertyValueRequest,
 } from '@/types/api/listingPropertyValues';
 
-export const fetchListingPropertyValues = async (): Promise<ListingPropertyValue[]> => {
-    const { data } = await api.get<ListingPropertyValue[]>('/api/ListingPropertyValues');
+export const fetchListingPropertyValues = async (): Promise<
+    ListingPropertyValue[]
+> => {
+    const { data } = await api.get<ListingPropertyValue[]>(
+        '/api/ListingPropertyValues'
+    );
     return data;
 };
 

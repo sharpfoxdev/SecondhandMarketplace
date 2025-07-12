@@ -1,8 +1,8 @@
-import { Image } from "./images";
-import { City } from "./cities";
-import { Category } from "./categories";
-import { ListingPropertyValueDetail } from "./listingPropertyValues";
-import { StateOfItem } from "./stateOfItem";
+import { Image } from './images';
+import { City } from './cities';
+import { Category } from './categories';
+import { ListingPropertyValueDetail } from './listingPropertyValues';
+import { StateOfItem } from './stateOfItem';
 
 export interface CreateListingRequest {
     price: number;

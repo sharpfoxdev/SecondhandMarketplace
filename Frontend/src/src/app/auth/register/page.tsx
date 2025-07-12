@@ -13,10 +13,10 @@ export default function Register() {
     const [success, setSuccess] = useState('');
     const router = useRouter();
 
-    const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
         try {
-            await registerUser({ username, nickname, password })
+            await registerUser({ username, nickname, password });
             setSuccess('Registration successful! Please login.');
             router.push('/auth/login');
         } catch (error) {
@@ -63,7 +63,10 @@ export default function Register() {
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-primary mt-3">
+                <button
+                    type="submit"
+                    className="btn btn-primary mt-3"
+                >
                     Register
                 </button>
             </form>

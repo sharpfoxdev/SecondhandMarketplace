@@ -11,7 +11,8 @@ import { ListingFilter } from '@/types/api/categories';
 export const fetchListings = async (
     filter: ListingFilter,
     pageNumber = 1,
-    pageSize = 12): Promise<Page<Listing>> => {
+    pageSize = 12
+): Promise<Page<Listing>> => {
     const { data } = await api.post<Page<Listing>>(
         `/api/Listings/GetAll`,
         filter,

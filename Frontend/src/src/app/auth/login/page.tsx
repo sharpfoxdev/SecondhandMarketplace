@@ -10,7 +10,7 @@ export default function Login() {
     const [error, setError] = useState('');
     const router = useRouter();
 
-    const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
         try {
             const res = await loginUser({ username, password });
@@ -48,7 +48,10 @@ export default function Login() {
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-primary mt-3">
+                <button
+                    type="submit"
+                    className="btn btn-primary mt-3"
+                >
                     Login
                 </button>
             </form>

@@ -1,9 +1,8 @@
 'use client';
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import CategoryForm from './CategoryForm';
 import { useState } from 'react';
 import { CategoryHierarchy } from '@/types/api/categories';
-
 
 interface CategoryItemProps {
     category: CategoryHierarchy;
@@ -16,7 +15,7 @@ export default function CategoryItem({
     onAddSubcategory,
     onDeleteCategory,
 }: CategoryItemProps) {
-    const router = useRouter()
+    const router = useRouter();
     const [showAddForm, setShowAddForm] = useState(false);
 
     return (
@@ -47,7 +46,9 @@ export default function CategoryItem({
                     </button>
                     <button
                         className="btn btn-sm btn-primary"
-                        onClick={() => router.push(`/admin/category/${category.id}`)}
+                        onClick={() =>
+                            router.push(`/admin/category/${category.id}`)
+                        }
                     >
                         Edit
                     </button>
@@ -58,8 +59,8 @@ export default function CategoryItem({
                 <div className="mt-2">
                     <CategoryForm
                         onSubmit={(name) => {
-                            onAddSubcategory(name, category.id)
-                            setShowAddForm(false)
+                            onAddSubcategory(name, category.id);
+                            setShowAddForm(false);
                         }}
                         placeholder="Subcategory name"
                     />
@@ -79,5 +80,5 @@ export default function CategoryItem({
                 </ul>
             )}
         </li>
-    )
+    );
 }

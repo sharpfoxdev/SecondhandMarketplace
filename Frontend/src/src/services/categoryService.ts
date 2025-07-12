@@ -17,18 +17,28 @@ export const fetchCategories = async (): Promise<Category[]> => {
     return data;
 };
 
-export const fetchCategoryHierarchy = async (): Promise<CategoryHierarchy[]> => {
-    const { data } = await api.get<CategoryHierarchy[]>('/api/Categories/Hierarchy');
+export const fetchCategoryHierarchy = async (): Promise<
+    CategoryHierarchy[]
+> => {
+    const { data } = await api.get<CategoryHierarchy[]>(
+        '/api/Categories/Hierarchy'
+    );
     return data;
 };
 
-export const fetchCategoryById = async (id: string): Promise<CategoryDetail> => {
+export const fetchCategoryById = async (
+    id: string
+): Promise<CategoryDetail> => {
     const { data } = await api.get<CategoryDetail>(`/api/Categories/${id}`);
     return data;
 };
 
-export const fetchCategoryByName = async (name: string): Promise<CategoryDetail> => {
-    const { data } = await api.get<CategoryDetail>(`/api/Categories/GetByName/${encodeURIComponent(name)}`);
+export const fetchCategoryByName = async (
+    name: string
+): Promise<CategoryDetail> => {
+    const { data } = await api.get<CategoryDetail>(
+        `/api/Categories/GetByName/${encodeURIComponent(name)}`
+    );
     return data;
 };
 

@@ -1,7 +1,6 @@
 import api from './apiClient';
 import { Image, AddImageRequest } from '@/types/api/images';
 
-
 export const fetchImages = async (): Promise<Image[]> => {
     const { data } = await api.get<Image[]>('/api/Images');
     return data;
@@ -12,10 +11,7 @@ export const fetchImageById = async (id: string): Promise<Image> => {
     return data;
 };
 
-
-export const uploadImage = async (
-    payload: AddImageRequest
-): Promise<Image> => {
+export const uploadImage = async (payload: AddImageRequest): Promise<Image> => {
     const formData = new FormData();
     formData.append('file', payload.file);
     formData.append('listingId', payload.listingId);
@@ -25,7 +21,6 @@ export const uploadImage = async (
     });
     return data;
 };
-
 
 export const deleteImage = async (id: string): Promise<Image> => {
     const { data } = await api.delete<Image>(`/api/Images/${id}`);

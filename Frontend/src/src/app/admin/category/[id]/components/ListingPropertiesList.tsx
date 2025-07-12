@@ -1,5 +1,5 @@
 'use client';
-import { ListingProperty } from "@/types/api/listingProperties";
+import { ListingProperty } from '@/types/api/listingProperties';
 
 interface ListingPropertiesListProps {
     listingProperties: ListingProperty[];
@@ -12,7 +12,9 @@ export default function ListingPropertiesList({
 }: ListingPropertiesListProps) {
     return (
         <div className="mt-4">
-            <h2 className="h5 mb-3">Listing Properties Tied to this Category</h2>
+            <h2 className="h5 mb-3">
+                Listing Properties Tied to this Category
+            </h2>
             <ul className="p-0 m-0">
                 {listingProperties.map((property, index) => (
                     <li

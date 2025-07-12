@@ -3,7 +3,6 @@
 import CategoryItem from './CategoryItem';
 import { CategoryHierarchy } from '@/types/api/categories';
 
-
 interface CategoryTreeProps {
     categories: CategoryHierarchy[];
     onAddSubcategory: (parentId: string, name: string) => void;

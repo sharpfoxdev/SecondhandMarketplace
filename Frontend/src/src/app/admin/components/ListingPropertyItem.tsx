@@ -47,7 +47,10 @@ export default function ListingPropertyItem({
                                     value={newName}
                                     onChange={(e) => setNewName(e.target.value)}
                                 />
-                                <button className="btn btn-primary" onClick={handleEdit}>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleEdit}
+                                >
                                     Confirm
                                 </button>
                             </div>
@@ -86,8 +89,8 @@ export default function ListingPropertyItem({
                         <div className="mt-3">
                             <ListingPropertyValueForm
                                 onSubmit={(valueName) => {
-                                    onAddValue(property.id, valueName)
-                                    setShowAddValueForm(false)
+                                    onAddValue(property.id, valueName);
+                                    setShowAddValueForm(false);
                                 }}
                             />
                         </div>

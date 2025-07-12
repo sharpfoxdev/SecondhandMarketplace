@@ -1,4 +1,4 @@
-import { ListingPropertyDetail } from "./listingProperties";
+import { ListingPropertyDetail } from './listingProperties';
 
 export interface AddListingPropertiesToCategoryRequest {
     listingPropertyIds: string[]; // GUIDs as strings
@@ -29,12 +29,12 @@ export interface CreateCategoryRequest {
 
 export enum Ordering {
     Price = 0,
-    CreatedAt = 1
+    CreatedAt = 1,
 }
 
 export enum OrderingDirection {
     Ascending = 0,
-    Descending = 1
+    Descending = 1,
 }
 
 export interface ListingFilter {

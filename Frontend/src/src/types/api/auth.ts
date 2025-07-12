@@ -1,6 +1,4 @@
-export interface ApplicationUser {
-
-}
+export interface ApplicationUser {}
 
 export interface LoginRequest {
     username: string;

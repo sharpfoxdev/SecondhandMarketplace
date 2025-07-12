@@ -4,7 +4,12 @@ import { useEffect, useState } from 'react';
 import CitySelector from './CitySelector';
 import { City } from '@/types/api/cities';
 import { StateOfItem } from '@/types/api/stateOfItem';
-import { CategoryDetail, ListingFilter, Ordering, OrderingDirection } from '@/types/api/categories';
+import {
+    CategoryDetail,
+    ListingFilter,
+    Ordering,
+    OrderingDirection,
+} from '@/types/api/categories';
 import PropertySection from './PropertySection';
 import { fetchCategoryByName } from '@/services/categoryService';
 import { fetchStatesOfItem } from '@/services/stateOfItemService';
@@ -30,23 +35,27 @@ export function FilterPanel({
     radiusEnabled = false,
     searchEnabled = false,
     orderingEnabled = true,
-    onFilterSubmit
+    onFilterSubmit,
 }: FilterPanelProps) {
-
     // current filter state
     const [priceMin, setPriceMin] = useState<number | null>(null);
     const [priceMax, setPriceMax] = useState<number | null>(null);
     const [selectedStates, setSelectedStates] = useState<string[]>([]);
-    const [selectedPropertyValues, setSelectedPropertyValues] = useState<string[]>([]);
+    const [selectedPropertyValues, setSelectedPropertyValues] = useState<
+        string[]
+    >([]);
     const [city, setCity] = useState<City | null>(null);
     const [radius, setRadius] = useState<number | null>(null);
     const [search, setSearch] = useState<string | null>(null);
     const [ordering, setOrdering] = useState<Ordering>(Ordering.CreatedAt);
-    const [orderingDirection, setOrderingDirection] = useState<OrderingDirection>(OrderingDirection.Descending);
+    const [orderingDirection, setOrderingDirection] =
+        useState<OrderingDirection>(OrderingDirection.Descending);
 
     // filter options for state of item and properties of category
     const [statesOfItem, setStatesOfItem] = useState<StateOfItem[]>([]);
-    const [categoryDetail, setCategoryDetail] = useState<CategoryDetail | null>(null);
+    const [categoryDetail, setCategoryDetail] = useState<CategoryDetail | null>(
+        null
+    );
 
     // styling of collapsible filters
     const [showStateOfItems, setShowStateOfItems] = useState(false);
@@ -57,14 +66,13 @@ export function FilterPanel({
             fetchCategoryByName(categoryName)
                 .then((data) => setCategoryDetail(data))
                 .catch(console.error);
-
         }
         if (stateOfItemEnabled) {
             fetchStatesOfItem()
                 .then((data) => setStatesOfItem(data))
                 .catch(console.error);
         }
-    }, [categoryName]);
+    }, [categoryName, listingPropertiesEnabled, stateOfItemEnabled]);
 
     const apply = () => {
         onFilterSubmit({
@@ -77,16 +85,16 @@ export function FilterPanel({
             ordering,
             orderingDirection: orderingDirection,
             stateOfItemIds: selectedStates,
-            selectedListingPropertyValueIds: selectedPropertyValues
+            selectedListingPropertyValueIds: selectedPropertyValues,
         });
     };
     const toggleState = (id: string) =>
-        setSelectedStates(s =>
-            s.includes(id) ? s.filter(x => x !== id) : [...s, id]
+        setSelectedStates((s) =>
+            s.includes(id) ? s.filter((x) => x !== id) : [...s, id]
         );
     const toggleProp = (id: string) =>
-        setSelectedPropertyValues(p =>
-            p.includes(id) ? p.filter(x => x !== id) : [...p, id]
+        setSelectedPropertyValues((p) =>
+            p.includes(id) ? p.filter((x) => x !== id) : [...p, id]
         );
     return (
         <div className="filter-panel">
@@ -95,13 +103,21 @@ export function FilterPanel({
                     <h5>Order By</h5>
                     <div className="d-flex gap-2 mb-1">
                         <button
-                            className={ordering === Ordering.CreatedAt ? 'btn btn-primary' : 'btn btn-outline-secondary'}
+                            className={
+                                ordering === Ordering.CreatedAt
+                                    ? 'btn btn-primary'
+                                    : 'btn btn-outline-secondary'
+                            }
                             onClick={() => setOrdering(Ordering.CreatedAt)}
                         >
                             Date
                         </button>
                         <button
-                            className={ordering === Ordering.Price ? 'btn btn-primary' : 'btn btn-outline-secondary'}
+                            className={
+                                ordering === Ordering.Price
+                                    ? 'btn btn-primary'
+                                    : 'btn btn-outline-secondary'
+                            }
                             onClick={() => setOrdering(Ordering.Price)}
                         >
                             Price
@@ -109,14 +125,32 @@ export function FilterPanel({
                     </div>
                     <div className="d-flex gap-2">
                         <button
-                            className={orderingDirection === OrderingDirection.Ascending ? 'btn btn-secondary' : 'btn btn-outline-secondary'}
-                            onClick={() => setOrderingDirection(OrderingDirection.Ascending)}
+                            className={
+                                orderingDirection ===
+                                OrderingDirection.Ascending
+                                    ? 'btn btn-secondary'
+                                    : 'btn btn-outline-secondary'
+                            }
+                            onClick={() =>
+                                setOrderingDirection(
+                                    OrderingDirection.Ascending
+                                )
+                            }
                         >
                             ↑
                         </button>
                         <button
-                            className={orderingDirection === OrderingDirection.Descending ? 'btn btn-secondary' : 'btn btn-outline-secondary'}
-                            onClick={() => setOrderingDirection(OrderingDirection.Descending)}
+                            className={
+                                orderingDirection ===
+                                OrderingDirection.Descending
+                                    ? 'btn btn-secondary'
+                                    : 'btn btn-outline-secondary'
+                            }
+                            onClick={() =>
+                                setOrderingDirection(
+                                    OrderingDirection.Descending
+                                )
+                            }
                         >
                             ↓
                         </button>
@@ -132,14 +166,18 @@ export function FilterPanel({
                         placeholder="Min"
                         className="form-control mb-1"
                         value={priceMin ?? ''}
-                        onChange={e => setPriceMin(e.target.value ? +e.target.value : null)}
+                        onChange={(e) =>
+                            setPriceMin(e.target.value ? +e.target.value : null)
+                        }
                     />
                     <input
                         type="number"
                         placeholder="Max"
                         className="form-control"
                         value={priceMax ?? ''}
-                        onChange={e => setPriceMax(e.target.value ? +e.target.value : null)}
+                        onChange={(e) =>
+                            setPriceMax(e.target.value ? +e.target.value : null)
+                        }
                     />
                 </div>
             )}
@@ -151,7 +189,7 @@ export function FilterPanel({
                         type="text"
                         className="form-control"
                         value={search ?? ''}
-                        onChange={e => setSearch(e.target.value || null)}
+                        onChange={(e) => setSearch(e.target.value || null)}
                     />
                 </div>
             )}
@@ -159,7 +197,10 @@ export function FilterPanel({
             {cityEnabled && (
                 <div className="mb-3">
                     <h5>City</h5>
-                    <CitySelector onCitySelect={setCity} placeholder="Select city" />
+                    <CitySelector
+                        onCitySelect={setCity}
+                        placeholder="Select city"
+                    />
                 </div>
             )}
 
@@ -170,7 +211,9 @@ export function FilterPanel({
                         type="number"
                         className="form-control"
                         value={radius ?? ''}
-                        onChange={e => setRadius(e.target.value ? +e.target.value : null)}
+                        onChange={(e) =>
+                            setRadius(e.target.value ? +e.target.value : null)
+                        }
                     />
                 </div>
             )}
@@ -179,14 +222,20 @@ export function FilterPanel({
                 <div className="mb-3">
                     <h5
                         style={{ cursor: 'pointer' }}
-                        onClick={() => setShowStateOfItems(s => !s)}
+                        onClick={() => setShowStateOfItems((s) => !s)}
                     >
-                        State of Item <span className="ms-2">{showStateOfItems ? '▾' : '▸'}</span>
+                        State of Item{' '}
+                        <span className="ms-2">
+                            {showStateOfItems ? '▾' : '▸'}
+                        </span>
                     </h5>
                     {showStateOfItems && (
                         <div className="ps-2">
-                            {statesOfItem.map(s => (
-                                <div key={s.id} className="form-check">
+                            {statesOfItem.map((s) => (
+                                <div
+                                    key={s.id}
+                                    className="form-check"
+                                >
                                     <input
                                         id={s.id}
                                         type="checkbox"
@@ -194,7 +243,10 @@ export function FilterPanel({
                                         checked={selectedStates.includes(s.id)}
                                         onChange={() => toggleState(s.id)}
                                     />
-                                    <label htmlFor={s.id} className="form-check-label">
+                                    <label
+                                        htmlFor={s.id}
+                                        className="form-check-label"
+                                    >
                                         {s.name}
                                     </label>
                                 </div>
@@ -207,17 +259,22 @@ export function FilterPanel({
                 <div className="mb-3">
                     <h5
                         style={{ cursor: 'pointer' }}
-                        onClick={() => setShowProperties(p => !p)}
+                        onClick={() => setShowProperties((p) => !p)}
                     >
-                        Properties <span className="ms-2">{showProperties ? '▾' : '▸'}</span>
+                        Properties{' '}
+                        <span className="ms-2">
+                            {showProperties ? '▾' : '▸'}
+                        </span>
                     </h5>
                     {showProperties && (
                         <div className="ps-2">
-                            {categoryDetail.listingProperties.map(prop => (
+                            {categoryDetail.listingProperties.map((prop) => (
                                 <PropertySection
                                     key={prop.id}
                                     name={prop.name}
-                                    values={prop.listingPropertyValues.map(v => ({ id: v.id, name: v.name }))}
+                                    values={prop.listingPropertyValues.map(
+                                        (v) => ({ id: v.id, name: v.name })
+                                    )}
                                     selected={selectedPropertyValues}
                                     onToggle={toggleProp}
                                 />
@@ -226,7 +283,10 @@ export function FilterPanel({
                     )}
                 </div>
             )}
-            <button className="btn btn-primary mt-3" onClick={apply}>
+            <button
+                className="btn btn-primary mt-3"
+                onClick={apply}
+            >
                 Apply Filter
             </button>
         </div>

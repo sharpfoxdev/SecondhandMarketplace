@@ -3,13 +3,26 @@
 import { useEffect, useState } from 'react';
 import ListingPropertyForm from './ListingPropertyForm';
 import ListingPropertyItem from './ListingPropertyItem';
-import { fetchListingProperties, createListingProperty, deleteListingProperty, updateListingProperty, addPropertyValuesToProperty } from '@/services/listingPropertyService';
-import { CreateListingPropertyRequest, ListingPropertyDetail } from '@/types/api/listingProperties';
-import { deleteListingPropertyValue, updateListingPropertyValue } from '@/services/listingPropertyValueService';
-
+import {
+    fetchListingProperties,
+    createListingProperty,
+    deleteListingProperty,
+    updateListingProperty,
+    addPropertyValuesToProperty,
+} from '@/services/listingPropertyService';
+import {
+    CreateListingPropertyRequest,
+    ListingPropertyDetail,
+} from '@/types/api/listingProperties';
+import {
+    deleteListingPropertyValue,
+    updateListingPropertyValue,
+} from '@/services/listingPropertyValueService';
 
 export default function ListingPropertySection() {
-    const [listingProperties, setListingProperties] = useState<ListingPropertyDetail[]>([]);
+    const [listingProperties, setListingProperties] = useState<
+        ListingPropertyDetail[]
+    >([]);
 
     useEffect(() => {
         const getListingProperties = async () => {
@@ -26,9 +39,9 @@ export default function ListingPropertySection() {
     const handleAddProperty = async (name: string) => {
         try {
             const request: CreateListingPropertyRequest = {
-                name: name
-            }
-            await createListingProperty(request)
+                name: name,
+            };
+            await createListingProperty(request);
             const res = await fetchListingProperties();
             setListingProperties(res);
         } catch (error) {
@@ -58,8 +71,9 @@ export default function ListingPropertySection() {
 
     const handleAddValue = async (propertyId: string, valueName: string) => {
         try {
-
-            await addPropertyValuesToProperty(propertyId, [{ name: valueName }])
+            await addPropertyValuesToProperty(propertyId, [
+                { name: valueName },
+            ]);
             const res = await fetchListingProperties();
             setListingProperties(res);
         } catch (error) {
@@ -79,7 +93,7 @@ export default function ListingPropertySection() {
 
     const handleEditValue = async (valueId: string, name: string) => {
         try {
-            await updateListingPropertyValue(valueId, { name })
+            await updateListingPropertyValue(valueId, { name });
             const res = await fetchListingProperties();
             setListingProperties(res);
         } catch (error) {

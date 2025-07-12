@@ -1,0 +1,30 @@
+{
+    "printWidth": 80,
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "singleAttributePerLine": true,
+    "overrides": [
+        {
+            "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
+            "options": {
+                "tabWidth": 4,
+                "useTabs": false
+            }
+        },
+        {
+            "files": "*.json",
+            "options": { "tabWidth": 4 }
+        },
+        {
+            "files": ["*.md", "*.markdown"],
+            "options": { "proseWrap": "always", "tabWidth": 4 }
+        }
+    ]
+}

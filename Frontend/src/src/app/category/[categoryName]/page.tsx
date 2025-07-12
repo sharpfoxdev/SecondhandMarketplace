@@ -9,7 +9,11 @@ import { Ordering, OrderingDirection } from '@/types/api/categories';
 import { Page } from '@/types/api/page';
 import { fetchListingsByCategoryName } from '@/services/categoryService';
 
-export default function CategoryPage({ params }: { params: { categoryName: string } }) {
+export default function CategoryPage({
+    params,
+}: {
+    params: { categoryName: string };
+}) {
     const { categoryName } = params;
     const [filter, setFilter] = useState<ListingFilter>({
         priceMin: null,
@@ -21,28 +25,33 @@ export default function CategoryPage({ params }: { params: { categoryName: strin
         radius: null,
         search: null,
         ordering: Ordering.CreatedAt,
-        orderingDirection: OrderingDirection.Descending
+        orderingDirection: OrderingDirection.Descending,
     });
     const [pageNumber, setPageNumber] = useState(1);
     const [pageData, setPageData] = useState<Page<Listing>>({
         items: [],
         totalPages: 1,
         pageNumber: 1,
-        pageSize: 30
+        pageSize: 30,
     });
 
     useEffect(() => {
         // reload on category, filter or page change
         const fetchListings = async () => {
             try {
-                const res = await fetchListingsByCategoryName(categoryName, filter, pageNumber, pageData.pageSize)
+                const res = await fetchListingsByCategoryName(
+                    categoryName,
+                    filter,
+                    pageNumber,
+                    pageData.pageSize
+                );
                 setPageData(res);
             } catch (err) {
                 console.error('Failed to load listings', err);
             }
         };
         fetchListings();
-    }, [categoryName, filter, pageNumber]);
+    }, [categoryName, filter, pageNumber, pageData.pageSize]);
 
     return (
         <div className="container mt-5">

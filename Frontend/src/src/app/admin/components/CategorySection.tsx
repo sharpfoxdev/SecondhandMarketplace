@@ -3,8 +3,15 @@
 import { useEffect, useState } from 'react';
 import CategoryForm from './CategoryForm';
 import CategoryTree from './CategoryTree';
-import { CategoryHierarchy, CreateCategoryRequest } from '@/types/api/categories';
-import { fetchCategoryHierarchy, createCategory, deleteCategory } from '@/services/categoryService';
+import {
+    CategoryHierarchy,
+    CreateCategoryRequest,
+} from '@/types/api/categories';
+import {
+    fetchCategoryHierarchy,
+    createCategory,
+    deleteCategory,
+} from '@/services/categoryService';
 
 export default function CategorySection() {
     const [categories, setCategories] = useState<CategoryHierarchy[]>([]);
@@ -22,13 +29,16 @@ export default function CategorySection() {
         fetchCategories();
     }, []);
 
-    const handleAddCategory = async (name: string, parentId: string | null = null) => {
+    const handleAddCategory = async (
+        name: string,
+        parentId: string | null = null
+    ) => {
         try {
             const request: CreateCategoryRequest = {
                 name: name,
-                parentCategoryId: parentId
-            }
-            await createCategory(request)
+                parentCategoryId: parentId,
+            };
+            await createCategory(request);
             const res = await fetchCategoryHierarchy();
             setCategories(res);
         } catch (error) {
@@ -48,15 +58,21 @@ export default function CategorySection() {
 
     return (
         <div className="container mt-5">
-            <h1 className="text-center text-md-left">Admin Page – Manage Categories</h1>
+            <h1 className="text-center text-md-left">
+                Admin Page – Manage Categories
+            </h1>
 
             <div className="row mt-4 gx-4 gy-4">
                 <div className="col-12 col-md-4">
                     <div className="card h-100">
                         <div className="card-body d-flex flex-column">
-                            <h2 className="card-title">Create a Top-Level Category</h2>
+                            <h2 className="card-title">
+                                Create a Top-Level Category
+                            </h2>
                             <CategoryForm
-                                onSubmit={(name: string) => handleAddCategory(name, null)}
+                                onSubmit={(name: string) =>
+                                    handleAddCategory(name, null)
+                                }
                             />
                         </div>
                     </div>

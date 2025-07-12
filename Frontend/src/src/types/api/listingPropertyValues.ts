@@ -1,4 +1,4 @@
-import { ListingProperty } from "./listingProperties";
+import { ListingProperty } from './listingProperties';
 
 export interface CreateListingPropertyValueRequest {
     name: string;

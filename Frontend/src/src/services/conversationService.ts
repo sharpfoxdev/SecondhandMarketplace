@@ -8,7 +8,10 @@ import { Message } from '@/types/api/messages';
 export const createConversation = async (
     payload: CreateConversationRequest
 ): Promise<Conversation> => {
-    const { data } = await api.post<Conversation>('/api/Conversations', payload);
+    const { data } = await api.post<Conversation>(
+        '/api/Conversations',
+        payload
+    );
     return data;
 };
 

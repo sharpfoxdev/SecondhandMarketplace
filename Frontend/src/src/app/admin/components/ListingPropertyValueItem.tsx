@@ -31,7 +31,10 @@ export default function ListingPropertyValueItem({
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                     />
-                    <button className="btn btn-primary" onClick={handleEdit}>
+                    <button
+                        className="btn btn-primary"
+                        onClick={handleEdit}
+                    >
                         Confirm
                     </button>
                 </div>

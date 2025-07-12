@@ -15,7 +15,9 @@ function getCurrentUserId(): string | null {
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         return (
-            payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ||
+            payload[
+                'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+            ] ||
             payload['sub'] ||
             null
         );
@@ -24,7 +26,11 @@ function getCurrentUserId(): string | null {
     }
 }
 
-export default function ConversationPage({ params }: { params: { conversationId: string } }) {
+export default function ConversationPage({
+    params,
+}: {
+    params: { conversationId: string };
+}) {
     const { conversationId } = params;
     const router = useRouter();
     const currentUserId = getCurrentUserId();
@@ -45,7 +51,9 @@ export default function ConversationPage({ params }: { params: { conversationId:
 
     useEffect(() => {
         if (!currentUserId) return;
-        const otherId = messages.find(m => m.senderId !== currentUserId)?.senderId;
+        const otherId = messages.find(
+            (m) => m.senderId !== currentUserId
+        )?.senderId;
         if (otherId) {
             fetchUserById(otherId)
                 .then((user) => setOtherUser(user))
@@ -63,7 +71,7 @@ export default function ConversationPage({ params }: { params: { conversationId:
 
         const handleReceive = (senderId: string, msg: Message) => {
             if (msg.conversationId === conversationId) {
-                setMessages(prev => [...prev, msg]);
+                setMessages((prev) => [...prev, msg]);
             }
         };
 
@@ -117,7 +125,9 @@ export default function ConversationPage({ params }: { params: { conversationId:
                             <Button
                                 variant="outline-primary"
                                 size="sm"
-                                onClick={() => router.push(`/user/${otherUser.id}/review`)}
+                                onClick={() =>
+                                    router.push(`/user/${otherUser.id}/review`)
+                                }
                             >
                                 Give Review To User
                             </Button>
@@ -132,21 +142,26 @@ export default function ConversationPage({ params }: { params: { conversationId:
                     {messages.map((m) => (
                         <div
                             key={m.id}
-                            className={`d-flex mb-2 ${m.senderId === currentUserId
-                                ? 'justify-content-end'
-                                : 'justify-content-start'
-                                }`}
+                            className={`d-flex mb-2 ${
+                                m.senderId === currentUserId
+                                    ? 'justify-content-end'
+                                    : 'justify-content-start'
+                            }`}
                         >
                             <div
-                                className={`p-2 rounded ${m.senderId === currentUserId
-                                    ? 'bg-primary text-white'
-                                    : 'bg-light'
-                                    }`}
+                                className={`p-2 rounded ${
+                                    m.senderId === currentUserId
+                                        ? 'bg-primary text-white'
+                                        : 'bg-light'
+                                }`}
                                 style={{ maxWidth: '75%' }}
                             >
                                 {m.content}
                                 <div className="text-muted small text-end">
-                                    {new Date(m.createdAt).toLocaleTimeString("en-GB", { timeZone: "CET" })}
+                                    {new Date(m.createdAt).toLocaleTimeString(
+                                        'en-GB',
+                                        { timeZone: 'CET' }
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -177,4 +192,3 @@ export default function ConversationPage({ params }: { params: { conversationId:
         </div>
     );
 }
-
