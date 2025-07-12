@@ -107,7 +107,7 @@ export default function InboxPage() {
         return () => {
             hubConnection?.stop();
         };
-    }, [conversations, hubConnection]);
+    }, [conversations]);
 
     return (
         <div className="container mt-5">

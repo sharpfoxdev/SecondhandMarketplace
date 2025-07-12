@@ -75,7 +75,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
         return () => {
             hubConnection?.stop();
         };
-    }, [hubConnection]);
+    }, []);
 
     const handleSendMessage = async () => {
         if (!messageText.trim() || !hubConnection || !listing) return;

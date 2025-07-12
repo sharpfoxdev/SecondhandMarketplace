@@ -2,18 +2,16 @@
     position: relative;
 }
 
-.dropdown-submenu > .dropdown-menu {
+.dropdown-submenu .dropdown-menu {
     top: 0;
     left: 100%;
     margin-top: -1px;
-    display: none;
 }
 
-.dropdown-submenu:hover > .dropdown-menu {
-    display: block;
-    left: 100%;
-    top: 0;
-    margin-top: -1px;
+.submenu-toggler {
+    background: transparent;
+    border: none;
+    cursor: pointer;
 }
 .card.listing-card {
     width: 100%;

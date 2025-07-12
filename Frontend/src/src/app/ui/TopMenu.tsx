@@ -1,18 +1,18 @@
 'use client';
-
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { fetchCategoryHierarchy } from '@/services/categoryService';
 import { CategoryHierarchy } from '@/types/api/categories';
+import CategoryMenuItem from './CategoryMenuItem';
 
 export default function TopMenu() {
     const [categories, setCategories] = useState<CategoryHierarchy[]>([]);
-
+    const [navOpen, setNavOpen] = useState(false);
+    const [categoriesOpen, setCategoriesOpen] = useState(false);
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const res = await fetchCategoryHierarchy();
-                //const response = await axios.get<Category[]>('https://localhost:7192/api/Categories/Hierarchy');
                 setCategories(res);
             } catch (error) {
                 console.error('Failed to fetch categories', error);
@@ -22,18 +22,12 @@ export default function TopMenu() {
         fetchCategories();
     }, []);
 
-    // Bootstrap JS is needed for rendering dropdown menu, but it wont let me import it in layout.tsx,
-    // so I import it here
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            import('bootstrap/dist/js/bootstrap.bundle.min.js');
-        }
-    }, []);
+    const closeNav = () => {
+        setNavOpen(false);
+        setCategoriesOpen(false);
+    };
+    const topLevelCategories = categories.filter((c) => !c.parentCategory);
 
-    // Filter top-level categories (those without a parent)
-    const topLevelCategories = categories.filter(
-        (category) => !category.parentCategory
-    );
     const renderCategoryMenu = (category: CategoryHierarchy) => {
         const hasSubcategories = category.childrenCategories.length > 0;
 
@@ -67,91 +61,68 @@ export default function TopMenu() {
                     className="navbar-brand"
                     style={{ fontSize: '24px', fontWeight: 'bold' }}
                 >
-                    Marketplace
+                    {process.env.NEXT_PUBLIC_MARKETPLACE_NAME}
                 </Link>
                 <button
                     className="navbar-toggler"
                     type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
+                    onClick={() => setNavOpen((o) => !o)}
                 >
-                    <span className="navbar-toggler-icon"></span>
+                    <span className="navbar-toggler-icon" />
                 </button>
+
                 <div
-                    className="collapse navbar-collapse"
+                    className={`collapse navbar-collapse ${navOpen ? 'show' : ''}`}
                     id="navbarNav"
                 >
                     <ul className="navbar-nav">
                         <li className="nav-item dropdown">
-                            <a
-                                className="nav-link dropdown-toggle"
-                                href="#"
-                                id="categoriesDropdown"
-                                role="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
+                            <button
+                                className="nav-link dropdown-toggle btn btn-link"
+                                type="button"
+                                onClick={() => {
+                                    setCategoriesOpen((c) => !c);
+                                }}
+                                aria-expanded={categoriesOpen}
                             >
                                 Categories
-                            </a>
+                            </button>
                             <ul
-                                className="dropdown-menu"
-                                aria-labelledby="categoriesDropdown"
+                                className={`dropdown-menu ${categoriesOpen ? 'show' : ''}`}
                             >
-                                {topLevelCategories.map((category) =>
-                                    renderCategoryMenu(category)
-                                )}
+                                {topLevelCategories.map((cat) => (
+                                    <CategoryMenuItem
+                                        key={cat.id}
+                                        category={cat}
+                                        closeNavbar={closeNav}
+                                    />
+                                ))}
                             </ul>
                         </li>
                     </ul>
+
                     <ul className="navbar-nav ms-auto">
-                        <li className="nav-item">
-                            <Link
-                                href="/listing/new"
-                                className="nav-link"
+                        {[
+                            ['New listing', '/listing/new'],
+                            ['Login', '/auth/login'],
+                            ['Register', '/auth/register'],
+                            ['Admin', '/admin'],
+                            ['Inbox', '/inbox'],
+                            ['My Profile', '/user'],
+                        ].map(([label, href]) => (
+                            <li
+                                className="nav-item"
+                                key={href}
                             >
-                                New listing
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link
-                                href="/auth/login"
-                                className="nav-link"
-                            >
-                                Login
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link
-                                href="/auth/register"
-                                className="nav-link"
-                            >
-                                Register
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link
-                                href="/admin"
-                                className="nav-link"
-                            >
-                                Admin
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link
-                                href="/inbox"
-                                className="nav-link"
-                            >
-                                Inbox
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link
-                                href="/user"
-                                className="nav-link"
-                            >
-                                My Profile
-                            </Link>
-                        </li>
+                                <Link
+                                    href={href}
+                                    className="nav-link"
+                                    onClick={closeNav}
+                                >
+                                    {label}
+                                </Link>
+                            </li>
+                        ))}
                     </ul>
                 </div>
             </div>
