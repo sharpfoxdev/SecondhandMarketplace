@@ -5,9 +5,18 @@ import {
     ListingDetail,
     UpdateListingRequest,
 } from '@/types/api/listings';
+import { Page } from '@/types/api/page';
+import { ListingFilter } from '@/types/api/categories';
 
-export const fetchListings = async (): Promise<Listing[]> => {
-    const { data } = await api.get<Listing[]>('/api/Listings');
+export const fetchListings = async (
+    filter: ListingFilter,
+    pageNumber = 1,
+    pageSize = 12): Promise<Page<Listing>> => {
+    const { data } = await api.post<Page<Listing>>(
+        `/api/Listings/GetAll`,
+        filter,
+        { params: { pageNumber, pageSize } }
+    );
     return data;
 };
 

@@ -40,10 +40,11 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Retrieves all listings.
+        /// Retrieves all listings. I am using post, because with get a cannot pass a filter in body. 
         /// </summary>
         /// <returns>A list of all listings.</returns>
-        [HttpGet]
+        [HttpPost]
+        [Route("GetAll")]
         public async Task<IActionResult> GetAll([FromBody] ListingFilterDto filter, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 12)
         {
             var filterDomain = mapper.Map<ListingFilter>(filter);
