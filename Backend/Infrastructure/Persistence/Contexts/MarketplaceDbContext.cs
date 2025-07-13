@@ -25,6 +25,7 @@ namespace Infrastructure.Persistence.Contexts
 		public DbSet<Message> Messages { get; set; }
 		public DbSet<ConversationParticipant> ConversationParticipant { get; set; }
 		public DbSet<City> Cities { get; set; }
+		public DbSet<Review> Reviews { get; set; }
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
 
@@ -55,7 +56,18 @@ namespace Infrastructure.Persistence.Contexts
 				.HasColumnType("POINT SRID 4326")
                 .IsRequired();
             });
-
+			modelBuilder.Entity<Review>(builder =>
+			{
+                builder.HasKey(r => r.Id);
+                builder.Property(r => r.ReviewText)
+					.IsRequired();
+				builder.HasOne<ApplicationUser>()
+				 .WithMany(u => u.ReviewsGiven)
+				 .HasForeignKey(r => r.ReviewerId);
+				builder.HasOne<ApplicationUser>()
+				 .WithMany(u => u.ReviewsReceived)
+				 .HasForeignKey(r => r.RevieweeId);
+			});
 
             var adminRoleId = "e8c9ac14-c7f6-4991-88aa-ad40bfe8f707";
 			var userRoleId = "2d39b4e7-843e-410b-b6e4-ae30e38039f4";

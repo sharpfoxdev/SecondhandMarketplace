@@ -19,5 +19,9 @@ namespace Infrastructure.Identity {
 		public List<Listing> Listings { get; set; }
         public List<ConversationParticipant> ConversationParticipants { get; set; }
         public List<Message> Messages { get; set; }
-	}
+        public List<Review> ReviewsGiven { get; set; }
+        public List<Review> ReviewsReceived { get; set; }
+
+
+    }
 }
