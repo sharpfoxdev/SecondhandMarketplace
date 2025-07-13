@@ -8,23 +8,8 @@ import { fetchMessagesByConversationId } from '@/services/conversationService';
 import Button from 'react-bootstrap/Button';
 import { User } from '@/types/api/users';
 import { fetchUserById } from '@/services/userService';
+import { useAuth } from '@/context/AuthContext';
 
-function getCurrentUserId(): string | null {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return (
-            payload[
-                'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-            ] ||
-            payload['sub'] ||
-            null
-        );
-    } catch {
-        return null;
-    }
-}
 
 export default function ConversationPage({
     params,
@@ -33,7 +18,8 @@ export default function ConversationPage({
 }) {
     const { conversationId } = params;
     const router = useRouter();
-    const currentUserId = getCurrentUserId();
+    const { user } = useAuth();
+    const currentUserId = user?.id ?? null;
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [messageText, setMessageText] = useState('');
@@ -43,10 +29,15 @@ export default function ConversationPage({
     const endRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        (async () => {
+        const fetchMessages = async () => {
             const res = await fetchMessagesByConversationId(conversationId);
             setMessages(res);
-        })();
+        };
+        fetchMessages();
+        // (async () => {
+        //     const res = await fetchMessagesByConversationId(conversationId);
+        //     setMessages(res);
+        // })();
     }, [conversationId]);
 
     useEffect(() => {
@@ -142,18 +133,16 @@ export default function ConversationPage({
                     {messages.map((m) => (
                         <div
                             key={m.id}
-                            className={`d-flex mb-2 ${
-                                m.senderId === currentUserId
-                                    ? 'justify-content-end'
-                                    : 'justify-content-start'
-                            }`}
+                            className={`d-flex mb-2 ${m.senderId === currentUserId
+                                ? 'justify-content-end'
+                                : 'justify-content-start'
+                                }`}
                         >
                             <div
-                                className={`p-2 rounded ${
-                                    m.senderId === currentUserId
-                                        ? 'bg-primary text-white'
-                                        : 'bg-light'
-                                }`}
+                                className={`p-2 rounded ${m.senderId === currentUserId
+                                    ? 'bg-primary text-white'
+                                    : 'bg-light'
+                                    }`}
                                 style={{ maxWidth: '75%' }}
                             >
                                 {m.content}

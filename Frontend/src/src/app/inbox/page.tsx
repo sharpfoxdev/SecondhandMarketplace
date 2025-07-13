@@ -7,35 +7,24 @@ import { fetchUserById } from '@/services/userService';
 import { fetchAllConversations } from '@/services/conversationService';
 import { User } from '@/types/api/users';
 import { Conversation } from '@/types/api/conversations';
+import { useAuth } from '@/context/AuthContext';
 
-function getCurrentUserId(): string | null {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-    try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        return (
-            payload[
-                'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-            ] ||
-            payload['sub'] ||
-            null
-        );
-    } catch {
-        return null;
-    }
-}
+
 
 export default function InboxPage() {
+    const { user } = useAuth();
+    const currentUserId = user?.id ?? null;
+
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [users, setUsers] = useState<Record<string, User>>({});
     const [hubConnection, setHubConnection] = useState<HubConnection | null>(
         null
     );
     const [unread, setUnread] = useState<Record<string, boolean>>({});
-    const currentUserId = getCurrentUserId();
+
 
     useEffect(() => {
-        const fetchConvs = async () => {
+        const fetchConversations = async () => {
             try {
                 const res = await fetchAllConversations();
                 const sorted = res.sort(
@@ -65,8 +54,8 @@ export default function InboxPage() {
             }
         };
 
-        fetchConvs();
-    }, [currentUserId, users]);
+        fetchConversations();
+    }, []); // when having users or current user id here, it breaks things for some reason, so unfortunatelly eslint will be complaining. Putting it away doesnt help either, as it continutally runs and spams backend
 
     useEffect(() => {
         const initHub = async () => {

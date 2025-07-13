@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -41,7 +41,9 @@ export default function ReviewPage({ params }: { params: { id: string } }) {
                                 required
                             />
                         </div>
-                        {error && <div className="text-danger mb-3">{error}</div>}
+                        {error && (
+                            <div className="text-danger mb-3">{error}</div>
+                        )}
                         <button
                             type="submit"
                             className="btn btn-primary"

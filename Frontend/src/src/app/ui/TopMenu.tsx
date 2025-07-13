@@ -91,7 +91,9 @@ export default function TopMenu() {
                             >
                                 Categories
                             </button>
-                            <ul className={`dropdown-menu ${categoriesOpen ? 'show' : ''}`}>
+                            <ul
+                                className={`dropdown-menu ${categoriesOpen ? 'show' : ''}`}
+                            >
                                 {topLevelCategories.map((cat) => (
                                     <CategoryMenuItem
                                         key={cat.id}

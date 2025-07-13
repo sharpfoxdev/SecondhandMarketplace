@@ -1,4 +1,4 @@
-import { User } from "./users";
+import { User } from './users';
 export interface CreateReviewRequest {
     revieweeId: string;
     reviewText: string;

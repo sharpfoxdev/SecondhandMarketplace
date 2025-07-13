@@ -47,7 +47,6 @@ export default function UserListingsPage() {
         router.push(`/listing/${id}/edit`);
     };
 
-
     if (loading) {
         return <div className="container mt-5">Loading...</div>;
     }

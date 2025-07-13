@@ -126,7 +126,9 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
                             </div>
                             <div className="card-body">
                                 <ListingPropertiesList
-                                    listingProperties={category.listingProperties}
+                                    listingProperties={
+                                        category.listingProperties
+                                    }
                                     onRemove={handleRemoveProperty}
                                 />
                             </div>
@@ -135,7 +137,9 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
 
                     <div className="col-12 col-md-6">
                         <div className="card h-100">
-                            <div className="card-header">Add More Properties</div>
+                            <div className="card-header">
+                                Add More Properties
+                            </div>
                             <div className="card-body">
                                 <AvailablePropertiesList
                                     availableProperties={availableProperties}

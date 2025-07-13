@@ -4,8 +4,6 @@ import React, { useState, ChangeEvent } from 'react';
 import { fetchListingById, deleteListing } from '@/services/listingService';
 import { ListingDetail } from '@/types/api/listings';
 
-
-
 export default function ListingManagementSection() {
     const [guid, setGuid] = useState<string>('');
     const [listing, setListing] = useState<ListingDetail | null>(null);
@@ -31,7 +29,8 @@ export default function ListingManagementSection() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm('Are you sure you want to delete this listing?')) return;
+        if (!window.confirm('Are you sure you want to delete this listing?'))
+            return;
         try {
             await deleteListing(id);
             setListing(null);
@@ -75,7 +74,10 @@ export default function ListingManagementSection() {
                             <a
                                 href={`/listing/${listing.id}`}
                                 className="fw-bold text-decoration-none"
-                                style={{ display: 'inline-block', maxWidth: '100%' }}
+                                style={{
+                                    display: 'inline-block',
+                                    maxWidth: '100%',
+                                }}
                             >
                                 {listing.title}
                             </a>

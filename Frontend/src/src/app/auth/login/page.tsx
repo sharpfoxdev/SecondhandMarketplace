@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
-
 export default function Login() {
     const { login } = useAuth();
     const [username, setUsername] = useState('');
@@ -12,7 +11,6 @@ export default function Login() {
     const [error, setError] = useState('');
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
-
 
     const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();

@@ -6,9 +6,12 @@ import ListingPropertySection from './components/listingPropertySection/ListingP
 import UserManagementSection from './components/UserManagementSection';
 import RequireAdmin from '@/sharedComponents/RequireAdmin';
 
-
 export default function AdminPage(): JSX.Element {
-    type TabKey = 'categories' | 'properties' | 'listingManagement' | 'userManagement';
+    type TabKey =
+        | 'categories'
+        | 'properties'
+        | 'listingManagement'
+        | 'userManagement';
     const [activeTab, setActiveTab] = useState<TabKey>('categories');
 
     return (
@@ -52,16 +55,24 @@ export default function AdminPage(): JSX.Element {
                 </ul>
 
                 <div className="tab-content">
-                    <div className={`tab-pane fade ${activeTab === 'categories' ? 'show active' : ''}`}>
+                    <div
+                        className={`tab-pane fade ${activeTab === 'categories' ? 'show active' : ''}`}
+                    >
                         <CategorySection />
                     </div>
-                    <div className={`tab-pane fade ${activeTab === 'properties' ? 'show active' : ''}`}>
+                    <div
+                        className={`tab-pane fade ${activeTab === 'properties' ? 'show active' : ''}`}
+                    >
                         <ListingPropertySection />
                     </div>
-                    <div className={`tab-pane fade ${activeTab === 'listingManagement' ? 'show active' : ''}`}>
+                    <div
+                        className={`tab-pane fade ${activeTab === 'listingManagement' ? 'show active' : ''}`}
+                    >
                         <ListingManagementSection />
                     </div>
-                    <div className={`tab-pane fade ${activeTab === 'userManagement' ? 'show active' : ''}`}>
+                    <div
+                        className={`tab-pane fade ${activeTab === 'userManagement' ? 'show active' : ''}`}
+                    >
                         <UserManagementSection />
                     </div>
                 </div>

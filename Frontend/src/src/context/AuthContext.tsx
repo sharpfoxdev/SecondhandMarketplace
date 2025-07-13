@@ -1,5 +1,11 @@
 'use client';
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import React, {
+    createContext,
+    useState,
+    useEffect,
+    useContext,
+    ReactNode,
+} from 'react';
 import { decodeToken, removeToken, saveToken } from '@/services/tokenService';
 import { loginUser } from '@/services/authService';
 import { LoginResponse } from '@/types/api/auth';
@@ -28,7 +34,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const payload = decodeToken();
         if (payload && payload.exp * 1000 > Date.now()) {
-            setUser({ id: payload.sub, nickname: payload.nickname, roles: payload.roles });
+            setUser({
+                id: payload.sub,
+                nickname: payload.nickname,
+                roles: payload.roles,
+            });
         }
         setLoading(false);
     }, []);
@@ -38,7 +48,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         saveToken(res.jwtToken);
         const payload = decodeToken();
         if (payload) {
-            setUser({ id: payload.sub, nickname: payload.nickname, roles: payload.roles });
+            setUser({
+                id: payload.sub,
+                nickname: payload.nickname,
+                roles: payload.roles,
+            });
             router.push('/');
         }
     };

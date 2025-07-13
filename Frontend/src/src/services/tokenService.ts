@@ -1,5 +1,5 @@
 import api from './apiClient';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 
 interface TokenPayload {
     sub: string;
@@ -25,9 +25,12 @@ export const decodeToken = (): TokenPayload | null => {
     if (!token) return null;
     try {
         const raw: any = jwtDecode(token);
-        const sub = raw['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] as string;
+        const sub = raw[
+            'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+        ] as string;
         const nickname = (raw.nickname ?? raw['nickname']) as string;
-        const rolesRaw = raw['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        const rolesRaw =
+            raw['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
         const roles = Array.isArray(rolesRaw) ? rolesRaw : [rolesRaw];
         const exp = raw.exp as number;
 

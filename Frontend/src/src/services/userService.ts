@@ -21,6 +21,8 @@ export const addAdminRole = async (id: string): Promise<UserDetail> => {
 };
 
 export const removeAdminRole = async (id: string): Promise<UserDetail> => {
-    const { data } = await api.delete<UserDetail>(`/api/Users/${id}/roles/admin`);
+    const { data } = await api.delete<UserDetail>(
+        `/api/Users/${id}/roles/admin`
+    );
     return data;
 };

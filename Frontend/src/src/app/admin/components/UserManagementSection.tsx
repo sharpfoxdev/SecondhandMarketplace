@@ -32,7 +32,8 @@ export default function UserManagementSection(): JSX.Element {
     };
 
     const handleDelete = async (userId: string) => {
-        if (!window.confirm('Are you sure you want to delete this user?')) return;
+        if (!window.confirm('Are you sure you want to delete this user?'))
+            return;
         try {
             await deleteUser(userId);
             setUser(null);
@@ -96,7 +97,10 @@ export default function UserManagementSection(): JSX.Element {
                             <a
                                 href={`/users/${user.id}`}
                                 className="fw-bold text-decoration-none"
-                                style={{ display: 'inline-block', maxWidth: '100%' }}
+                                style={{
+                                    display: 'inline-block',
+                                    maxWidth: '100%',
+                                }}
                             >
                                 {user.nickname}
                             </a>
