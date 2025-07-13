@@ -175,36 +175,6 @@ namespace Infrastructure.Persistence.Repositories {
             }
             return existing;
         }
-        /// <summary>
-        /// Used to get by name
-        /// </summary>
-        /// <param name="name">Name of Category. </param>
-        /// <returns>
-        /// Null if a Category with the given name was not found.
-        /// Otherwise returns listings in the given category. 
-        /// </returns>
-        public async Task<List<Listing>> GetListingsByCategoryNameAsyncOld(string name, ListingFilter filter) {
-			var existing = await dbContext.Categories
-				.Include(x => x.Listings)
-					.ThenInclude(x => x.Images)
-                .Include(x => x.Listings)
-                    .ThenInclude(x => x.SelectedListingPropertyValues)
-                .Include(x => x.ChildrenCategories)
-				.Include(x => x.ListingProperties)
-					.ThenInclude(x => x.ListingPropertyValues)
-				.FirstOrDefaultAsync(x => x.Name == name);
-			if (existing == null) {
-				return new List<Listing>();
-			}
-			// todo rewite this to use queries, so that I dont enumerate all the filters are applied
-			var listings = filter.Filter(existing.Listings, existing.ListingProperties).ToList();
-			foreach(var child in existing.ChildrenCategories)
-			{
-				var childListings = await GetListingsByCategoryNameAsyncOld(child.Name, filter);
-				listings.AddRange(childListings);
-			}
-			return listings;
-		}
         public async Task<Page<Listing>> GetListingsByCategoryNameAsync(string name, ListingFilter filter, int pageNumber = 1, int pageSize = 20)
         {
             var categoryIds = await GetCategoryAndDescendantIdsAsync(name);
