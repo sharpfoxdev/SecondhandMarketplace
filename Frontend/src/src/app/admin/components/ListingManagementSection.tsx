@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, ChangeEvent } from 'react';
-import axios from 'axios';
 import { fetchListingById, deleteListing } from '@/services/listingService';
 import { ListingDetail } from '@/types/api/listings';
 
@@ -22,7 +21,6 @@ export default function ListingManagementSection() {
         setError(null);
         try {
             const res = await fetchListingById(guid);
-            //const response = await axios.get<Listing>(`/api/listings/${guid}`);
             setListing(res);
         } catch (err: any) {
             setListing(null);
@@ -36,7 +34,6 @@ export default function ListingManagementSection() {
         if (!window.confirm('Are you sure you want to delete this listing?')) return;
         try {
             await deleteListing(id);
-            //await axios.delete(`/api/listings/${id}`);
             setListing(null);
             setGuid('');
             alert('Listing deleted successfully');

@@ -47,9 +47,6 @@ export default function UserListingsPage() {
         router.push(`/listing/${id}/edit`);
     };
 
-    const handleRedirectToListing = (id: string) => {
-        router.push(`/listing/${id}`);
-    };
 
     if (loading) {
         return <div className="container mt-5">Loading...</div>;

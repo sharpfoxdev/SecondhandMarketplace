@@ -50,6 +50,7 @@ namespace Infrastructure
             .AddScoped<IConversationRepository, ConversationRepository>()
             .AddScoped<IMessageRepository, MessageRepository>()
 			.AddScoped<ICityRepository, CityRepository>()
+			.AddScoped<IReviewRepository, ReviewRepository>()
 			.AddHttpContextAccessor()
 			.AddIdentity(); //possibly move elsewhere
 		}

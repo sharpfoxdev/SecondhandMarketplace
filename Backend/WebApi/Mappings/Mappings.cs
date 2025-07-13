@@ -12,6 +12,7 @@ using WebApi.ApiDtos.Conversations;
 using Infrastructure.Identity;
 using WebApi.ApiDtos.Cities;
 using WebApi.ApiDtos;
+using WebApi.ApiDtos.Reviews;
 
 namespace WebApi.Mappings
 {
@@ -21,7 +22,6 @@ namespace WebApi.Mappings
     /// </summary>
     public class Mappings : Profile {
 		public Mappings() {
-			// TODO PUT INTO METHODS
 
 			// Mapping between Domain and return Dtos
 			CreateMap<ListingPropertyValue, ListingPropertyValueDto>().ReverseMap();
@@ -42,6 +42,7 @@ namespace WebApi.Mappings
 			CreateMap<ApplicationUser, UserDto>().ReverseMap();
 			CreateMap<ApplicationUser, UserDetailDto>().ReverseMap();
 			CreateMap<City, CityDto>().ReverseMap();
+			CreateMap<Review, ReviewDto>().ReverseMap();
 
 			// Mapping between domain and Create Request Dtos
 			CreateMap<ListingPropertyValue, CreateListingPropertyValueRequest>().ReverseMap();
@@ -49,6 +50,7 @@ namespace WebApi.Mappings
 			CreateMap<Category, CreateCategoryRequest>().ReverseMap();
 			CreateMap<ListingProperty, CreateListingPropertyRequest>().ReverseMap();
 			CreateMap<ListingPropertyValue, CreatePropertyValueInsidePropertyRequest>().ReverseMap();
+			CreateMap<Review, CreateReviewRequest>().ReverseMap();
 
 			// Mapping between domain and Update Request Dtos
 			CreateMap<ListingPropertyValue, UpdateListingPropertyValueRequest>().ReverseMap();
