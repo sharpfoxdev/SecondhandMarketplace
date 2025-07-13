@@ -13,6 +13,7 @@ import {
 import { CategoryDetail } from '@/types/api/categories';
 import { ListingProperty } from '@/types/api/listingProperties';
 import { fetchListingProperties } from '@/services/listingPropertyService';
+import RequireAdmin from '@/sharedComponents/RequireAdmin';
 
 export default function CategoryPage({ params }: { params: { id: string } }) {
     const { id } = params; // get the category id from the route
@@ -102,49 +103,51 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
     if (!category) return <p>Loading...</p>;
 
     return (
-        <div className="container mt-5">
-            <h1 className="text-center text-md-left">
-                Manage Category: {category.name}
-            </h1>
-            <div className="my-4">
-                <div className="card">
-                    <div className="card-body">
-                        <CategoryNameEdit
-                            categoryName={category.name}
-                            onSave={handleSaveCategoryName}
-                        />
-                    </div>
-                </div>
-            </div>
-            <div className="row gx-4 gy-4">
-                <div className="col-12 col-md-6">
-                    <div className="card h-100">
-                        <div className="card-header">
-                            Current Listing Properties
-                        </div>
+        <RequireAdmin>
+            <div className="container mt-5">
+                <h1 className="text-center text-md-left">
+                    Manage Category: {category.name}
+                </h1>
+                <div className="my-4">
+                    <div className="card">
                         <div className="card-body">
-                            <ListingPropertiesList
-                                listingProperties={category.listingProperties}
-                                onRemove={handleRemoveProperty}
+                            <CategoryNameEdit
+                                categoryName={category.name}
+                                onSave={handleSaveCategoryName}
                             />
                         </div>
                     </div>
                 </div>
+                <div className="row gx-4 gy-4">
+                    <div className="col-12 col-md-6">
+                        <div className="card h-100">
+                            <div className="card-header">
+                                Current Listing Properties
+                            </div>
+                            <div className="card-body">
+                                <ListingPropertiesList
+                                    listingProperties={category.listingProperties}
+                                    onRemove={handleRemoveProperty}
+                                />
+                            </div>
+                        </div>
+                    </div>
 
-                <div className="col-12 col-md-6">
-                    <div className="card h-100">
-                        <div className="card-header">Add More Properties</div>
-                        <div className="card-body">
-                            <AvailablePropertiesList
-                                availableProperties={availableProperties}
-                                selectedProperties={selectedProperties}
-                                onCheckboxChange={handleCheckboxChange}
-                                onAdd={handleAddProperties}
-                            />
+                    <div className="col-12 col-md-6">
+                        <div className="card h-100">
+                            <div className="card-header">Add More Properties</div>
+                            <div className="card-body">
+                                <AvailablePropertiesList
+                                    availableProperties={availableProperties}
+                                    selectedProperties={selectedProperties}
+                                    onCheckboxChange={handleCheckboxChange}
+                                    onAdd={handleAddProperties}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </RequireAdmin>
     );
 }

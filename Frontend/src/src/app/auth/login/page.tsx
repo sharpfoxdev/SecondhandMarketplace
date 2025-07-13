@@ -2,25 +2,31 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginUser } from '@/services/authService';
+import { useAuth } from '@/context/AuthContext';
+
 
 export default function Login() {
+    const { login } = useAuth();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
+    const [loading, setLoading] = useState<boolean>(false);
+
 
     const handleSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
+        setError('');
+        setLoading(true);
         try {
-            const res = await loginUser({ username, password });
-            localStorage.setItem('token', res.jwtToken);
+            await login(username, password);
             router.push('/');
-        } catch (error) {
+        } catch {
             setError('Invalid username or password');
+        } finally {
+            setLoading(false);
         }
     };
-
     return (
         <div className="container mt-5">
             <h1 className="text-center">Login</h1>
@@ -30,10 +36,11 @@ export default function Login() {
                     <label htmlFor="username">Email</label>
                     <input
                         type="email"
-                        className="form-control"
                         id="username"
+                        className="form-control"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        disabled={loading}
                         required
                     />
                 </div>
@@ -41,18 +48,20 @@ export default function Login() {
                     <label htmlFor="password">Password</label>
                     <input
                         type="password"
-                        className="form-control"
                         id="password"
+                        className="form-control"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading}
                         required
                     />
                 </div>
                 <button
                     type="submit"
                     className="btn btn-primary mt-3"
+                    disabled={loading}
                 >
-                    Login
+                    {loading ? 'Logging in...' : 'Login'}
                 </button>
             </form>
         </div>

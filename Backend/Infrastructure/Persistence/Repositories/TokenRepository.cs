@@ -24,7 +24,8 @@ namespace Infrastructure.Persistence.Repositories {
 
 			claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
 			claims.Add(new Claim(ClaimTypes.Email, user.Email));
-			foreach (var role in roles) {
+            claims.Add(new Claim("nickname", user.Nickname));
+            foreach (var role in roles) {
 				claims.Add(new Claim(ClaimTypes.Role, role));
 			}
 			// we get data from appsettings.json
@@ -34,7 +35,7 @@ namespace Infrastructure.Persistence.Repositories {
 				configuration["Jwt:Issuer"],
 				configuration["Jwt:Audience"],
 				claims,
-				expires: DateTime.Now.AddMinutes(15),
+				expires: DateTime.Now.AddMinutes(30),
 				signingCredentials: credentials);
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}

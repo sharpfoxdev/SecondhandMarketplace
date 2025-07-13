@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react';
 import { fetchCategoryHierarchy } from '@/services/categoryService';
 import { CategoryHierarchy } from '@/types/api/categories';
 import CategoryMenuItem from './CategoryMenuItem';
+import { useAuth } from '@/context/AuthContext';
 
 export default function TopMenu() {
     const [categories, setCategories] = useState<CategoryHierarchy[]>([]);
-    const [navOpen, setNavOpen] = useState(false);
-    const [categoriesOpen, setCategoriesOpen] = useState(false);
+    const [navOpen, setNavOpen] = useState<boolean>(false);
+    const [categoriesOpen, setCategoriesOpen] = useState<boolean>(false);
+    const { user, logout } = useAuth();
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -26,6 +29,7 @@ export default function TopMenu() {
         setNavOpen(false);
         setCategoriesOpen(false);
     };
+
     const topLevelCategories = categories.filter((c) => !c.parentCategory);
 
     const renderCategoryMenu = (category: CategoryHierarchy) => {
@@ -39,6 +43,7 @@ export default function TopMenu() {
                 <Link
                     href={`/category/${category.name}`}
                     className={`dropdown-item ${hasSubcategories ? 'dropdown-toggle' : ''}`}
+                    onClick={closeNav}
                 >
                     {category.name}
                 </Link>
@@ -60,6 +65,7 @@ export default function TopMenu() {
                     href="/"
                     className="navbar-brand"
                     style={{ fontSize: '24px', fontWeight: 'bold' }}
+                    onClick={closeNav}
                 >
                     {process.env.NEXT_PUBLIC_MARKETPLACE_NAME}
                 </Link>
@@ -80,16 +86,12 @@ export default function TopMenu() {
                             <button
                                 className="nav-link dropdown-toggle btn btn-link"
                                 type="button"
-                                onClick={() => {
-                                    setCategoriesOpen((c) => !c);
-                                }}
+                                onClick={() => setCategoriesOpen((c) => !c)}
                                 aria-expanded={categoriesOpen}
                             >
                                 Categories
                             </button>
-                            <ul
-                                className={`dropdown-menu ${categoriesOpen ? 'show' : ''}`}
-                            >
+                            <ul className={`dropdown-menu ${categoriesOpen ? 'show' : ''}`}>
                                 {topLevelCategories.map((cat) => (
                                     <CategoryMenuItem
                                         key={cat.id}
@@ -102,27 +104,80 @@ export default function TopMenu() {
                     </ul>
 
                     <ul className="navbar-nav ms-auto">
-                        {[
-                            ['New listing', '/listing/new'],
-                            ['Login', '/auth/login'],
-                            ['Register', '/auth/register'],
-                            ['Admin', '/admin'],
-                            ['Inbox', '/inbox'],
-                            ['My Profile', '/user'],
-                        ].map(([label, href]) => (
-                            <li
-                                className="nav-item"
-                                key={href}
-                            >
-                                <Link
-                                    href={href}
-                                    className="nav-link"
-                                    onClick={closeNav}
-                                >
-                                    {label}
-                                </Link>
-                            </li>
-                        ))}
+                        {user ? (
+                            <>
+                                <li className="nav-item">
+                                    <Link
+                                        href="/listing/new"
+                                        className="nav-link"
+                                        onClick={closeNav}
+                                    >
+                                        New Listing
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link
+                                        href="/inbox"
+                                        className="nav-link"
+                                        onClick={closeNav}
+                                    >
+                                        Inbox
+                                    </Link>
+                                </li>
+                                {user.roles.includes('Admin') && (
+                                    <li className="nav-item">
+                                        <Link
+                                            href="/admin"
+                                            className="nav-link"
+                                            onClick={closeNav}
+                                        >
+                                            Admin
+                                        </Link>
+                                    </li>
+                                )}
+                                <li className="nav-item">
+                                    <Link
+                                        href="/user"
+                                        className="nav-link"
+                                        onClick={closeNav}
+                                    >
+                                        My Profile [{user.nickname}]
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <button
+                                        className="nav-link btn btn-link"
+                                        onClick={() => {
+                                            logout();
+                                            closeNav();
+                                        }}
+                                    >
+                                        Logout
+                                    </button>
+                                </li>
+                            </>
+                        ) : (
+                            <>
+                                <li className="nav-item">
+                                    <Link
+                                        href="/auth/login"
+                                        className="nav-link"
+                                        onClick={closeNav}
+                                    >
+                                        Login
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link
+                                        href="/auth/register"
+                                        className="nav-link"
+                                        onClick={closeNav}
+                                    >
+                                        Register
+                                    </Link>
+                                </li>
+                            </>
+                        )}
                     </ul>
                 </div>
             </div>

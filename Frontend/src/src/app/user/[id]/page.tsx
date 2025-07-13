@@ -1,56 +1,3 @@
-// "use client";
-
-// import { useEffect, useState } from 'react';
-// import { useParams, useRouter } from 'next/navigation';
-// import { fetchReviewsByReviewee } from '@/services/reviewService';
-// import { ReviewList } from './components/ReviewList';
-// import { Page } from '@/types/api/page';
-// import { Review } from '@/types/api/reviews';
-// import { Button } from 'react-bootstrap';
-
-// export default function UserReviewsPage({ params }: { params: { id: string } }) {
-//     const { id } = params;
-//     const router = useRouter();
-
-//     const [page, setPage] = useState<Page<Review> | null>(null);
-//     const [loading, setLoading] = useState(true);
-//     const [error, setError] = useState<string | null>(null);
-
-//     const loadReviewPage = async (pageNumber: number = 1) => {
-//         if (!id) return;
-//         setLoading(true);
-//         setError(null);
-//         try {
-//             const data = await fetchReviewsByReviewee(id, pageNumber);
-//             setPage(data);
-//         } catch (err: any) {
-//             setError(err.message || 'Failed to load reviews.');
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-
-//     useEffect(() => {
-//         loadReviewPage();
-//     }, [id]);
-
-//     if (!id) {
-//         return <p className="text-danger mt-3">Invalid user ID.</p>;
-//     }
-
-//     return (
-//         <div className="container my-5">
-
-//             {loading && <p>Loading reviews...</p>}
-//             {error && <p className="text-danger">{error}</p>}
-
-//             {page && (
-//                 <ReviewList page={page} onPageChange={(reviewPageNumber) => loadReviewPage(reviewPageNumber)} />
-//             )}
-//         </div>
-//     );
-// }
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -89,7 +36,6 @@ export default function UserPage({ params }: { params: { id: string } }) {
 
     const [error, setError] = useState<string | null>(null);
 
-    // Load user info
     const loadUser = async () => {
         setLoadingUser(true);
         try {
@@ -102,7 +48,6 @@ export default function UserPage({ params }: { params: { id: string } }) {
         }
     };
 
-    // Load paged reviews
     const loadReviews = async (pageNumber: number = 1) => {
         setLoadingReviews(true);
         try {
@@ -115,7 +60,6 @@ export default function UserPage({ params }: { params: { id: string } }) {
         }
     };
 
-    // Load paged listings
     const loadListings = async (pageNumber: number = 1) => {
         setLoadingListings(true);
         try {
