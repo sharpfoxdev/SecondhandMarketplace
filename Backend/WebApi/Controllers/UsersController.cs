@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Infrastructure.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +35,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("{id:guid}/detail")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetDetail(Guid id)
         {
             var user = await userManager.FindByIdAsync(id.ToString());
@@ -47,6 +49,7 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("{id:guid}/roles/admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddAdminRole(Guid id)
         {
             var user = await userManager.FindByIdAsync(id.ToString());
@@ -64,6 +67,7 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete("{id:guid}/roles/admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveAdminRole(Guid id)
         {
             var user = await userManager.FindByIdAsync(id.ToString());
@@ -81,6 +85,7 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var user = await userManager.FindByIdAsync(id.ToString());

@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces.Repositories;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.ApiDtos.ListingPropertyValues;
@@ -54,7 +55,8 @@ namespace WebApi.Controllers {
 		/// <param name="request"></param>
 		/// <returns>Created value. </returns>
 		[HttpPost]
-		public async Task<IActionResult> Post(CreateListingPropertyValueRequest request) {
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Post(CreateListingPropertyValueRequest request) {
 			var domain = mapper.Map<ListingPropertyValue>(request);
 			domain = await repository.CreateAsync(domain);
 			return Ok(mapper.Map<ListingPropertyValueDto>(domain));
@@ -72,7 +74,8 @@ namespace WebApi.Controllers {
         /// <returns>404 if id not found, else the updated value. </returns>
         [HttpPut]
 		[Route("{id:Guid}")]
-		public async Task<IActionResult> Put(Guid id, UpdateListingPropertyValueRequest request) {
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Put(Guid id, UpdateListingPropertyValueRequest request) {
 			var domain = mapper.Map<ListingPropertyValue>(request);
 			domain = await repository.UpdateAsync(id, domain);
 			if (domain == null) {
@@ -89,7 +92,8 @@ namespace WebApi.Controllers {
         /// <returns>Deleted resource or 404 if id not found. </returns>
         [HttpDelete]
 		[Route("{id:Guid}")]
-		public async Task<IActionResult> Delete(Guid id) {
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(Guid id) {
 			var domain = await repository.DeleteAsync(id);
 			if (domain == null) {
 				return NotFound();

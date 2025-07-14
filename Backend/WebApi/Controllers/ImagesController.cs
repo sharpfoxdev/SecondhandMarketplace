@@ -83,23 +83,6 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Deletes an image by its ID.
-        /// </summary>
-        /// <param name="id">The unique identifier of the image to delete.</param>
-        /// <returns>The deleted image or NotFound if the image doesn't exist.</returns>
-        [HttpDelete]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var domain = await repository.DeleteAsync(id);
-            if (domain == null)
-            {
-                return NotFound();
-            }
-            return Ok(mapper.Map<ImageDto>(domain));
-        }
-
-        /// <summary>
         /// Validates the uploaded file.
         /// </summary>
         /// <param name="imageUploadRequestDto">The request object containing the file to validate.</param>

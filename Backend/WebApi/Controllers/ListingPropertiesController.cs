@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces.Repositories;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.ApiDtos.ListingProperties;
@@ -63,7 +64,8 @@ namespace WebApi.Controllers {
 		/// Created resource in a form of ListingPropertyDto. 
 		/// </returns>
 		[HttpPost]
-		public async Task<IActionResult> Post(CreateListingPropertyRequest request) {
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Post(CreateListingPropertyRequest request) {
 			var domain = mapper.Map<ListingProperty>(request);
 			domain = await repository.CreateAsync(domain);
 			return Ok(mapper.Map<ListingPropertyDto>(domain));
@@ -84,7 +86,8 @@ namespace WebApi.Controllers {
 		/// </returns>
 		[HttpPut]
 		[Route("{id:Guid}")]
-		public async Task<IActionResult> Put(Guid id, UpdateListingPropertyRequest request) {
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Put(Guid id, UpdateListingPropertyRequest request) {
 			var domain = mapper.Map<ListingProperty>(request);
 			domain = await repository.UpdateAsync(id, domain);
 			if (domain == null) {
@@ -100,7 +103,8 @@ namespace WebApi.Controllers {
 		/// <returns>Deleted property or 404, when the id is not found. </returns>
 		[HttpDelete]
 		[Route("{id:Guid}")]
-		public async Task<IActionResult> Delete(Guid id) {
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(Guid id) {
 			var domain = await repository.DeleteAsync(id);
 			if (domain == null) {
 				return NotFound();
@@ -119,11 +123,11 @@ namespace WebApi.Controllers {
 		[HttpPost]
 		[Route("AddPropertyValues" +
 			"/{id:Guid}")]
-		public async Task<IActionResult> AddPropertyValues(Guid id, List<CreatePropertyValueInsidePropertyRequest> propertyValues) {
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddPropertyValues(Guid id, List<CreatePropertyValueInsidePropertyRequest> propertyValues) {
 			var listAttrDomain = mapper.Map<List<ListingPropertyValue>>(propertyValues);
 			var propertyDomain = await repository.AddListingPropertyValueAsync(id, listAttrDomain);
 			if(propertyDomain == null) {
-				// couldnt find the property
 				return NotFound();
 			}
 			return Ok(mapper.Map<ListingPropertyDetailDto>(propertyDomain));

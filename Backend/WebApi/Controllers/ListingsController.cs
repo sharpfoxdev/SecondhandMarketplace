@@ -83,6 +83,7 @@ namespace WebApi.Controllers
         [Authorize]
         [HttpGet]
         [Route("GetByUser")]
+        [Authorize]
         public async Task<IActionResult> GetAllByUser()
         {
             string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

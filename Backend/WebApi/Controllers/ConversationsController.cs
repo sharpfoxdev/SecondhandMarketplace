@@ -2,6 +2,7 @@
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +43,7 @@ namespace WebApi.Controllers
         /// <param name="request">Request object containing category details.</param>
         /// <returns>The created category.</returns>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post(CreateConversationRequest request)
         {
             string senderIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -70,6 +72,7 @@ namespace WebApi.Controllers
         /// <returns>The requested messages, or a Forbidden response if user is not part of the conversation.</returns>
         [HttpGet]
         [Route("{conversationId:Guid}/messages")]
+        [Authorize]
         public async Task<IActionResult> GetMessagesById(Guid conversationId)
         {
             string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -89,6 +92,7 @@ namespace WebApi.Controllers
         /// <returns>The requested conversation, or a Forbidden response if user is not part of the conversation.</returns>
         [HttpGet]
         [Route("{conversationId:Guid}")]
+        [Authorize]
         public async Task<IActionResult> GetById(Guid conversationId)
         {
             string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -106,6 +110,7 @@ namespace WebApi.Controllers
         /// </summary>
         /// <returns>List of all conversations for the user. </returns>
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllByUser()
         {
             string userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

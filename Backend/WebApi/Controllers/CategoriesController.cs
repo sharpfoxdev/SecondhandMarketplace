@@ -11,6 +11,7 @@ using WebApi.ApiDtos.Listings;
 using Application.Filters;
 using WebApi.ApiDtos;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Controllers
 {
@@ -107,6 +108,7 @@ namespace WebApi.Controllers
         /// <param name="request">Request object containing category details.</param>
         /// <returns>The created category.</returns>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Post(CreateCategoryRequest request)
         {
             var domain = mapper.Map<Category>(request);
@@ -123,6 +125,7 @@ namespace WebApi.Controllers
         /// <returns></returns>
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Put(Guid id, UpdateCategoryRequest request)
         {
             var domain = mapper.Map<Category>(request);
@@ -142,6 +145,7 @@ namespace WebApi.Controllers
         /// <returns>Updated category or 404, when the ids are not found. </returns>
         [HttpPut]
         [Route("AddListingProperties/{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddListingProperties(Guid id, AddListingPropertiesToCategoryRequest request)
         {
             var domain = await repository.AddListingPropertiesAsync(id, request.ListingPropertyIds);
@@ -164,6 +168,7 @@ namespace WebApi.Controllers
         /// <returns>Updated category or 404, when the ids are not found. </returns>
         [HttpPut]
         [Route("RemoveListingProperty/{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveListingProperty(Guid id, RemoveListingPropertyFromCategoryRequest request)
         {
             var domain = await repository.RemoveListingPropertyAsync(id, request.Id);
@@ -182,6 +187,7 @@ namespace WebApi.Controllers
         /// <returns>Deleted category or 404, when the id is not found. </returns>
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var domain = await repository.DeleteAsync(id);

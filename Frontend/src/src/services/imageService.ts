@@ -21,8 +21,3 @@ export const uploadImage = async (payload: AddImageRequest): Promise<Image> => {
     });
     return data;
 };
-
-export const deleteImage = async (id: string): Promise<Image> => {
-    const { data } = await api.delete<Image>(`/api/Images/${id}`);
-    return data;
-};
