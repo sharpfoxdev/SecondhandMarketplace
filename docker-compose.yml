@@ -1,6 +1,55 @@
 version: "3.9"
 
 services:
+    db:
+        build: ./Database
+        container_name: marketplace-db
+        restart: unless-stopped
+        environment:
+          MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+          MYSQL_DATABASE:     ${MYSQL_DATABASE}
+          MYSQL_USER:         ${MYSQL_USER}
+          MYSQL_PASSWORD:     ${MYSQL_PASSWORD}
+        volumes:
+          - ./Database/mysqlData:/var/lib/mysql
+          # seed scripts run only on first init
+        healthcheck:
+          test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+        ports:
+          - '3306:3306'
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: pma
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+            PMA_ARBITRARY: 1
+        restart: unless-stopped
+        ports:
+            - "8082:80"
+        depends_on:
+            - db
+    # backend:
+    #     build:
+    #         context: ./Backend
+    #         dockerfile: WebApi/Dockerfile
+    #     container_name: marketplace-backend
+    #     restart: unless-stopped
+    #     depends_on:
+    #         db:
+    #             condition: service_healthy
+    #     env_file:
+    #         - .env
+    #     environment:
+    #         ASPNETCORE_ENVIRONMENT: Production
+    #     volumes:
+    #         # persist uploaded images and serve them via /Images
+    #         - ./Backend/WebApi/images:/app/Images
+    #     ports:
+    #         - '7192:80'
   # db:
     # build: ./Database
     # container_name: db
@@ -72,22 +121,22 @@ services:
     
     # entrypoint: "dotnet ef database update --project Infrastructure/Infrastructure.csproj --startup-project Api/Api.csproj --context Infrastructure.Persistence.Contexts.CrawlerDbContext"
 
-  frontend:
-    build:
-        context: ./Frontend/src
-        dockerfile: Dockerfile
-        args:
+    frontend:
+        build:
+            context: ./Frontend/src
+            dockerfile: Dockerfile
+            args:
+                NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+                NEXT_PUBLIC_MARKETPLACE_NAME: ${NEXT_PUBLIC_MARKETPLACE_NAME}
+        image: marketplace-frontend:latest
+        container_name: marketplace-frontend
+        restart: unless-stopped
+        ports:
+            - '3000:3000'
+        environment:
             NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
             NEXT_PUBLIC_MARKETPLACE_NAME: ${NEXT_PUBLIC_MARKETPLACE_NAME}
-    image: marketplace-frontend:latest
-    container_name: marketplace-frontend
-    restart: unless-stopped
-    ports:
-        - '3000:3000'
-    environment:
-        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-        NEXT_PUBLIC_MARKETPLACE_NAME: ${NEXT_PUBLIC_MARKETPLACE_NAME}
-        NODE_ENV: production
+            NODE_ENV: production
     # build: ./Client/
     # ports:
       # - "8083:80"
@@ -101,3 +150,6 @@ services:
 networks:
   my_network:
     external: true
+
+volumes:
+  mysqlData:
