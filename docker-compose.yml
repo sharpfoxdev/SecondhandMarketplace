@@ -1,0 +1,103 @@
+version: "3.9"
+
+services:
+  # db:
+    # build: ./Database
+    # container_name: db
+    # environment:
+      # MYSQL_ROOT_PASSWORD: rootpassword
+      # MYSQL_DATABASE: crawler
+      # MYSQL_USER: testUser
+      # MYSQL_PASSWORD: testPassword
+    # ports:
+      # - "3306:3306"
+    # volumes:
+      # - ./Database/mysqlData:/var/lib/mysql
+    # healthcheck:
+      # test: ["CMD-SHELL", "mysqladmin ping -uroot -prootpassword"]
+      # timeout: 5s
+      # interval: 10s
+      # retries: 10
+    # restart: always
+
+  # phpmyadmin:
+    # image: phpmyadmin/phpmyadmin
+    # container_name: pma
+    # environment:
+      # PMA_HOST: db
+      # PMA_PORT: 3306
+      # PMA_ARBITRARY: 1
+    # restart: always
+    # ports:
+      # - "8082:80"
+    # depends_on:
+      # - db
+
+  # backend:
+    # build: ./Backend/
+    # ports:
+      # - "8080:8080"
+      # - "8081:8081"
+      # - "5077:5077"
+    # environment:
+      # ASPNETCORE_ENVIRONMENT: Production
+      # ConnectionStrings__DefaultConnection: "server=db;database=crawler;user=testUser;password=testPassword"
+      # MYSQL_HOST: db
+      # MYSQL_DATABASE: crawler
+      # MYSQL_USER: testUser
+      # MYSQL_PASSWORD: testPassword
+    # depends_on:
+      # db:
+        # condition: service_healthy
+      # migration:
+        # condition: service_completed_successfully
+    # healthcheck:
+      # test: ["CMD-SHELL", "nc -z db 3306"]
+      # interval: 10s
+      # retries: 10
+    
+
+  # migration:
+    # build:
+      # dockerfile: ./Infrastructure/Dockerfile
+      # context: ./Backend/
+    # depends_on:
+      # db:
+        # condition: service_healthy
+    # environment:
+      # MYSQL_HOST: db
+      # MYSQL_DATABASE: crawler
+      # MYSQL_USER: testUser
+      # MYSQL_PASSWORD: testPassword
+    
+    # entrypoint: "dotnet ef database update --project Infrastructure/Infrastructure.csproj --startup-project Api/Api.csproj --context Infrastructure.Persistence.Contexts.CrawlerDbContext"
+
+  frontend:
+    build:
+        context: ./Frontend/src
+        dockerfile: Dockerfile
+        args:
+            NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+            NEXT_PUBLIC_MARKETPLACE_NAME: ${NEXT_PUBLIC_MARKETPLACE_NAME}
+    image: marketplace-frontend:latest
+    container_name: marketplace-frontend
+    restart: unless-stopped
+    ports:
+        - '3000:3000'
+    environment:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+        NEXT_PUBLIC_MARKETPLACE_NAME: ${NEXT_PUBLIC_MARKETPLACE_NAME}
+        NODE_ENV: production
+    # build: ./Client/
+    # ports:
+      # - "8083:80"
+    # depends_on:
+      # - backend
+    
+
+# volumes:
+  # mysqlData:
+
+networks:
+  my_network:
+    external: true
