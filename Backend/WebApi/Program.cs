@@ -8,6 +8,8 @@ using System.Text.Json.Serialization;
 using WebApi.Mappings;
 using DotNetEnv;
 using WebApi.Hubs;
+using Infrastructure.Persistence.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,21 +31,7 @@ builder.Services.AddControllers().AddJsonOptions(options => {
 Env.Load();
 builder.Services.AddSignalR();
 builder.Services.AddInfrastructure();
-//builder.Services.AddAuthentication(options => {
-//	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//	options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-//})
-//	.AddJwtBearer(options =>
-//	options.TokenValidationParameters = new TokenValidationParameters {
-//		ValidateIssuer = true,
-//		ValidateAudience = true,
-//		ValidateLifetime = true,
-//		ValidateIssuerSigningKey = true,
-//		ValidIssuer = builder.Configuration["Jwt:Issuer"], // reads from the appsettings.json
-//		ValidAudience = builder.Configuration["Jwt:Audience"],
-//		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-//	});
+
 
 builder.Services
     .AddAuthentication(options =>
