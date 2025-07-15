@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { CategoryHierarchy } from '@/types/api/categories';
 import { useRouter } from 'next/navigation';

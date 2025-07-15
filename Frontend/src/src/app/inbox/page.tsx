@@ -52,7 +52,8 @@ export default function InboxPage() {
         };
 
         fetchConversations();
-    }, []); // when having users or current user id here, it breaks things for some reason, so unfortunatelly eslint will be complaining. Putting it away doesnt help either, as it continutally runs and spams backend
+    }, []); // when having users or current user id here, it breaks things for some reason, so unfortunatelly
+    //eslint will be complaining. Putting it away doesnt help either, as it continutally runs and spams backend
 
     useEffect(() => {
         const initHub = async () => {
@@ -64,19 +65,21 @@ export default function InboxPage() {
                 .withAutomaticReconnect()
                 .build();
 
-            conn.on('ReceiveMessage', (senderId: string, msg: any) => {
+            conn.on('ReceiveMessage', (senderId: string, message: any) => {
                 // if new message for existing conversation
-                const convId = msg.conversationId as string;
+                const conversationId = message.conversationId as string;
                 setConversations((prev) => {
-                    const idx = prev.findIndex((c) => c.id === convId);
-                    if (idx === -1) return prev;
+                    const index = prev.findIndex(
+                        (c) => c.id === conversationId
+                    );
+                    if (index === -1) return prev;
                     const updated = [...prev];
-                    updated[idx].lastUpdatedAt = new Date().toLocaleString();
+                    updated[index].lastUpdatedAt = new Date().toLocaleString();
                     // move to the top
-                    const [conv] = updated.splice(idx, 1);
+                    const [conv] = updated.splice(index, 1);
                     return [conv, ...updated];
                 });
-                setUnread((u) => ({ ...u, [msg.conversationId]: true }));
+                setUnread((u) => ({ ...u, [message.conversationId]: true }));
             });
 
             try {

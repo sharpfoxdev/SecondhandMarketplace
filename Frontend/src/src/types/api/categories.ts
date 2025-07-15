@@ -1,7 +1,7 @@
 import { ListingPropertyDetail } from './listingProperties';
 
 export interface AddListingPropertiesToCategoryRequest {
-    listingPropertyIds: string[]; // GUIDs as strings
+    listingPropertyIds: string[];
 }
 
 export interface Category {

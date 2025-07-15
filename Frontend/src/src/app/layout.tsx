@@ -8,7 +8,7 @@ import { AuthProvider } from '@/context/AuthContext';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Outdoor Marketplace',
+    title: process.env.NEXT_PUBLIC_MARKETPLACE_NAME,
     description: 'An outdoor marketplace',
 };
 

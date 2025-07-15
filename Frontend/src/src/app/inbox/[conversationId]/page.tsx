@@ -75,7 +75,7 @@ export default function ConversationPage({
         };
     }, [conversationId]);
 
-    // scrol to bottom on new messages
+    // scroll tothe bottom on new messages
     useEffect(() => {
         endRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);

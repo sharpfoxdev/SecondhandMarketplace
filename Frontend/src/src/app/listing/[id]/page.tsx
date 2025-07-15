@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation';
 import styles from './ListingPage.module.css';
 import { fetchUserById } from '@/services/userService';
 import { User } from '@/types/api/users';
-import Image from 'next/image';
 
 export default function ListingPage({ params }: { params: { id: string } }) {
     const { id } = params;
@@ -134,13 +133,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                             <div
                                 className={`ratio ratio-4x3 ${styles.thumbnailWrapper}`}
                             >
-                                {/* <Image
-                                    src={img.imageUrl}
-                                    alt="Listing"
-                                    fill
-                                    style={{ objectFit: 'cover' }}
-                                    className={styles.thumbnail}
-                                /> */}
                                 <img
                                     src={img.imageUrl}
                                     alt="Listing"
@@ -163,11 +155,6 @@ export default function ListingPage({ params }: { params: { id: string } }) {
                 <Modal.Body>
                     {selectedImageIndex !== null && (
                         <div className="d-flex flex-column align-items-center">
-                            {/* <Image
-                                src={listing.images[selectedImageIndex].imageUrl}
-                                alt="Full size"
-                                className="img-fluid"
-                            /> */}
                             <img
                                 src={
                                     listing.images[selectedImageIndex].imageUrl

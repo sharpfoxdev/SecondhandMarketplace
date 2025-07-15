@@ -17,7 +17,6 @@ import { User } from '@/types/api/users';
 
 export default function UserPage({ params }: { params: { id: string } }) {
     const { id } = params;
-    const router = useRouter();
 
     const [user, setUser] = useState<User | null>(null);
     const [activeTab, setActiveTab] = useState<'listings' | 'reviews'>(
