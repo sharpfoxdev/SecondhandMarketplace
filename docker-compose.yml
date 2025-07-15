@@ -12,7 +12,6 @@ services:
           MYSQL_PASSWORD:     ${MYSQL_PASSWORD}
         volumes:
           - ./Database/mysqlData:/var/lib/mysql
-          # seed scripts run only on first init
         healthcheck:
           test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
           interval: 10s
@@ -32,94 +31,24 @@ services:
             - "8082:80"
         depends_on:
             - db
-    # backend:
-    #     build:
-    #         context: ./Backend
-    #         dockerfile: WebApi/Dockerfile
-    #     container_name: marketplace-backend
-    #     restart: unless-stopped
-    #     depends_on:
-    #         db:
-    #             condition: service_healthy
-    #     env_file:
-    #         - .env
-    #     environment:
-    #         ASPNETCORE_ENVIRONMENT: Production
-    #     volumes:
-    #         # persist uploaded images and serve them via /Images
-    #         - ./Backend/WebApi/images:/app/Images
-    #     ports:
-    #         - '7192:80'
-  # db:
-    # build: ./Database
-    # container_name: db
-    # environment:
-      # MYSQL_ROOT_PASSWORD: rootpassword
-      # MYSQL_DATABASE: crawler
-      # MYSQL_USER: testUser
-      # MYSQL_PASSWORD: testPassword
-    # ports:
-      # - "3306:3306"
-    # volumes:
-      # - ./Database/mysqlData:/var/lib/mysql
-    # healthcheck:
-      # test: ["CMD-SHELL", "mysqladmin ping -uroot -prootpassword"]
-      # timeout: 5s
-      # interval: 10s
-      # retries: 10
-    # restart: always
-
-  # phpmyadmin:
-    # image: phpmyadmin/phpmyadmin
-    # container_name: pma
-    # environment:
-      # PMA_HOST: db
-      # PMA_PORT: 3306
-      # PMA_ARBITRARY: 1
-    # restart: always
-    # ports:
-      # - "8082:80"
-    # depends_on:
-      # - db
-
-  # backend:
-    # build: ./Backend/
-    # ports:
-      # - "8080:8080"
-      # - "8081:8081"
-      # - "5077:5077"
-    # environment:
-      # ASPNETCORE_ENVIRONMENT: Production
-      # ConnectionStrings__DefaultConnection: "server=db;database=crawler;user=testUser;password=testPassword"
-      # MYSQL_HOST: db
-      # MYSQL_DATABASE: crawler
-      # MYSQL_USER: testUser
-      # MYSQL_PASSWORD: testPassword
-    # depends_on:
-      # db:
-        # condition: service_healthy
-      # migration:
-        # condition: service_completed_successfully
-    # healthcheck:
-      # test: ["CMD-SHELL", "nc -z db 3306"]
-      # interval: 10s
-      # retries: 10
     
-
-  # migration:
-    # build:
-      # dockerfile: ./Infrastructure/Dockerfile
-      # context: ./Backend/
-    # depends_on:
-      # db:
-        # condition: service_healthy
-    # environment:
-      # MYSQL_HOST: db
-      # MYSQL_DATABASE: crawler
-      # MYSQL_USER: testUser
-      # MYSQL_PASSWORD: testPassword
-    
-    # entrypoint: "dotnet ef database update --project Infrastructure/Infrastructure.csproj --startup-project Api/Api.csproj --context Infrastructure.Persistence.Contexts.CrawlerDbContext"
+    backend:
+        build:
+            context: ./Backend
+            dockerfile: WebApi/Dockerfile
+        container_name: marketplace-backend
+        restart: unless-stopped
+        depends_on:
+            db:
+                condition: service_healthy
+        env_file:
+            - .env
+        environment:
+            ASPNETCORE_ENVIRONMENT: Production
+        volumes:
+            - ./Backend/WebApi/images:/app/Images
+        ports:
+            - '7192:80'
 
     frontend:
         build:
@@ -137,19 +66,11 @@ services:
             NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
             NEXT_PUBLIC_MARKETPLACE_NAME: ${NEXT_PUBLIC_MARKETPLACE_NAME}
             NODE_ENV: production
-    # build: ./Client/
-    # ports:
-      # - "8083:80"
-    # depends_on:
-      # - backend
-    
-
-# volumes:
-  # mysqlData:
+        depends_on:
+            - backend
 
 networks:
-  my_network:
-    external: true
-
+    my_network:
+        external: true
 volumes:
-  mysqlData:
+    mysqlData:
