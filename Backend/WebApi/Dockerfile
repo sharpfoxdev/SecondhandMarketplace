@@ -10,6 +10,7 @@ COPY WebApi/WebApi.csproj WebApi/
 COPY Infrastructure/Infrastructure.csproj Infrastructure/
 COPY Core/Application/Application.csproj Core/Application/
 COPY Core/Domain/Domain.csproj Core/Domain/
+COPY Test/Test.csproj Test/
 
 # restore dependencies
 RUN dotnet restore
