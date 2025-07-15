@@ -9,8 +9,6 @@ import { User } from '@/types/api/users';
 import { Conversation } from '@/types/api/conversations';
 import { useAuth } from '@/context/AuthContext';
 
-
-
 export default function InboxPage() {
     const { user } = useAuth();
     const currentUserId = user?.id ?? null;
@@ -21,7 +19,6 @@ export default function InboxPage() {
         null
     );
     const [unread, setUnread] = useState<Record<string, boolean>>({});
-
 
     useEffect(() => {
         const fetchConversations = async () => {
