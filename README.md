@@ -8,7 +8,7 @@ Made as a bachelor thesis at Faculty of Mathematics and Physics, Charles Univers
 
 **WARNING** - there are .env files commited to this repository. This is for testing and/or illustrative purposes, what they should look like. You should not push .env files with important connection strings, passwords into repositories. 
 
-You need to have installed docker [Docker](https://www.docker.com/).
+You need to have installed [Docker](https://www.docker.com/).
 
 Then you can configure connection strings and data in an .env file in this folder. 
 Then run 
