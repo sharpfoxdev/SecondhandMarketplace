@@ -69,8 +69,5 @@ services:
         depends_on:
             - backend
 
-networks:
-    my_network:
-        external: true
 volumes:
     mysqlData:
