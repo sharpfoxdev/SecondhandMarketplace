@@ -6,14 +6,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MarketplaceDbContext))]
-    [Migration("20250621222021_adding fields to user")]
-    partial class addingfieldstouser
+    [Migration("20250716082027_First migration")]
+    partial class Firstmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +59,37 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ParentCategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Domain.Entities.City", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Point>("Location")
+                        .IsRequired()
+                        .HasColumnType("POINT SRID 4326");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Region")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("Domain.Entities.Conversation", b =>
@@ -132,6 +164,12 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid>("CityId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -160,6 +198,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CityId");
+
                     b.HasIndex("SellerId");
 
                     b.HasIndex("StateOfItemId");
@@ -180,23 +220,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ListingProperties");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
-                            Name = "BackpackBrand"
-                        },
-                        new
-                        {
-                            Id = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
-                            Name = "BackpackType"
-                        },
-                        new
-                        {
-                            Id = new Guid("72697394-56b3-4ed8-851f-b74e28454616"),
-                            Name = "BinocularsType"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.ListingPropertyValue", b =>
@@ -217,56 +240,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ListingPropertyId");
 
                     b.ToTable("ListingPropertyValues");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b567cbd5-d49d-427d-a90f-1d94f8cd5c8e"),
-                            ListingPropertyId = new Guid("72697394-56b3-4ed8-851f-b74e28454616"),
-                            Name = "Monokulár"
-                        },
-                        new
-                        {
-                            Id = new Guid("c62d49f3-0294-4e9a-9411-5a392f719b76"),
-                            ListingPropertyId = new Guid("72697394-56b3-4ed8-851f-b74e28454616"),
-                            Name = "Binokulár"
-                        },
-                        new
-                        {
-                            Id = new Guid("8dd8cbb6-03a9-4220-b343-d4c5a283283b"),
-                            ListingPropertyId = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
-                            Name = "Batoh"
-                        },
-                        new
-                        {
-                            Id = new Guid("ba38e3c6-777c-4dbd-87bd-450206c7e49a"),
-                            ListingPropertyId = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
-                            Name = "Sumka"
-                        },
-                        new
-                        {
-                            Id = new Guid("d882ac03-d93e-41c6-8503-2d2fd47acac5"),
-                            ListingPropertyId = new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"),
-                            Name = "Taška"
-                        },
-                        new
-                        {
-                            Id = new Guid("13b902a9-c0e4-4799-80d8-56206eb1acc8"),
-                            ListingPropertyId = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
-                            Name = "Patizon"
-                        },
-                        new
-                        {
-                            Id = new Guid("3f5fd110-e73f-46fe-bb92-3a8094e3cbcb"),
-                            ListingPropertyId = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
-                            Name = "Sir Joseph"
-                        },
-                        new
-                        {
-                            Id = new Guid("4f53489e-90b3-43ad-b51c-aa65f301b984"),
-                            ListingPropertyId = new Guid("9091889f-ed33-48a0-979e-875968b305fe"),
-                            Name = "Prima"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Message", b =>
@@ -297,6 +270,34 @@ namespace Infrastructure.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Review", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ReviewText")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("RevieweeId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ReviewerId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RevieweeId");
+
+                    b.HasIndex("ReviewerId");
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("Domain.Entities.StateOfItem", b =>
                 {
                     b.Property<Guid>("Id")
@@ -310,13 +311,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StateOfItem");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("2e0e5d47-2ff5-421e-945e-9fdc08cc762d"),
-                            Name = "Nový"
-                        });
                 });
 
             modelBuilder.Entity("Infrastructure.Identity.ApplicationRole", b =>
@@ -619,6 +613,12 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Infrastructure.Identity.ApplicationUser", null)
                         .WithMany("Listings")
                         .HasForeignKey("SellerId")
@@ -632,6 +632,8 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+
+                    b.Navigation("City");
 
                     b.Navigation("StateOfItem");
                 });
@@ -662,6 +664,21 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Conversation");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Review", b =>
+                {
+                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany("ReviewsReceived")
+                        .HasForeignKey("RevieweeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Infrastructure.Identity.ApplicationUser", null)
+                        .WithMany("ReviewsGiven")
+                        .HasForeignKey("ReviewerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ListingListingPropertyValue", b =>
@@ -761,6 +778,10 @@ namespace Infrastructure.Migrations
                     b.Navigation("Listings");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("ReviewsGiven");
+
+                    b.Navigation("ReviewsReceived");
                 });
 #pragma warning restore 612, 618
         }

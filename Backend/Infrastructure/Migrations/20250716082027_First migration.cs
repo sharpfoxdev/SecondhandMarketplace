@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class freshstartoncemore1 : Migration
+    public partial class Firstmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,6 +41,9 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Nickname = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastLoggedIn = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
@@ -86,6 +90,41 @@ namespace Infrastructure.Migrations
                         column: x => x.ParentCategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Cities",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ZipCode = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    District = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Region = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Location = table.Column<Point>(type: "point srid 4326", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cities", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Conversations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    LastUpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Conversations", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -239,6 +278,89 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Reviews",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ReviewerId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    RevieweeId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ReviewText = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reviews_AspNetUsers_RevieweeId",
+                        column: x => x.RevieweeId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reviews_AspNetUsers_ReviewerId",
+                        column: x => x.ReviewerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ConversationParticipant",
+                columns: table => new
+                {
+                    ConversationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConversationParticipant", x => new { x.ConversationId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_ConversationParticipant_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ConversationParticipant_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ConversationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    SenderId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Content = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Messages_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "CategoryListingProperty",
                 columns: table => new
                 {
@@ -299,17 +421,13 @@ namespace Infrastructure.Migrations
                     ReasonOfSale = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     IsSold = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ApplicationUserId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CityId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CategoryId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Listings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Listings_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Listings_AspNetUsers_SellerId",
                         column: x => x.SellerId,
@@ -320,6 +438,12 @@ namespace Infrastructure.Migrations
                         name: "FK_Listings_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Listings_Cities_CityId",
+                        column: x => x.CityId,
+                        principalTable: "Cities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -392,36 +516,6 @@ namespace Infrastructure.Migrations
                     { new Guid("e8c9ac14-c7f6-4991-88aa-ad40bfe8f707"), "e8c9ac14-c7f6-4991-88aa-ad40bfe8f707", "Admin", "ADMIN" }
                 });
 
-            migrationBuilder.InsertData(
-                table: "ListingProperties",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { new Guid("72697394-56b3-4ed8-851f-b74e28454616"), "BinocularsType" },
-                    { new Guid("9091889f-ed33-48a0-979e-875968b305fe"), "BackpackBrand" },
-                    { new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"), "BackpackType" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "StateOfItem",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { new Guid("2e0e5d47-2ff5-421e-945e-9fdc08cc762d"), "Nový" });
-
-            migrationBuilder.InsertData(
-                table: "ListingPropertyValues",
-                columns: new[] { "Id", "ListingPropertyId", "Name" },
-                values: new object[,]
-                {
-                    { new Guid("13b902a9-c0e4-4799-80d8-56206eb1acc8"), new Guid("9091889f-ed33-48a0-979e-875968b305fe"), "Patizon" },
-                    { new Guid("3f5fd110-e73f-46fe-bb92-3a8094e3cbcb"), new Guid("9091889f-ed33-48a0-979e-875968b305fe"), "Sir Joseph" },
-                    { new Guid("4f53489e-90b3-43ad-b51c-aa65f301b984"), new Guid("9091889f-ed33-48a0-979e-875968b305fe"), "Prima" },
-                    { new Guid("8dd8cbb6-03a9-4220-b343-d4c5a283283b"), new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"), "Batoh" },
-                    { new Guid("b567cbd5-d49d-427d-a90f-1d94f8cd5c8e"), new Guid("72697394-56b3-4ed8-851f-b74e28454616"), "Monokulár" },
-                    { new Guid("ba38e3c6-777c-4dbd-87bd-450206c7e49a"), new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"), "Sumka" },
-                    { new Guid("c62d49f3-0294-4e9a-9411-5a392f719b76"), new Guid("72697394-56b3-4ed8-851f-b74e28454616"), "Binokulár" },
-                    { new Guid("d882ac03-d93e-41c6-8503-2d2fd47acac5"), new Guid("e2cfc37d-9d86-4dbf-a0e9-c4b2b59770c3"), "Taška" }
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -470,6 +564,11 @@ namespace Infrastructure.Migrations
                 column: "ListingPropertiesId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ConversationParticipant_UserId",
+                table: "ConversationParticipant",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Images_ListingId",
                 table: "Images",
                 column: "ListingId");
@@ -485,14 +584,14 @@ namespace Infrastructure.Migrations
                 column: "ListingPropertyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Listings_ApplicationUserId",
-                table: "Listings",
-                column: "ApplicationUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Listings_CategoryId",
                 table: "Listings",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Listings_CityId",
+                table: "Listings",
+                column: "CityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Listings_SellerId",
@@ -503,6 +602,26 @@ namespace Infrastructure.Migrations
                 name: "IX_Listings_StateOfItemId",
                 table: "Listings",
                 column: "StateOfItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_ConversationId",
+                table: "Messages",
+                column: "ConversationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SenderId",
+                table: "Messages",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_RevieweeId",
+                table: "Reviews",
+                column: "RevieweeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_ReviewerId",
+                table: "Reviews",
+                column: "ReviewerId");
         }
 
         /// <inheritdoc />
@@ -527,10 +646,19 @@ namespace Infrastructure.Migrations
                 name: "CategoryListingProperty");
 
             migrationBuilder.DropTable(
+                name: "ConversationParticipant");
+
+            migrationBuilder.DropTable(
                 name: "Images");
 
             migrationBuilder.DropTable(
                 name: "ListingListingPropertyValue");
+
+            migrationBuilder.DropTable(
+                name: "Messages");
+
+            migrationBuilder.DropTable(
+                name: "Reviews");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -542,6 +670,9 @@ namespace Infrastructure.Migrations
                 name: "Listings");
 
             migrationBuilder.DropTable(
+                name: "Conversations");
+
+            migrationBuilder.DropTable(
                 name: "ListingProperties");
 
             migrationBuilder.DropTable(
@@ -549,6 +680,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Cities");
 
             migrationBuilder.DropTable(
                 name: "StateOfItem");
