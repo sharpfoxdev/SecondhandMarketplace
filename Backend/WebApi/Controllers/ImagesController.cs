@@ -67,7 +67,6 @@ namespace WebApi.Controllers
         /// <remarks>
         /// This method checks file size and extension before uploading. It only allows .jpg, .jpeg, and .png files, and the file size must not exceed 10MB.
         /// </remarks>
-        // POST: /api/Images/Upload
         [HttpPost]
         [Route("Upload")]
         public async Task<IActionResult> Upload([FromForm] AddImageRequest request)

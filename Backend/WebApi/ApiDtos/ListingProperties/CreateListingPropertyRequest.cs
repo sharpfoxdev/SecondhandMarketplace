@@ -3,6 +3,5 @@
 namespace WebApi.ApiDtos.ListingProperties {
 	public class CreateListingPropertyRequest {
 		public string Name { get; set; }
-		//public List<CreatePropertyValueInsidePropertyRequest> ListingPropertyValues { get; set; }
 	}
 }

@@ -9,7 +9,5 @@ namespace WebApi.ApiDtos.Listings {
 		public string ReasonOfSale { get; set; }
 		public bool IsSold { get; set; }
 
-		// TODO add possibility to change attribute selections
-		// public List<IAttributeSelection> PropertyValueSelection { get; set; }
 	}
 }

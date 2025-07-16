@@ -63,11 +63,6 @@ namespace WebApi.Controllers {
 		}
         /// <summary>
         /// Updates specified value.
-        /// TO CHECK should it be able to change the listing property? Doesnt sound like a good idea, 
-        /// it is better to delete the value and create a new one in a place we want. 
-        /// 
-        /// TO CHECK what happens, when a listing is using the value, that is being updated or deleted?
-        /// Should be replaced with null in the listing. 
         /// </summary>
         /// <param name="id">Id of value to update. </param>
         /// <param name="request"></param>
@@ -85,8 +80,6 @@ namespace WebApi.Controllers {
 		}
         /// <summary>
         /// Deletes specified value.
-        /// TO CHECK what happens, when a listing is using the value, that is being updated or deleted?
-        /// Should be replaced with null in the listing. 
         /// </summary>
         /// <param name="id">Id of value. </param>
         /// <returns>Deleted resource or 404 if id not found. </returns>

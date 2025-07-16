@@ -11,13 +11,7 @@ namespace WebApi.ApiDtos.Conversations
         public DateTime LastUpdatedAt { get; set; }
         public DateTime CreatedAt { get; set; }
     }
-    //public class ConversationDetailDto
-    //{
-    //    public Guid Id { get; set; }
-    //    public List<MessageDto> Messages { get; set; }
-    //    public List<ConversationParticipant> ConversationParticipants { get; set; }
-    //    public DateTime CreatedAt { get; set; }
-    //}
+
     public class ConversationParticipantDto
     {
         public Guid ConversationId { get; set; }

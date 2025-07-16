@@ -234,7 +234,6 @@ namespace Infrastructure.Persistence.Repositories {
         /// It is also not currently possible to update the parent category of the category, as moving
         /// the category within the tree would mess up the listings, as they would not support
         /// the new parent categories ListingProperties. 
-        /// TOCHECK - is this really an issue?
         /// </summary>
         /// <param name="id">Id of Category to update. </param>
         /// <param name="updatedCategory">Category of updated data. </param>

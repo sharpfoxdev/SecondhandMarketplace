@@ -69,14 +69,12 @@ namespace Infrastructure.Persistence.Repositories
 			await SaveImageToFileSystem(image, file);
 			image.ImageUrl = CreateImageUrl(image);
 
-			// Save to the database (Image table)
 			await dbContext.Images.AddAsync(image);
 			await dbContext.SaveChangesAsync();
 
 			return image;
 		}
 		public void DeleteImageFromFileSystem(Image image) {
-			// remove the image from the filesystem
 			var localFilePath = Path.Combine(
 				webHostEnvironment.ContentRootPath,
 				"Images",
@@ -92,7 +90,6 @@ namespace Infrastructure.Persistence.Repositories
 				return null;
 			}
 			DeleteImageFromFileSystem(existing);
-			// delete from database
 			dbContext.Images.Remove(existing);
 			await dbContext.SaveChangesAsync();
 			return existing;

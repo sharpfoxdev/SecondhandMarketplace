@@ -64,13 +64,11 @@ namespace Infrastructure.Persistence.Repositories {
 				// didnt find existing with this id
 				return null;
 			}
-			// TODO - maybe check, that we are not adding already existing values
 			existing.ListingPropertyValues.AddRange(values);
 			await dbContext.SaveChangesAsync();
 			return existing;
 		}
 		public async Task<ListingProperty?> UpdateAsync(Guid id, ListingProperty updatedProperty) {
-			// we will not be updating values
 			var existing = await dbContext.ListingProperties
 				.Include(x => x.ListingPropertyValues)
 				.Include(x => x.Categories)

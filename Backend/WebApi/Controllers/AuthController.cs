@@ -36,7 +36,7 @@ namespace WebApi.Controllers
         /// Registers a new user with provided credentials. If it is the first user in the database, he gets admin role. 
         /// Subsequent registered people get user role. 
         /// </summary>
-        /// <param name="registerRequest">Request object containing username, password, and roles.</param>
+        /// <param name="registerRequest">Request object containing username, password</param>
         /// <returns>Success message or error message if registration fails.</returns>
         /// <remarks>
         /// This endpoint creates a new user in the system and assigns roles. If registration or role assignment fails, 
@@ -94,7 +94,6 @@ namespace WebApi.Controllers
             {
                 return BadRequest("Invalid credentials");
             }
-            // here we will create JWT token in the next lecture
             var roles = await userManager.GetRolesAsync(user);
             if (roles == null)
             {

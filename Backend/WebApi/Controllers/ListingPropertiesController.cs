@@ -56,8 +56,7 @@ namespace WebApi.Controllers {
 			return Ok(mapper.Map<ListingPropertyDetailDto>(domain));
 		}
 		/// <summary>
-		/// Creates a new listing property. It is also possible to create new propertyValues witin it
-		/// in this step. 
+		/// Creates a new listing property. 
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns>
@@ -72,11 +71,6 @@ namespace WebApi.Controllers {
 		}
 		/// <summary>
 		/// Updates information about the property. You cannot change the id. 
-		/// TO CHECK: should I be able to change the category it is tied to? That would affect the listings,
-		/// as they are tied to the categories as well and have to have matching propertyValues. So that
-		/// sounds like a bad idea. Or can delete the matching propertyValues in the listings and in the
-		/// listings, that use the new category add null as the matching attribute. Currently the 
-		/// update request doesn't allow to change the category.
 		/// </summary>
 		/// <param name="id">Id of property to update. </param>
 		/// <param name="request"></param>
@@ -97,7 +91,6 @@ namespace WebApi.Controllers {
 		}
 		/// <summary>
 		/// Deletes the given property and cascade deletes also all the propertyValues associated to it. 
-		/// TO CHECK what happens in the listings, that use the values of this property
 		/// </summary>
 		/// <param name="id">Id of property to delete. </param>
 		/// <returns>Deleted property or 404, when the id is not found. </returns>

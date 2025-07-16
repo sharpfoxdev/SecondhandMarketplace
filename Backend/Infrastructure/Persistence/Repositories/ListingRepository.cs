@@ -111,7 +111,7 @@ namespace Infrastructure.Persistence.Repositories
 				.Include(x => x.City)
 				.FirstOrDefaultAsync(x => x.Id == id);
 			if(existing == null) {
-				return null; // couldnt find this listing
+				return null;
 			}
 			return existing;
 		}

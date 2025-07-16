@@ -16,7 +16,6 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // todo pridat authorized very likely
     public class ConversationsController : ControllerBase
     {
 
@@ -51,11 +50,9 @@ namespace WebApi.Controllers
             var existingConversation = await conversationRepository.ConversationExists(senderId, request.RecipientId);
             if (existingConversation != null)
             {
-                // todo tohle vrati v pohode domain, ale nechce to namapovat
                 var mappedExisting = mapper.Map<ConversationDto>(existingConversation);
                 return Ok(mappedExisting);
             }
-            // todo overit, ze ten druhy clovek existuje
             var conversationId = Guid.NewGuid();
             var participant1 = new ConversationParticipant { ConversationId = conversationId, UserId = senderId };
             var participant2 = new ConversationParticipant { ConversationId = conversationId, UserId = request.RecipientId };

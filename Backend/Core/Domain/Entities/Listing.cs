@@ -13,10 +13,6 @@ namespace Domain.Entities {
     /// have to match the ListingProperties of the category it belongs to. So for example
     /// if the category is "Clothes" with ListingProperties "Color", "Size", this listing then
     /// has to have ListingPropertyValues matching the ListingProperties, so for example "Red" and "XXL".
-    /// 
-    /// TODO: what to do when the categories is updates the ListingProperties. 
-    /// When deleting - also delete the the matching attribute
-    /// When adding - add null instead (user can fill in, if they want to - can prompt them)
     /// </summary>
     public class Listing : IEntity {
 		public Guid Id { get; set; }

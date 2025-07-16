@@ -52,7 +52,7 @@ namespace Infrastructure
 			.AddScoped<ICityRepository, CityRepository>()
 			.AddScoped<IReviewRepository, ReviewRepository>()
 			.AddHttpContextAccessor()
-			.AddIdentity(); //possibly move elsewhere
+			.AddIdentity();
 		}
 		public static IServiceCollection AddIdentity(this IServiceCollection services) {
 			return services

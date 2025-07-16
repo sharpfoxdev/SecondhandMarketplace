@@ -40,7 +40,7 @@ namespace WebApi.Controllers
         }
 
         /// <summary>
-        /// Retrieves all listings. I am using post, because with get a cannot pass a filter in body. 
+        /// Retrieves all listings. I am using post, because with get a cannot pass a filter in the body of request. 
         /// </summary>
         /// <returns>A list of all listings.</returns>
         [HttpPost]
