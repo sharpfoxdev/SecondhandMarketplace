@@ -9,6 +9,7 @@ import Button from 'react-bootstrap/Button';
 import { User } from '@/types/api/users';
 import { fetchUserById } from '@/services/userService';
 import { useAuth } from '@/context/AuthContext';
+import { fetchConversationById } from '@/services/conversationService';
 
 export default function ConversationPage({
     params,
@@ -36,16 +37,20 @@ export default function ConversationPage({
     }, [conversationId]);
 
     useEffect(() => {
-        if (!currentUserId) return;
-        const otherId = messages.find(
-            (m) => m.senderId !== currentUserId
-        )?.senderId;
-        if (otherId) {
-            fetchUserById(otherId)
-                .then((user) => setOtherUser(user))
-                .catch(console.error);
-        }
-    }, [messages, currentUserId]);
+        const fetchOtherUser = async () => {
+            if (!currentUserId) return;
+            const conv = await fetchConversationById(conversationId);
+            const otherUserId = conv.conversationParticipants.find(
+                (p) => p.userId !== currentUserId
+            )?.userId;
+            if (otherUserId) {
+                fetchUserById(otherUserId)
+                    .then((user) => setOtherUser(user))
+                    .catch(console.error);
+            }
+        };
+        fetchOtherUser();
+    }, [currentUserId, conversationId]);
 
     useEffect(() => {
         const conn = new HubConnectionBuilder()

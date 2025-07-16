@@ -93,7 +93,7 @@ export default function ListingPage({ params }: { params: { id: string } }) {
             setShowMessageForm(false);
             router.push(`/inbox/${conversationId}`);
         } catch (error) {
-            alert("Couldn't send message");
+            alert("Couldn't send message. Check that you are logged in. ");
             console.error('Error sending message:', error);
         }
     };
